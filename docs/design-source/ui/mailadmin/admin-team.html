@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team & access — Ziroemail</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .row { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .row:last-child { border-bottom: none; }
+  .row .nm { flex: 1; min-width: 180px; }
+  .row .nm b { font-size: .94rem; color: var(--tx-1); display: block; }
+  .row .nm span { font-size: .85rem; color: var(--tx-3); }
+
+  .pe-av { width: 40px; height: 40px; border-radius: 50%; background: var(--ink-600); color: #fff; display: grid; place-items: center; font-size: .8rem; font-weight: 700; flex: none; }
+  .pe-av.b { background: var(--blue); }
+
+  /* the owner row is the one that cannot be edited here, and says so */
+  .owner-row { border-bottom: none; padding-bottom: 6px; }
+  .owner-row .lock { color: var(--tx-3); display: inline-flex; align-items: center; }
+
+  /* add-administrator panel */
+  .addadm {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+    padding: 24px; margin-top: 18px;
+  }
+  .addadm[hidden] { display: none; }
+  .aa-step[hidden] { display: none; }
+  .otp-in {
+    font-family: var(--mono); font-size: 1.5rem; letter-spacing: .38em;
+    text-align: center; max-width: 260px; height: 62px;
+  }
+  .otp-in::placeholder { letter-spacing: .38em; color: var(--tx-3); }
+  .who { display: flex; gap: 13px; align-items: center; min-width: 200px; flex: 1; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <div class="page-head">
+        <div>
+          <h1>Team &amp; access</h1>
+          <p>Who can administer <span class="mono">adaobifoods.com</span>, and what each of them can do.</p>
+        </div>
+        <button class="btn btn-pri" type="button" data-add-admin>Add an administrator</button>
+      </div>
+
+      <section class="card" data-reveal>
+        <h2 style="font-size:1.05rem">People with access</h2>
+
+        <!-- The owner is the address the account was opened with. It is not a
+             mailbox on this domain and it cannot be swapped out here, because
+             it is what we use to prove who owns the account. -->
+        <div class="row owner-row" style="margin-top:8px">
+          <span class="who">
+            <span class="pe-av b" aria-hidden="true">VO</span>
+            <span class="nm">
+              <b>Victory Okeke</b>
+              <span>vicokekedev@gmail.com</span>
+            </span>
+          </span>
+          <span class="pill pill-info">Owner &middot; account holder</span>
+          <span class="lock" title="The owner address cannot be changed here">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span class="sr-only">Locked</span>
+          </span>
+        </div>
+        <p class="hint" style="margin-top:4px">This is the address you signed up with, not a
+          mailbox on <span class="mono">adaobifoods.com</span>. It is how we verify ownership if
+          you are ever locked out, so it is changed by
+          <a href="admin-help.html">contacting us</a> rather than from this screen.</p>
+
+        <div class="row" style="margin-top:16px">
+          <span class="who">
+            <span class="pe-av" aria-hidden="true">NA</span>
+            <span class="nm"><b>Ngozi Adeyemi</b><span>ngozi@adaobifoods.com</span></span>
+          </span>
+          <span class="pill pill-mut">Administrator</span>
+          <button class="btn btn-line btn-sm" type="button" data-add-admin>Change</button>
+        </div>
+        <div class="row">
+          <span class="who">
+            <span class="pe-av" aria-hidden="true">TS</span>
+            <span class="nm"><b>Techsavii Ltd</b><span>Agency &middot; access granted 4 March 2026</span></span>
+          </span>
+          <span class="pill pill-warn">Delegated</span>
+          <button class="btn btn-danger btn-sm" type="button">Withdraw</button>
+        </div>
+      </section>
+
+      <!-- Add an administrator: type the address, they confirm with a code.
+           No invitation to accept, no waiting on somebody to click a link. -->
+      <section class="addadm" data-addadm hidden aria-labelledby="aa-h">
+        <h2 id="aa-h" style="font-size:1.05rem">Add an administrator</h2>
+        <p class="sm mut mt-s">Enter their address and we send a six-digit code. Once they read
+          it back to you, or type it themselves, they are an administrator immediately.</p>
+
+        <!-- step 1: the address -->
+        <div class="aa-step" data-aa-step="1">
+          <div class="field mt">
+            <label class="label" for="adm">Their email address</label>
+            <input class="input" id="adm" name="admin" type="email"
+                   placeholder="ngozi@adaobifoods.com" autocomplete="off" spellcheck="false">
+            <p class="hint">This can be a mailbox on this domain, or any address outside it
+              &mdash; your accountant's Gmail, your web developer's work address. They do not
+              need a mailbox here to administer the account, so you are not buying one for
+              somebody who only does your books.</p>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-pri" type="button" data-aa-send>Send the code</button>
+            <button class="btn btn-quiet" type="button" data-aa-cancel>Cancel</button>
+          </div>
+        </div>
+
+        <!-- step 2: the code -->
+        <div class="aa-step" data-aa-step="2" hidden>
+          <div class="banner banner-info mt" role="status">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.6"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.6" r=".9" fill="currentColor"/></svg>
+            <span class="bd">
+              <b>Code sent to <span data-aa-addr>ngozi@adaobifoods.com</span></b>
+              <p>It is valid for 10&nbsp;minutes. If they are with you, they can read it out and
+                you can type it here yourself.</p>
+            </span>
+          </div>
+
+          <div class="field mt">
+            <label class="label" for="otp">Six-digit code</label>
+            <input class="input otp-in" id="otp" name="otp" type="text" inputmode="numeric"
+                   autocomplete="one-time-code" maxlength="6" placeholder="000000"
+                   spellcheck="false" aria-describedby="otp-hint">
+            <p class="hint" id="otp-hint">Type the code from the email we just sent.</p>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-pri" type="button" data-aa-confirm>Confirm administrator</button>
+            <button class="btn btn-line" type="button" data-aa-resend>Send it again</button>
+            <button class="btn btn-quiet" type="button" data-aa-cancel>Cancel</button>
+          </div>
+        </div>
+
+        <!-- step 3: done -->
+        <div class="aa-step" data-aa-step="3" hidden>
+          <div class="banner banner-ok mt" role="status">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8.2 7 10.2l4-4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="bd">
+              <b><span data-aa-addr2>ngozi@adaobifoods.com</span> is now an administrator</b>
+              <p>They can create mailboxes, move storage and change DNS records. They cannot
+                change the plan, export all mail, or withdraw anyone's access &mdash; those stay
+                with you as owner.</p>
+            </span>
+          </div>
+          <button class="btn btn-line mt" type="button" data-aa-cancel>Done</button>
+        </div>
+      </section>
+
+      <h2 style="font-size:1.05rem;margin-top:34px">What each role can do</h2>
+      <div class="tbl-wrap mt">
+        <table class="data">
+          <caption class="sr-only">Permissions by role</caption>
+          <thead>
+            <tr><th scope="col">Can</th><th scope="col" style="text-align:center">Owner</th><th scope="col" style="text-align:center">Administrator</th><th scope="col" style="text-align:center">User</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Read their own mail</th><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="y">&#10003;</td></tr>
+            <tr><th scope="row">Create and delete mailboxes</th><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="n">&mdash;</td></tr>
+            <tr><th scope="row">Move storage between mailboxes</th><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="n">&mdash;</td></tr>
+            <tr><th scope="row">Change DNS records</th><td class="y">&#10003;</td><td class="y">&#10003;</td><td class="n">&mdash;</td></tr>
+            <tr><th scope="row">Buy storage or change the plan</th><td class="y">&#10003;</td><td class="n">&mdash;</td><td class="n">&mdash;</td></tr>
+            <tr><th scope="row">Export all organisation mail</th><td class="y">&#10003;</td><td class="n">&mdash;</td><td class="n">&mdash;</td></tr>
+            <tr><th scope="row">Withdraw someone else's access</th><td class="y">&#10003;</td><td class="n">&mdash;</td><td class="n">&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note mt-l">
+        <h4>Why delegated access can always be withdrawn</h4>
+        <p>Most businesses arrive through the agency that built their website, and that
+          relationship sometimes ends badly. Delegated access gives an agency everything it
+          needs to do the work &mdash; and gives you the one thing that matters: the ability
+          to take the keys back yourself, without asking anyone.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

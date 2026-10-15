@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help centre — Ziroemail</title>
+<meta name="description" content="Guides for setting up your domain, adding mailboxes, configuring phones and fixing delivery problems.">
+<!-- seo:start -->
+<link rel="canonical" href="https://ziroemail.com/help">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ziroemail">
+<meta property="og:locale" content="en_NG">
+<meta property="og:url" content="https://ziroemail.com/help">
+<meta property="og:title" content="Help centre — Ziroemail">
+<meta property="og:description" content="Guides for DNS records, phone setup, storage quotas, delivery problems and billing.">
+<meta property="og:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Help centre — Ziroemail">
+<meta name="twitter:description" content="Guides for DNS records, phone setup, storage quotas, delivery problems and billing.">
+<meta name="twitter:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Ziroemail",
+  "url": "https://ziroemail.com",
+  "logo": "https://ziroemail.com/assets/img/ziroemail-icon.png",
+  "description": "Business email hosting for Nigerian companies, on your own domain.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Port Harcourt",
+    "addressRegion": "Rivers State",
+    "addressCountry": "NG"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "support@ziroemail.com",
+    "areaServed": "NG",
+    "availableLanguage": "English"
+  }
+}
+</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* set before first paint so the hero never flashes in unanimated */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .h-hero {
+    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
+    padding-block: calc(var(--hdr-h) + 48px) 68px;
+  }
+  .h-hero .wrap { position: relative; z-index: 2; }
+  .h-hero h1 { color: #fff; }
+  .h-hero .shape { color: var(--blue); }
+  .hh1 { width: 400px; height: 400px; right: -140px; top: -150px; }
+
+  .searchbar {
+    display: flex; align-items: center; gap: 12px; max-width: 520px; margin-top: 26px;
+    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.20);
+    border-radius: var(--r-xs); padding: 0 16px; height: 54px;
+  }
+  .searchbar input { flex: 1; background: none; border: none; color: #fff; font-size: 1rem; min-width: 0; }
+  .searchbar input::placeholder { color: #8A97A6; }
+  .searchbar input:focus { outline: none; }
+
+  .cats { display: grid; gap: 18px; }
+  @media (min-width: 720px) { .cats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .cat { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 26px; }
+  .cat .ic {
+    width: 40px; height: 40px; border-radius: 12px; background: var(--blue-050); color: var(--blue);
+    display: grid; place-items: center; border: 1px solid var(--blue-200); margin-bottom: 16px;
+  }
+  .cat h3 { font-size: 1.05rem; }
+  .cat ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 2px; }
+  .cat li a {
+    display: block; padding: 8px 0; font-size: .93rem; color: var(--tx-2);
+    border-bottom: 1px solid transparent;
+  }
+  .cat li a:hover { color: var(--blue); }
+  .cat .more { display: inline-block; margin-top: 14px; font-size: .88rem; font-weight: 600; color: var(--blue); }
+
+  .pop { display: grid; gap: 14px; }
+  @media (min-width: 820px) { .pop { grid-template-columns: repeat(2, 1fr); } }
+  .pop a {
+    display: flex; gap: 14px; align-items: flex-start; padding: 20px 22px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r); color: var(--tx-1);
+  }
+  .pop a:hover { border-color: var(--blue); }
+  .pop .n { font-family: var(--mono); font-size: .8rem; color: var(--blue); flex: none; padding-top: 2px; }
+  .pop b { font-size: .98rem; display: block; }
+  .pop span { font-size: .88rem; color: var(--tx-3); display: block; margin-top: 4px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="hdr hdr-ink hdr-over">
+  <div class="wrap wrap-wide bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo logo-light" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37"><img class="logo logo-dark" src="assets/img/ziroemail-wordmark-black.png" alt="" aria-hidden="true" width="150" height="37">
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="migrate.html">Switching</a>
+      <a href="help.html" aria-current="page">Help</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="btn btn-line btn-sm" href="login.html">Sign in</a>
+      <a class="btn btn-pri btn-sm" href="signup.html">Get started</a>
+    </div>
+    <button class="burger" data-nav-toggle aria-expanded="false" aria-controls="mnav" aria-label="Open menu">
+      <svg class="i-open" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-close" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mnav" id="mnav">
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="migrate.html">Switching</a>
+    <a href="help.html">Help centre</a>
+    <div class="btn-row">
+      <a class="btn btn-line full" href="login.html">Sign in</a>
+      <a class="btn btn-pri full" href="signup.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="h-hero">
+    <span class="shape shape-ring hh1" aria-hidden="true"></span>
+    <div class="wrap" data-hero>
+      <span class="eyebrow" style="margin-bottom:16px;display:block">Help centre</span>
+      <h1>How can we help?</h1>
+      <label class="searchbar">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.2" stroke="#8A97A6" stroke-width="1.6"/><path d="m11 11 3.2 3.2" stroke="#8A97A6" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="sr-only">Search the help centre</span>
+        <input type="search" placeholder="Search guides — DNS, phone setup, storage…">
+      </label>
+    </div>
+  </section>
+
+  <!-- ===== POPULAR ===== -->
+  <section class="sec-sm">
+    <div class="wrap">
+      <h2 style="font-size:1.2rem">Most read</h2>
+      <div class="pop mt" data-stagger>
+        <a href="#">
+          <span class="n">01</span>
+          <span><b>My mail is going to spam</b><span>The usual cause and how to check it in two minutes</span></span>
+        </a>
+        <a href="#">
+          <span class="n">02</span>
+          <span><b>Set up email on an iPhone</b><span>One tap with the configuration profile</span></span>
+        </a>
+        <a href="#">
+          <span class="n">03</span>
+          <span><b>Where do I paste the DNS records?</b><span>Step by step for the common Nigerian registrars</span></span>
+        </a>
+        <a href="#">
+          <span class="n">04</span>
+          <span><b>Give a mailbox more storage</b><span>Moving space around inside your pool</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CATEGORIES ===== -->
+  <section class="sec bg-soft">
+    <div class="wrap">
+      <div class="sec-head mb-l" data-reveal>
+        <span class="eyebrow">Browse</span>
+        <h2>Guides by topic</h2>
+      </div>
+
+      <div class="cats" data-stagger>
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 8h13M8 1.5c1.8 2 2.6 4.2 2.6 6.5S9.8 12.5 8 14.5c-1.8-2-2.6-4.2-2.6-6.5S6.2 3.5 8 1.5z" stroke="currentColor" stroke-width="1.3"/></svg>
+          </span>
+          <h3>Domain &amp; DNS</h3>
+          <ul>
+            <li><a href="#">Adding your four records</a></li>
+            <li><a href="#">Fixing an SPF conflict</a></li>
+            <li><a href="#">Why records take time to appear</a></li>
+            <li><a href="#">Adding a second domain</a></li>
+          </ul>
+          <a class="more" href="#">All 9 guides &rarr;</a>
+        </div>
+
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><rect x="4.5" y="1.5" width="7" height="13" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M7 12.6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Phones &amp; apps</h3>
+          <ul>
+            <li><a href="#">iPhone and iPad setup</a></li>
+            <li><a href="#">Android setup</a></li>
+            <li><a href="#">Outlook on a computer</a></li>
+            <li><a href="#">Manual IMAP and SMTP settings</a></li>
+          </ul>
+          <a class="more" href="#">All 7 guides &rarr;</a>
+        </div>
+
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><rect x="1.8" y="4" width="12.4" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M1.8 6.6h12.4" stroke="currentColor" stroke-width="1.5"/></svg>
+          </span>
+          <h3>Storage &amp; mailboxes</h3>
+          <ul>
+            <li><a href="#">How the storage pool works</a></li>
+            <li><a href="#">Changing a mailbox quota</a></li>
+            <li><a href="#">Buying extra storage</a></li>
+            <li><a href="#">Creating a shared address</a></li>
+          </ul>
+          <a class="more" href="#">All 8 guides &rarr;</a>
+        </div>
+
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M8 1.5 14 4v4.2c0 3.4-2.5 5.7-6 6.3-3.5-.6-6-2.9-6-6.3V4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </span>
+          <h3>Delivery &amp; spam</h3>
+          <ul>
+            <li><a href="#">My mail is going to spam</a></li>
+            <li><a href="#">Releasing a message from quarantine</a></li>
+            <li><a href="#">Reporting a phishing message</a></li>
+            <li><a href="#">What we do about abuse</a></li>
+          </ul>
+          <a class="more" href="#">All 6 guides &rarr;</a>
+        </div>
+
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.6" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 6.4h13" stroke="currentColor" stroke-width="1.5"/></svg>
+          </span>
+          <h3>Billing</h3>
+          <ul>
+            <li><a href="#">Paying by bank transfer</a></li>
+            <li><a href="#">Paying by USSD</a></li>
+            <li><a href="#">Downloading a VAT invoice</a></li>
+            <li><a href="#">What happens if payment is late</a></li>
+          </ul>
+          <a class="more" href="#">All 6 guides &rarr;</a>
+        </div>
+
+        <div class="cat">
+          <span class="ic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M3 13.5 8 2l5 11.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 10h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <h3>Moving to Ziroemail</h3>
+          <ul>
+            <li><a href="#">Moving from Google Workspace</a></li>
+            <li><a href="#">Moving from cPanel</a></li>
+            <li><a href="#">Keeping your old address working</a></li>
+            <li><a href="#">What comes across, and what does not</a></li>
+          </ul>
+          <a class="more" href="#">All 5 guides &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STILL STUCK ===== -->
+  <section class="sec bg-ink center">
+    <div class="wrap wrap-tight">
+      <h2>Still stuck?</h2>
+      <p class="lead mt">Send us a screenshot on WhatsApp. We would rather fix it with you
+        than have you read four more articles.</p>
+      <div class="btn-row center mt-l">
+        <a class="btn btn-pri btn-lg" href="contact.html">Message us</a>
+        <a class="btn btn-line btn-lg" href="status.html">Check system status</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div>
+        <img class="logo" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+        <p class="sm" style="margin-top:16px;max-width:34ch;color:var(--tx-inv-3)">
+          Business email for Nigerian companies. Built and run by Zirostack in Port Harcourt, Rivers State.
+        </p>
+        <a class="tlink" style="margin-top:18px;color:var(--blue-300);font-size:.9rem" href="status.html">System status</a>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="setup-device.html">Phone setup</a>
+        <a href="migrate.html">Switching</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="help.html">Help centre</a>
+        <a href="contact.html">Contact us</a>
+        <a href="status.html">Status page</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="legal-terms.html">Terms of service</a>
+        <a href="legal-privacy.html">Privacy policy</a>
+        <a href="legal-aup.html">Acceptable use</a>
+        <a href="legal-refunds.html">Refund policy</a>
+      </div>
+    </div>
+    <div class="ftr-btm">
+      <span>&copy; 2026 Zirostack Ltd.</span>
+      <span>Port Harcourt, Rivers State &middot; VAT charged at 7.5%</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ziroemail — screen index</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .idx { padding-block: 40px 90px; }
+  .grp { margin-top: 40px; }
+  .grp-h { display: flex; align-items: center; gap: 14px; }
+  .grp-h h2 { font-size: 1.12rem; }
+  .grp-h .bar { flex: 1; height: 1px; background: var(--line); }
+  .grp-h .path { font-family: var(--mono); font-size: .78rem; color: var(--blue); }
+  .scr-grid { display: grid; gap: 12px; margin-top: 18px; }
+  @media (min-width: 640px) { .scr-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .scr-grid { grid-template-columns: repeat(3, 1fr); } }
+  .scr { display: block; border: 1px solid var(--line); border-radius: var(--r); background: #fff; padding: 18px 20px; color: var(--tx-1); }
+  .scr:hover { border-color: var(--blue); background: var(--blue-050); }
+  .scr b { font-size: .97rem; display: block; }
+  .scr .rt { font-family: var(--mono); font-size: .76rem; color: var(--blue); margin-top: 3px; display: block; }
+  .scr p { font-size: .85rem; color: var(--tx-3); margin-top: 8px; line-height: 1.5; }
+  .todo { opacity: .5; pointer-events: none; }
+  .todo .rt { color: var(--tx-3); }
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <span class="pill pill-info">Internal index</span>
+  </div>
+</header>
+
+<main class="wrap idx">
+  <h1>Screens</h1>
+  <p class="lead mt-s" style="max-width:62ch">Every built screen, grouped by surface. Design
+    rules live in <span class="mono">DESIGN.md</span>. No build step &mdash; open any file
+    directly.</p>
+
+  <div class="note mt-l" style="max-width:62ch">
+    <h4>Delete this file before handoff</h4>
+    <p>It is a working index, not a product route.</p>
+  </div>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Public site</h2><span class="path">/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="index.html"><b>Landing</b><span class="rt">index.html</span><p>Typographic hero, phrase cycler, storage model, pricing.</p></a>
+      <a class="scr" href="pricing.html"><b>Pricing</b><span class="rt">pricing.html</span><p>Per-domain plans, pool allocation, 10 GB add-on, comparison, FAQ.</p></a>
+      <a class="scr" href="features.html"><b>Features</b><span class="rt">features.html</span><p>Six feature rows, spec grid, what we do not offer.</p></a>
+      <a class="scr" href="migrate.html"><b>Switching</b><span class="rt">migrate.html</span><p>Source providers, move timeline, automatic setup.</p></a>
+      <a class="scr" href="help.html"><b>Help centre</b><span class="rt">help.html</span><p>Search, most-read, six topic categories.</p></a>
+      <a class="scr" href="contact.html"><b>Contact</b><span class="rt">contact.html</span><p>WhatsApp, email, status. Form with real states.</p></a>
+      <a class="scr" href="status.html"><b>Status</b><span class="rt">status.html</span><p>Uptime strips per service, incident history.</p></a>
+      <a class="scr" href="legal-terms.html"><b>Terms of service</b><span class="rt">legal-terms.html</span><p>Shared legal shell with sidebar nav.</p></a>
+      <a class="scr" href="legal-privacy.html"><b>Privacy policy</b><span class="rt">legal-privacy.html</span><p>What we hold, subprocessors, your rights.</p></a>
+      <a class="scr" href="legal-aup.html"><b>Acceptable use</b><span class="rt">legal-aup.html</span><p>What gets an account suspended, stated in advance.</p></a>
+      <a class="scr" href="legal-refunds.html"><b>Refund policy</b><span class="rt">legal-refunds.html</span><p>Specific enough to self-calculate.</p></a>
+    </div>
+  </section>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Account &amp; checkout</h2><span class="path">/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="signup.html"><b>Create account</b><span class="rt">signup.html</span><p>Short form, carried plan, inline error state.</p></a>
+      <a class="scr" href="login.html"><b>Sign in</b><span class="rt">login.html</span><p>Email and password, remembered device.</p></a>
+      <a class="scr" href="login-2fa.html"><b>Two-factor</b><span class="rt">login-2fa.html</span><p>Six-digit code entry with recovery path.</p></a>
+      <a class="scr" href="checkout-payment.html"><b>Payment method</b><span class="rt">checkout-payment.html</span><p>Transfer leads, then USSD, card, dollar.</p></a>
+      <a class="scr" href="checkout-transfer.html"><b>Bank transfer</b><span class="rt">checkout-transfer.html</span><p>Virtual account, copy button, waiting state.</p></a>
+      <a class="scr" href="verify-email.html"><b>Verify email</b><span class="rt">verify-email.html</span><p>Resend cooldown, spam-folder note.</p></a>
+      <a class="scr" href="forgot-password.html"><b>Forgot password</b><span class="rt">forgot-password.html</span><p>Neutral wording that will not confirm which addresses exist.</p></a>
+      <a class="scr" href="login-recovery.html"><b>Recovery code</b><span class="rt">login-recovery.html</span><p>Mono input, codes-remaining pips.</p></a>
+    </div>
+  </section>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Device setup</h2><span class="path">/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="setup-device.html"><b>Set up your email</b><span class="rt">setup-device.html</span><p>Token-reached. Device picker, iOS profile, Android values, QR.</p></a>
+    </div>
+  </section>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Onboarding</h2><span class="path">/onboarding/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="onboarding/onboard-records.html"><b>DNS records</b><span class="rt">onboard-records.html</span><p>Live verification, per-record states, SPF conflict with merged value.</p></a>
+      <a class="scr" href="onboarding/onboard-domain.html"><b>Enter domain</b><span class="rt">onboard-domain.html</span><p>Detects who runs their mail today.</p></a>
+      <a class="scr" href="onboarding/onboard-mailboxes.html"><b>Create mailboxes</b><span class="rt">onboard-mailboxes.html</span><p>Live storage allocator with over-allocation guard.</p></a>
+      <a class="scr" href="onboarding/onboard-assisted.html"><b>Automatic setup</b><span class="rt">onboard-assisted.html</span><p>Delegated access or a WhatsApp walkthrough.</p></a>
+      <a class="scr" href="onboarding/onboard-done.html"><b>You are live</b><span class="rt">onboard-done.html</span><p>Confirmation, per-mailbox QR codes, three exits.</p></a>
+    </div>
+  </section>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Business dashboard</h2><span class="path">/mailadmin/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="mailadmin/admin.html"><b>Dashboard</b><span class="rt">admin.html</span><p>Attention panel, stats, quick actions, activity.</p></a>
+      <a class="scr" href="mailadmin/admin-mailboxes.html"><b>Mailboxes</b><span class="rt">admin-mailboxes.html</span><p>Storage pool, per-mailbox quotas, assigned vs used.</p></a>
+      <a class="scr" href="mailadmin/admin-billing.html"><b>Plan &amp; storage</b><span class="rt">admin-billing.html</span><p>Pool vs ceiling, add 10 GB, invoices with VAT.</p></a>
+      <a class="scr" href="mailadmin/admin-domains.html"><b>All domains</b><span class="rt">admin-domains.html</span><p>Every domain with its own plan and pool; add one and pay.</p></a>
+      <a class="scr" href="mailadmin/admin-domain.html"><b>Domain health</b><span class="rt">admin-domain.html</span><p>Record states, inbox placement, reputation.</p></a>
+      <a class="scr" href="mailadmin/admin-mailbox.html"><b>Mailbox detail</b><span class="rt">admin-mailbox.html</span><p>Quota editor with a floor marker, access, suspend/delete.</p></a>
+      <a class="scr" href="mailadmin/admin-aliases.html"><b>Extra addresses</b><span class="rt">admin-aliases.html</span><p>Aliases and forwarding; catch-all off by default.</p></a>
+      <a class="scr" href="mailadmin/admin-team.html"><b>Team &amp; access</b><span class="rt">admin-team.html</span><p>Roles, permission matrix, withdrawable delegated access.</p></a>
+      <a class="scr" href="mailadmin/admin-help.html"><b>Help</b><span class="rt">admin-help.html</span><p>WhatsApp and support email, with what to send us.</p></a>
+      <a class="scr" href="mailadmin/admin-audit.html"><b>Activity log</b><span class="rt">admin-audit.html</span><p>Filterable log of every change and who made it.</p></a>
+    </div>
+  </section>
+
+  <section class="grp">
+    <div class="grp-h"><h2>Webmail</h2><span class="path">/mail/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="mail/mail.html"><b>Inbox</b><span class="rt">mail.html</span><p>Three panes on desktop, one at a time on a phone.</p></a>
+      <a class="scr" href="mail/mail-compose.html"><b>Compose</b><span class="rt">mail-compose.html</span><p>Chips, toolbar, signature, attachment.</p></a>
+      <a class="scr" href="mail/mail-search.html"><b>Search</b><span class="rt">mail-search.html</span><p>Scope chips and highlighted matches.</p></a>
+      <a class="scr" href="mail/mail-contacts.html"><b>Contacts</b><span class="rt">mail-contacts.html</span><p>Alphabetical list with detail pane.</p></a>
+      <a class="scr" href="mail/mail-settings.html"><b>Settings</b><span class="rt">mail-settings.html</span><p>Storage slice, signature, devices, security.</p></a>
+    </div>
+  </section>
+  <section class="grp">
+    <div class="grp-h"><h2>System</h2><span class="path">/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="404.html"><b>Page not found</b><span class="rt">404.html</span><p>Three ways back; owns the mistake if we sent them.</p></a>
+      <a class="scr" href="500.html"><b>Server error</b><span class="rt">500.html</span><p>Reassures that mail is unaffected; carries a reference.</p></a>
+      <a class="scr" href="maintenance.html"><b>Maintenance</b><span class="rt">maintenance.html</span><p>Scheduled window, with delivery still running.</p></a>
+      <a class="scr" href="offline.html"><b>Offline</b><span class="rt">offline.html</span><p>Recent mail still readable, drafts safe.</p></a>
+    </div>
+  </section>
+  <section class="grp">
+    <div class="grp-h"><h2>Operations console</h2><span class="path">/ops/</span><span class="bar"></span></div>
+    <div class="scr-grid">
+      <a class="scr" href="ops/ops.html"><b>Overview</b><span class="rt">ops.html</span><p>Four morning checks, platform figures, stuck domains.</p></a>
+      <a class="scr" href="ops/ops-deliverability.html"><b>Deliverability</b><span class="rt">ops-deliverability.html</span><p>Blocklists, bounce trend, inbox placement.</p></a>
+      <a class="scr" href="ops/ops-queue.html"><b>Delivery log</b><span class="rt">ops-queue.html</span><p>Every message, with a full hop-by-hop trace.</p></a>
+      <a class="scr" href="ops/ops-domains.html"><b>Domain status</b><span class="rt">ops-domains.html</span><p>DNS across the estate; broken and unfinished first.</p></a>
+      <a class="scr" href="ops/ops-abuse.html"><b>Abuse queue</b><span class="rt">ops-abuse.html</span><p>Three flags, three different causes, one click to lock.</p></a>
+      <a class="scr" href="ops/ops-abuse-detail.html"><b>Sending review</b><span class="rt">ops-abuse-detail.html</span><p>The evidence behind a lock, and what did not fire.</p></a>
+      <a class="scr" href="ops/ops-orgs.html"><b>Organisations</b><span class="rt">ops-orgs.html</span><p>Search by domain, address, business or invoice.</p></a>
+      <a class="scr" href="ops/ops-org.html"><b>Organisation record</b><span class="rt">ops-org.html</span><p>One customer: mailboxes, DNS, billing, phone number.</p></a>
+      <a class="scr" href="ops/ops-mailboxes.html"><b>Mailboxes</b><span class="rt">ops-mailboxes.html</span><p>Platform-wide, sorted by what will cause a call.</p></a>
+      <a class="scr" href="ops/ops-refunds.html"><b>Refunds</b><span class="rt">ops-refunds.html</span><p>Two-person approval above ₦20,000.</p></a>
+      <a class="scr" href="ops/ops-backups.html"><b>Backups</b><span class="rt">ops-backups.html</span><p>Nightly snapshots and proof they restore.</p></a>
+      <a class="scr" href="ops/ops-staff.html"><b>Staff</b><span class="rt">ops-staff.html</span><p>Roles, and who may open a customer mailbox.</p></a>
+      <a class="scr" href="ops/ops-audit.html"><b>Audit trail</b><span class="rt">ops-audit.html</span><p>Append-only. Every action, with the reason given.</p></a>
+      <a class="scr" href="ops/ops-reports.html"><b>Reports</b><span class="rt">ops-reports.html</span><p>Monthly: who joined, who left, what it earned.</p></a>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

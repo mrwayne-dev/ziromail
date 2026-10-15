@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You are live — Ziroemail</title>
+<meta name="description" content="Your domain is verified and your mailboxes are ready.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ob-hdr { background: #fff; border-bottom: 1px solid var(--line); }
+  .ob-hdr .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+
+  .done { padding-block: 44px 90px; }
+
+  /* the confirmation, front and centre */
+  .tick {
+    width: 74px; height: 74px; border-radius: 50%; background: var(--ok-bg);
+    border: 1px solid var(--ok-line); color: var(--ok);
+    display: grid; place-items: center; margin-bottom: 26px;
+  }
+  .done h1 { font-size: clamp(1.9rem, 1.5rem + 1.7vw, 2.7rem); }
+  .done .lead { margin-top: 16px; max-width: 52ch; }
+
+  .checks { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin-top: 34px; }
+  @media (min-width: 760px) { .checks { grid-template-columns: repeat(2, 1fr); } }
+  .check-i { background: #fff; padding: 20px 22px; display: flex; gap: 13px; align-items: flex-start; }
+  .check-i svg { flex: none; margin-top: 2px; }
+  .check-i b { font-size: .95rem; color: var(--tx-1); display: block; }
+  .check-i span { font-size: .87rem; color: var(--tx-3); }
+
+  /* one setup card per mailbox */
+  .setups { display: grid; gap: 14px; margin-top: 20px; }
+  @media (min-width: 820px) { .setups { grid-template-columns: repeat(3, 1fr); } }
+  .setup {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+    padding: 22px; text-align: center;
+  }
+  .setup .who { font-family: var(--mono); font-size: .88rem; color: var(--tx-1); word-break: break-all; }
+  .setup .qr { margin: 16px auto 0; background: #fff; }
+  .setup .btn { margin-top: 16px; }
+  .setup .note-line { font-size: .8rem; color: var(--tx-3); margin-top: 10px; }
+
+  .next { display: grid; gap: 14px; margin-top: 20px; }
+  @media (min-width: 760px) { .next { grid-template-columns: repeat(3, 1fr); } }
+  .next a {
+    display: block; background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+    padding: 22px; color: var(--tx-1);
+  }
+  .next a:hover { border-color: var(--blue); background: var(--blue-050); }
+  .next b { font-size: .97rem; display: block; }
+  .next span { font-size: .87rem; color: var(--tx-3); display: block; margin-top: 6px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ob-hdr">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html" aria-label="Ziroemail home">
+      <img class="logo" src="../assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="btn btn-line btn-sm" href="../mailadmin/admin.html">Go to dashboard</a>
+  </div>
+</header>
+
+<main id="main" class="wrap done">
+
+  <div data-hero>
+    <span class="tick" aria-hidden="true">
+      <svg width="34" height="34" viewBox="0 0 16 16" fill="none">
+        <path d="M13.5 4.5 6.2 11.8 2.5 8.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+
+    <h1>You are live.</h1>
+    <p class="lead">
+      <span class="mono" style="color:var(--tx-1)">adaobifoods.com</span> is verified and your
+      three mailboxes are ready to receive. Mail sent to them now arrives here.
+    </p>
+  </div>
+
+  <!-- what passed -->
+  <div class="checks">
+    <div class="check-i">
+      <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#E6F6EE"/><path d="M12 5.5 6.8 10.7 4 7.9" stroke="#12794A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>All four records verified</b><span>MX, SPF, DKIM and DMARC are passing</span></span>
+    </div>
+    <div class="check-i">
+      <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#E6F6EE"/><path d="M12 5.5 6.8 10.7 4 7.9" stroke="#12794A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>Three mailboxes created</b><span>22 GB assigned, 8 GB still free in your pool</span></span>
+    </div>
+    <div class="check-i">
+      <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#E6F6EE"/><path d="M12 5.5 6.8 10.7 4 7.9" stroke="#12794A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span><b>Filtering is on</b><span>Spam, phishing and malware, from the first message</span></span>
+    </div>
+    <div class="check-i">
+      <svg width="19" height="19" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="#EFF4FA"/><circle cx="8" cy="8" r="2.4" fill="#1066C6"/></svg>
+      <span><b>Importing your old mail</b><span>About 40 minutes remaining &mdash; you can leave this page</span></span>
+    </div>
+  </div>
+
+  <!-- setup links -->
+  <h2 style="font-size:1.24rem;margin-top:46px">Now get everyone onto their phone</h2>
+  <p class="lead mt-s" style="max-width:56ch;font-size:1rem">
+    Each person scans their own code, or you send them the link on WhatsApp. It takes about
+    thirty seconds and they will not need to type any settings.
+  </p>
+
+  <div class="setups">
+    <div class="setup">
+      <p class="who">victory@adaobifoods.com</p>
+      <svg class="qr" width="120" height="120" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-label="Setup code for victory@adaobifoods.com">
+        <rect width="29" height="29" fill="#fff"/>
+        <g fill="#0A0C0F">
+          <path d="M0 0h7v7H0zM1 1v5h5V1z M2 2h3v3H2z"/><path d="M22 0h7v7h-7zM23 1v5h5V1z M24 2h3v3h-3z"/><path d="M0 22h7v7H0zM1 23v5h5v-5z M2 24h3v3H2z"/>
+          <path d="M9 0h1v1H9zM11 0h2v1h-2zM15 0h1v1h-1zM18 0h2v1h-2z"/><path d="M9 2h2v1H9zM13 2h1v1h-1zM16 2h3v1h-3z"/>
+          <path d="M10 4h1v1h-1zM12 4h3v1h-3zM17 4h1v1h-1zM19 4h1v1h-1z"/><path d="M9 6h3v1H9zM14 6h2v1h-2zM18 6h2v1h-2z"/>
+          <path d="M0 9h1v1H0zM2 9h2v1H2zM5 9h1v1H5zM8 9h3v1H8zM12 9h1v1h-1zM14 9h2v1h-2zM17 9h1v1h-1zM20 9h2v1h-2zM24 9h1v1h-1zM26 9h2v1h-2z"/>
+          <path d="M1 11h2v1H1zM4 11h1v1H4zM7 11h1v1H7zM10 11h2v1h-2zM13 11h3v1h-3zM18 11h1v1h-1zM21 11h1v1h-1zM23 11h2v1h-2zM27 11h1v1h-1z"/>
+          <path d="M0 13h2v1H0zM3 13h1v1H3zM6 13h2v1H6zM9 13h1v1H9zM11 13h1v1h-1zM14 13h1v1h-1zM16 13h3v1h-3zM20 13h1v1h-1zM22 13h1v1h-1zM25 13h3v1h-3z"/>
+          <path d="M2 15h1v1H2zM4 15h3v1H4zM8 15h2v1H8zM12 15h2v1h-2zM15 15h1v1h-1zM17 15h1v1h-1zM19 15h2v1h-2zM23 15h1v1h-1zM26 15h1v1h-1z"/>
+          <path d="M0 17h1v1H0zM3 17h2v1H3zM7 17h1v1H7zM9 17h2v1H9zM13 17h1v1h-1zM16 17h2v1h-2zM19 17h1v1h-1zM21 17h3v1h-3zM25 17h1v1h-1zM27 17h1v1h-1z"/>
+          <path d="M1 19h3v1H1zM5 19h1v1H5zM8 19h1v1H8zM10 19h1v1h-1zM12 19h3v1h-3zM17 19h2v1h-2zM20 19h1v1h-1zM24 19h2v1h-2z"/>
+          <path d="M9 21h2v1H9zM12 21h1v1h-1zM15 21h3v1h-3zM19 21h1v1h-1zM22 21h1v1h-1zM25 21h2v1h-2z"/>
+          <path d="M9 23h1v1H9zM11 23h3v1h-3zM16 23h1v1h-1zM18 23h2v1h-2zM21 23h2v1h-2zM24 23h1v1h-1zM27 23h1v1h-1z"/>
+          <path d="M10 25h2v1h-2zM13 25h2v1h-2zM17 25h1v1h-1zM20 25h3v1h-3zM25 25h1v1h-1z"/>
+          <path d="M9 27h3v1H9zM14 27h1v1h-1zM16 27h2v1h-2zM19 27h2v1h-2zM23 27h2v1h-2zM26 27h2v1h-2z"/>
+        </g>
+      </svg>
+      <a class="btn btn-pri btn-sm full" href="../setup-device.html">Set up this phone</a>
+      <p class="note-line">That is you &mdash; scan it now</p>
+    </div>
+
+    <div class="setup">
+      <p class="who">sales@adaobifoods.com</p>
+      <svg class="qr" width="120" height="120" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-label="Setup code for sales@adaobifoods.com">
+        <rect width="29" height="29" fill="#fff"/>
+        <g fill="#0A0C0F">
+          <path d="M0 0h7v7H0zM1 1v5h5V1z M2 2h3v3H2z"/><path d="M22 0h7v7h-7zM23 1v5h5V1z M24 2h3v3h-3z"/><path d="M0 22h7v7H0zM1 23v5h5v-5z M2 24h3v3H2z"/>
+          <path d="M9 0h2v1H9zM12 0h1v1h-1zM15 0h2v1h-2zM19 0h1v1h-1z"/><path d="M10 2h1v1h-1zM13 2h2v1h-2zM17 2h2v1h-2z"/>
+          <path d="M9 4h2v1H9zM13 4h1v1h-1zM16 4h2v1h-2zM19 4h1v1h-1z"/><path d="M10 6h2v1h-2zM14 6h1v1h-1zM17 6h3v1h-3z"/>
+          <path d="M0 9h2v1H0zM3 9h1v1H3zM5 9h2v1H5zM9 9h2v1H9zM13 9h1v1h-1zM15 9h1v1h-1zM18 9h2v1h-2zM21 9h1v1h-1zM24 9h2v1h-2zM27 9h1v1h-1z"/>
+          <path d="M1 11h1v1H1zM3 11h2v1H3zM6 11h2v1H6zM10 11h1v1h-1zM12 11h2v1h-2zM16 11h2v1h-2zM19 11h2v1h-2zM23 11h1v1h-1zM25 11h2v1h-2z"/>
+          <path d="M0 13h1v1H0zM2 13h2v1H2zM5 13h1v1H5zM8 13h2v1H8zM11 13h2v1h-2zM15 13h2v1h-2zM18 13h1v1h-1zM21 13h2v1h-2zM24 13h1v1h-1zM26 13h2v1h-2z"/>
+          <path d="M1 15h2v1H1zM5 15h2v1H5zM9 15h1v1H9zM11 15h1v1h-1zM14 15h3v1h-3zM18 15h2v1h-2zM22 15h1v1h-1zM25 15h2v1h-2z"/>
+          <path d="M0 17h2v1H0zM4 17h1v1H4zM6 17h2v1H6zM10 17h2v1h-2zM13 17h2v1h-2zM17 17h1v1h-1zM20 17h2v1h-2zM24 17h2v1h-2zM27 17h1v1h-1z"/>
+          <path d="M2 19h1v1H2zM4 19h2v1H4zM9 19h2v1H9zM13 19h1v1h-1zM15 19h2v1h-2zM19 19h1v1h-1zM22 19h3v1h-3zM26 19h1v1h-1z"/>
+          <path d="M10 21h1v1h-1zM13 21h2v1h-2zM17 21h1v1h-1zM20 21h2v1h-2zM24 21h1v1h-1zM26 21h2v1h-2z"/>
+          <path d="M9 23h2v1H9zM12 23h1v1h-1zM15 23h3v1h-3zM19 23h2v1h-2zM23 23h1v1h-1zM25 23h1v1h-1z"/>
+          <path d="M11 25h1v1h-1zM14 25h2v1h-2zM18 25h1v1h-1zM21 25h2v1h-2zM24 25h2v1h-2z"/>
+          <path d="M9 27h1v1H9zM12 27h2v1h-2zM16 27h1v1h-1zM18 27h3v1h-3zM22 27h2v1h-2zM25 27h2v1h-2z"/>
+        </g>
+      </svg>
+      <a class="btn btn-line btn-sm full" href="../setup-device.html">Send on WhatsApp</a>
+      <p class="note-line">Not set up yet</p>
+    </div>
+
+    <div class="setup">
+      <p class="who">ngozi@adaobifoods.com</p>
+      <svg class="qr" width="120" height="120" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-label="Setup code for ngozi@adaobifoods.com">
+        <rect width="29" height="29" fill="#fff"/>
+        <g fill="#0A0C0F">
+          <path d="M0 0h7v7H0zM1 1v5h5V1z M2 2h3v3H2z"/><path d="M22 0h7v7h-7zM23 1v5h5V1z M24 2h3v3h-3z"/><path d="M0 22h7v7H0zM1 23v5h5v-5z M2 24h3v3H2z"/>
+          <path d="M9 0h1v1H9zM12 0h2v1h-2zM16 0h1v1h-1zM18 0h2v1h-2z"/><path d="M11 2h2v1h-2zM14 2h1v1h-1zM17 2h2v1h-2z"/>
+          <path d="M9 4h1v1H9zM12 4h2v1h-2zM15 4h2v1h-2zM19 4h1v1h-1z"/><path d="M10 6h1v1h-1zM13 6h3v1h-3zM18 6h2v1h-2z"/>
+          <path d="M0 9h1v1H0zM3 9h2v1H3zM6 9h1v1H6zM9 9h2v1H9zM12 9h2v1h-2zM16 9h1v1h-1zM19 9h2v1h-2zM23 9h2v1h-2zM26 9h1v1h-1z"/>
+          <path d="M1 11h2v1H1zM5 11h1v1H5zM7 11h1v1H7zM10 11h2v1h-2zM14 11h2v1h-2zM17 11h1v1h-1zM20 11h2v1h-2zM24 11h2v1h-2z"/>
+          <path d="M0 13h2v1H0zM4 13h2v1H4zM8 13h1v1H8zM11 13h1v1h-1zM13 13h2v1h-2zM17 13h2v1h-2zM21 13h1v1h-1zM23 13h2v1h-2zM27 13h1v1h-1z"/>
+          <path d="M2 15h2v1H2zM6 15h1v1H6zM9 15h2v1H9zM12 15h1v1h-1zM15 15h2v1h-2zM19 15h1v1h-1zM22 15h2v1h-2zM26 15h2v1h-2z"/>
+          <path d="M1 17h1v1H1zM3 17h1v1H3zM5 17h2v1H5zM10 17h1v1h-1zM12 17h2v1h-2zM16 17h1v1h-1zM18 17h2v1h-2zM21 17h2v1h-2zM25 17h2v1h-2z"/>
+          <path d="M0 19h2v1H0zM4 19h1v1H4zM6 19h1v1H6zM9 19h1v1H9zM11 19h3v1h-3zM15 19h1v1h-1zM17 19h2v1h-2zM20 19h2v1h-2zM24 19h1v1h-1zM26 19h2v1h-2z"/>
+          <path d="M9 21h1v1H9zM11 21h2v1h-2zM14 21h2v1h-2zM18 21h1v1h-1zM21 21h2v1h-2zM25 21h2v1h-2z"/>
+          <path d="M10 23h2v1h-2zM13 23h1v1h-1zM16 23h2v1h-2zM19 23h1v1h-1zM22 23h2v1h-2zM26 23h1v1h-1z"/>
+          <path d="M9 25h1v1H9zM12 25h3v1h-3zM17 25h2v1h-2zM20 25h1v1h-1zM23 25h2v1h-2zM27 25h1v1h-1z"/>
+          <path d="M11 27h2v1h-2zM15 27h1v1h-1zM17 27h2v1h-2zM21 27h3v1h-3zM25 27h1v1h-1z"/>
+        </g>
+      </svg>
+      <a class="btn btn-line btn-sm full" href="../setup-device.html">Send on WhatsApp</a>
+      <p class="note-line">Not set up yet</p>
+    </div>
+  </div>
+
+  <div class="note note-warn mt-l">
+    <h4>Tell your customers nothing changed</h4>
+    <p>Your addresses are exactly the same as before &mdash; nobody needs to update their
+      contacts. The only difference is that your mail now arrives reliably.</p>
+  </div>
+
+  <!-- what next -->
+  <h2 style="font-size:1.24rem;margin-top:46px">Where to go from here</h2>
+  <div class="next">
+    <a href="../mail/mail.html">
+      <b>Open your mailbox</b>
+      <span>Read and send from the browser, right now.</span>
+    </a>
+    <a href="../mailadmin/admin-mailboxes.html">
+      <b>Add more mailboxes</b>
+      <span>You still have 8 GB unassigned in the pool.</span>
+    </a>
+    <a href="../mailadmin/admin.html">
+      <b>Go to the dashboard</b>
+      <span>Storage, billing, staff and domain health.</span>
+    </a>
+  </div>
+</main>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

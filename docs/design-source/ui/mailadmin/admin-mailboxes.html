@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mailboxes — Ziroemail</title>
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .mb-row { display: flex; gap: 14px; align-items: center; }
+  .mb-av {
+    width: 38px; height: 38px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    font-size: .78rem; font-weight: 700; color: #fff; background: var(--ink-600);
+  }
+  .mb-av.b { background: var(--blue); }
+  .mb-row .who { min-width: 0; }
+  .mb-row b { font-size: .94rem; color: var(--tx-1); display: block; }
+  .mb-row span { font-size: .82rem; color: var(--tx-3); }
+
+  /* span defaults to inline, which collapses the bar — make it a block */
+  .quota { display: block; min-width: 130px; max-width: 170px; }
+  .quota .bar { height: 6px; border-radius: 999px; background: var(--paper-2); overflow: hidden; margin-top: 6px; }
+  .quota .bar > i { display: block; height: 100%; background: var(--blue); border-radius: 999px; }
+  .quota .bar.warn > i { background: var(--warn); }
+  .quota .n { font-size: .84rem; color: var(--tx-2); font-variant-numeric: tabular-nums; }
+
+  .act-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ---- add-mailbox modal ---- */
+  /* the address field reads as one address: the part they type, then the
+     domain they cannot change */
+  .addr-in { display: flex; align-items: stretch; }
+  /* the typed part gives way; the domain is never truncated, because a half
+     shown domain is worse than a narrow field */
+  .addr-in .input { border-radius: var(--r-xs) 0 0 var(--r-xs); min-width: 0; flex: 1 1 60px; }
+  .addr-in .at {
+    display: flex; align-items: center; padding: 0 12px; white-space: nowrap;
+    font-size: .9rem; color: var(--tx-3); background: var(--paper-2);
+    border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+    flex: 0 0 auto;
+  }
+  /* a very long domain wraps the suffix under the field rather than squeezing it */
+  @media (max-width: 420px) {
+    .addr-in { flex-wrap: wrap; }
+    .addr-in .input { flex: 1 1 100%; border-radius: var(--r-xs); }
+    .addr-in .at {
+      border-left: 1.5px solid var(--line-2); border-top: none;
+      border-radius: 0 0 var(--r-xs) var(--r-xs); width: 100%;
+    }
+  }
+  .addr-in .input[aria-invalid="true"],
+  .addr-in .input[aria-invalid="true"] + .at { border-color: var(--bad); }
+  [data-mb-hint].is-bad { color: var(--bad); font-weight: 550; }
+
+  .q-edit { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+  .q-in { display: flex; }
+  .q-in .input { border-radius: var(--r-xs) 0 0 var(--r-xs); width: 108px; font-variant-numeric: tabular-nums; }
+  .q-in .gb {
+    display: flex; align-items: center; padding: 0 13px; font-size: .9rem; color: var(--tx-3);
+    background: var(--paper-2); border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+  }
+  .q-in .input[aria-invalid="true"], .q-in .input[aria-invalid="true"] + .gb { border-color: var(--bad); }
+  [data-mb-pool].is-bad { color: var(--bad); font-weight: 550; }
+  [data-mb-pool] b { color: var(--tx-1); }
+
+  .pw-opts { display: grid; gap: 9px; margin-top: 8px; }
+  .pw-opt {
+    display: block; position: relative; cursor: pointer;
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); padding: 13px 15px; background: #fff;
+  }
+  .pw-opt:hover { border-color: var(--tx-3); }
+  .pw-opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .pw-opt:has(input:checked) { border-color: var(--blue); background: var(--blue-050); }
+  .pw-opt:has(input:focus-visible) { outline: 2.5px solid var(--blue); outline-offset: 2px; }
+  .pw-opt b { display: block; font-size: .93rem; color: var(--tx-1); }
+  .pw-opt .bd span { display: block; font-size: .84rem; color: var(--tx-3); margin-top: 3px; line-height: 1.5; }
+
+  /* pool header — the active domain's plan and storage at a glance */
+  .pool-head {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+    padding: 24px; margin-bottom: 22px;
+  }
+  .pool-stat { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: baseline; }
+  .pool-stat .big { font-size: 1.9rem; font-weight: 650; letter-spacing: -.035em; color: var(--tx-1); font-variant-numeric: tabular-nums; line-height: 1; }
+  .pool-stat .k { font-size: .78rem; font-weight: 650; color: var(--tx-3); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .pool-acts { display: flex; gap: 9px; flex-wrap: wrap; }
+  @media (max-width: 559px) { .pool-acts { width: 100%; } .pool-acts .btn { flex: 1 1 auto; justify-content: center; } }
+
+  /* the pool bar: one segment per mailbox, then what is unassigned */
+  .pool { display: flex; height: 30px; border-radius: 999px; overflow: hidden; background: var(--paper-2); }
+  .pool-seg { display: grid; place-items: center; font-size: .72rem; font-weight: 650; color: #fff; min-width: 0; overflow: hidden; white-space: nowrap; }
+  .pool-seg.s1 { background: var(--blue); }
+  .pool-seg.s2 { background: var(--blue-600); }
+  .pool-seg.s3 { background: var(--blue-700); }
+  .pool-seg.s4 { background: var(--blue-800); }
+  .pool-seg.s5 { background: var(--blue-900); }
+  .pool-seg.free { background: #E2E8F0; color: var(--tx-3); }
+  .pool-key { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 11px; font-size: .78rem; color: var(--tx-3); }
+  .pool-key span { display: inline-flex; align-items: center; gap: 6px; }
+  .pool-key i { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <div class="page-head">
+        <div>
+          <h1>Mailboxes</h1>
+          <p>Everything here belongs to <span class="mono" data-dom-name>adaobifoods.com</span>.
+            Switch domain at the top to manage another.</p>
+        </div>
+        <div class="btn-row" style="flex:0 0 auto">
+          <button class="btn btn-pri" type="button" data-add-mb>Add a mailbox</button>
+          <a class="btn btn-line" href="admin-storage.html">Add extra storage</a>
+        </div>
+      </div>
+
+      <!-- the active domain's pool -->
+      <section class="pool-head" aria-labelledby="pool-h" data-dom-scope data-reveal>
+        <div class="between" style="align-items:flex-start;flex-wrap:wrap;gap:16px">
+          <div class="pool-stat">
+            <div>
+              <span class="k" id="pool-h">Assigned</span>
+              <span class="big"><span data-dom-assigned>26</span> <span style="font-size:1rem;color:var(--tx-3);font-weight:500">of <span data-dom-poolgb>40</span> GB</span></span>
+            </div>
+            <div>
+              <span class="k">Actually used</span>
+              <span class="big" data-dom-used>13.5 GB</span>
+            </div>
+            <div>
+              <span class="k">Plan</span>
+              <span class="pill pill-info" style="margin-top:2px"><span data-dom-plan>Business</span> &middot; expandable to <span data-dom-ceil>100 GB</span></span>
+            </div>
+          </div>
+          <div class="pool-acts">
+            <a class="btn btn-quiet btn-sm" href="admin-domain.html">Domain settings</a>
+          </div>
+        </div>
+
+        <div class="pool" data-dom-poolbar style="margin-top:20px" role="img" aria-label="Storage pool by mailbox"></div>
+        <div class="pool-key" data-dom-poolkey></div>
+      </section>
+
+      <!-- records warning, shown only when the active domain has one -->
+      <div class="banner banner-warn mb" data-dom-warn hidden>
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M8 2.6 14.4 13H1.6L8 2.6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6.6v2.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="11.1" r=".9" fill="currentColor"/></svg>
+        <span class="bd">
+          <b data-dom-warntitle></b>
+          <p>Mail from this domain may be refused by Gmail and Outlook until the record is
+            added. <a href="admin-domain.html">Fix the records</a>.</p>
+        </span>
+      </div>
+
+      <!-- the list for the active domain -->
+      <div class="tbl-wrap">
+        <table class="data">
+          <caption class="sr-only">Mailboxes on <span data-dom-name>adaobifoods.com</span> with their assigned quota and usage</caption>
+          <thead>
+            <tr>
+              <th scope="col">Mailbox</th>
+              <th scope="col">Quota</th>
+              <th scope="col">Last signed in</th>
+              <th scope="col">Status</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody data-dom-rows></tbody>
+        </table>
+      </div>
+
+      <div class="note mt-l">
+        <h4>Changing a quota</h4>
+        <p>Raise or lower any mailbox from <b>Manage</b>. You cannot set a quota below what
+          a mailbox already uses &mdash; clear some space first, so nothing is lost. Unassigned
+          storage stays in the pool until you hand it out.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="#">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<!-- Add a mailbox. Same native <dialog> component as the add-domain modal,
+     so focus trapping, Esc and the inert background come from the browser. -->
+<dialog class="modal" data-mb-modal aria-labelledby="mb-h">
+  <div class="modal-pos">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="ht">
+          <h2 id="mb-h">Add a mailbox</h2>
+          <p>On <span class="mono" data-dom-name>adaobifoods.com</span>. Its storage comes
+            out of this domain's pool.</p>
+        </div>
+        <button class="modal-x" type="button" data-mb-cancel aria-label="Close">
+          <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <form data-demo-form novalidate style="display:contents">
+        <div class="modal-body">
+          <div class="field" style="margin:0">
+            <label class="label" for="mbuser">Address</label>
+            <span class="addr-in">
+              <input class="input mono" id="mbuser" type="text" placeholder="sales"
+                     autocomplete="off" spellcheck="false" autocapitalize="off" required
+                     data-mb-user aria-describedby="mb-taken">
+              <span class="at mono">@<span data-dom-name>adaobifoods.com</span></span>
+            </span>
+            <p class="hint" id="mb-taken" data-mb-hint>Letters, numbers, dots and hyphens.
+              This becomes the sign-in name.</p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="mbname">Display name <span class="mut">(optional)</span></label>
+            <input class="input" id="mbname" type="text" placeholder="Adaobi Foods — Sales" autocomplete="off">
+            <p class="hint">What recipients see as the sender. You can change it later.</p>
+          </div>
+
+          <fieldset style="border:0;padding:0;margin:20px 0 0">
+            <legend class="label">Storage for this mailbox</legend>
+            <div class="q-edit" style="margin-top:8px">
+              <span class="q-in">
+                <input class="input" id="mbquota" type="number" min="1" step="0.5" value="2"
+                       data-mb-quota aria-label="Quota in gigabytes">
+                <span class="gb">GB</span>
+              </span>
+            </div>
+            <p class="hint" data-mb-pool>There is <b>14 GB</b> unassigned in the pool.</p>
+          </fieldset>
+
+          <fieldset style="border:0;padding:0;margin:20px 0 0">
+            <legend class="label">First password</legend>
+            <div class="pw-opts">
+              <label class="pw-opt">
+                <input type="radio" name="mbpw" value="link" checked>
+                <span class="bd">
+                  <b>Send a setup link</b>
+                  <span>They choose their own password and set up their phone. You never
+                    see it.</span>
+                </span>
+              </label>
+              <label class="pw-opt">
+                <input type="radio" name="mbpw" value="set">
+                <span class="bd">
+                  <b>Set one myself</b>
+                  <span>Hand it over in person. They are asked to change it at first
+                    sign-in.</span>
+                </span>
+              </label>
+            </div>
+            <div class="field" style="margin-top:12px" data-mb-pwfield hidden>
+              <label class="label sr-only" for="mbpass">Password</label>
+              <input class="input" id="mbpass" type="text" placeholder="At least 12 characters"
+                     autocomplete="off">
+            </div>
+          </fieldset>
+
+          <div class="banner banner-info mt" data-demo-note hidden>
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+            <span class="bd">
+              <b>This is a design prototype</b>
+              <p>In the built product this creates the mailbox and sends the setup link.</p>
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <p class="fnote" data-mb-note>Mailboxes are not charged per seat &mdash; only the
+            storage they take.</p>
+          <div class="btn-row">
+            <button class="btn btn-quiet" type="button" data-mb-cancel>Cancel</button>
+            <button class="btn btn-pri" type="submit" data-mb-submit>Create mailbox</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

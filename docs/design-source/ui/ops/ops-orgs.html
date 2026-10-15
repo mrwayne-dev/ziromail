@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Organisations — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .srch { background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs); padding: 16px; }
+  .srch-row { display: grid; gap: 10px; }
+  @media (min-width: 820px) { .srch-row { grid-template-columns: 1fr auto auto; align-items: end; } }
+  .srch label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--tx-3); margin-bottom: 5px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+  .chip {
+    font-size: .8rem; font-weight: 550; padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--line-2); color: var(--tx-2); background: #fff; cursor: pointer;
+  }
+  .chip:hover { border-color: var(--tx-1); color: var(--tx-1); }
+  .chip[aria-pressed="true"] { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
+  .chip .c { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html" aria-current="page">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Organisations</h1>
+        <p>Every business on the platform. Search by domain, mailbox address, business name or invoice number &mdash; whatever the caller happens to have in front of them.</p>
+      </div>
+      <button class="btn btn-line btn-sm" type="button">Export as CSV</button>
+    </div>
+
+    <form class="srch" action="ops-orgs.html" method="get">
+      <div class="srch-row">
+        <div>
+          <label for="oq">Search</label>
+          <input class="input" type="search" id="oq" name="q" autocomplete="off" spellcheck="false"
+                 placeholder="adaobifoods.com, sales@…, INV-2026-0412…">
+        </div>
+        <button class="btn btn-pri" type="submit">Search</button>
+        <button class="btn btn-line" type="reset">Clear</button>
+      </div>
+      <div class="chips">
+        <button class="chip" type="button" aria-pressed="true">All<span class="c">412</span></button>
+        <button class="chip" type="button" aria-pressed="false">Setup incomplete<span class="c">11</span></button>
+        <button class="chip" type="button" aria-pressed="false">Payment overdue<span class="c">7</span></button>
+        <button class="chip" type="button" aria-pressed="false">Storage over 85%<span class="c">14</span></button>
+        <button class="chip" type="button" aria-pressed="false">Flagged<span class="c">3</span></button>
+        <button class="chip" type="button" aria-pressed="false">Renewing in 30 days<span class="c">38</span></button>
+      </div>
+    </form>
+
+    <p class="sm mut mt">Showing all 412 organisations, most recently active first.</p>
+
+    <div class="tbl-wrap mt-s">
+      <table class="ops">
+        <caption class="sr-only">All customer organisations</caption>
+        <thead class="wide">
+          <tr>
+            <th scope="col">Business</th>
+            <th scope="col">Domain</th>
+            <th scope="col">Plan</th>
+            <th scope="col" class="num">Mailboxes</th>
+            <th scope="col" class="num">Storage</th>
+            <th scope="col">State</th>
+            <th scope="col" class="num">Renews</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Adaobi Foods Ltd</a></td>
+            <td class="mono">adaobifoods.com</td>
+            <td>Business</td>
+            <td class="num">4</td>
+            <td class="num">13.5 / 40 GB</td>
+            <td><span class="pill pill-ok">Healthy</span></td>
+            <td class="num">4 Mar 27</td>
+          </tr>
+          <tr class="sev-high">
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">QuickLoans Nigeria</a></td>
+            <td class="mono">quickloans-ng.com</td>
+            <td>Starter</td>
+            <td class="num">3</td>
+            <td class="num">2.1 / 10 GB</td>
+            <td><span class="pill pill-bad">Rate limited</span></td>
+            <td class="num">14 Aug 27</td>
+          </tr>
+          <tr class="sev-med">
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Lagos Property Hub</a></td>
+            <td class="mono">lagospropertyhub.com</td>
+            <td>Business</td>
+            <td class="num">9</td>
+            <td class="num">34.8 / 40 GB</td>
+            <td><span class="pill pill-warn">Storage 87%</span></td>
+            <td class="num">2 Feb 27</td>
+          </tr>
+          <tr class="sev-high">
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">CityMart Nigeria</a></td>
+            <td class="mono">citymartng.com</td>
+            <td>Business</td>
+            <td class="num">12</td>
+            <td class="num">21.0 / 40 GB</td>
+            <td><span class="pill pill-bad">MX missing</span></td>
+            <td class="num">19 Jun 27</td>
+          </tr>
+          <tr class="sev-med">
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Bello Haulage Ltd</a></td>
+            <td class="mono">bellohaulage.com</td>
+            <td>Starter</td>
+            <td class="num">2</td>
+            <td class="num">0.8 / 10 GB</td>
+            <td><span class="pill pill-warn">Setup incomplete</span></td>
+            <td class="num">9 May 27</td>
+          </tr>
+          <tr>
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Pearl Clinic</a></td>
+            <td class="mono">pearlclinic.com.ng</td>
+            <td>Business</td>
+            <td class="num">6</td>
+            <td class="num">4.2 / 40 GB</td>
+            <td><span class="pill pill-ok">Healthy</span></td>
+            <td class="num">21 Sep 27</td>
+          </tr>
+          <tr class="sev-low">
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Chioma Textiles</a></td>
+            <td class="mono">chiomatextiles.ng</td>
+            <td>Business</td>
+            <td class="num">0</td>
+            <td class="num">0 / 40 GB</td>
+            <td><span class="pill pill-warn">Never set up</span></td>
+            <td class="num">20 Sep 27</td>
+          </tr>
+          <tr>
+            <td class="wide"><a href="ops-org.html" style="color:var(--blue);font-weight:600">Zion Schools</a></td>
+            <td class="mono">zionschools.edu.ng</td>
+            <td>Business</td>
+            <td class="num">18</td>
+            <td class="num">29.6 / 40 GB</td>
+            <td><span class="pill pill-warn">DKIM broken</span></td>
+            <td class="num">11 Jan 27</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="between mt" style="flex-wrap:wrap;gap:12px">
+      <p class="sm mut">8 of 412 shown.</p>
+      <div class="btn-row" style="flex:0 0 auto">
+        <button class="btn btn-line btn-sm" type="button" disabled>Previous</button>
+        <button class="btn btn-line btn-sm" type="button">Next</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

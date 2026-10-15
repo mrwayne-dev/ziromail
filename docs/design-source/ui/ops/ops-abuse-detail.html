@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>info@quickloans-ng.com — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ab-grid { display: grid; gap: 18px; }
+  @media (min-width: 1040px) { .ab-grid { grid-template-columns: 1.55fr 1fr; align-items: start; } }
+
+  /* 24-hour volume bars, hour by hour — the spike explains itself */
+  .hours { display: flex; align-items: flex-end; gap: 3px; height: 108px; margin-top: 16px; }
+  .hours .h { flex: 1; min-width: 0; background: var(--blue-200); border-radius: 2px 2px 0 0; position: relative; }
+  .hours .h.hot { background: var(--bad); }
+  .hours .h.base { background: var(--line-2); }
+  .hrs-ax { display: flex; justify-content: space-between; font-size: .75rem; color: var(--tx-3); margin-top: 7px; font-variant-numeric: tabular-nums; }
+
+  .kv { display: grid; gap: 0; }
+  .kv .r { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .88rem; }
+  .kv .r:last-child { border-bottom: none; }
+  .kv .r span { color: var(--tx-3); }
+  .kv .r b { color: var(--tx-1); font-weight: 600; text-align: right; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html" aria-current="page">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Sending review</h1>
+        <p>Everything the anomaly detector saw, and everything it did not. The decision is yours and it is recorded with your name on it.</p>
+      </div>
+      <span class="pill pill-bad">Rate limited 07:48</span>
+    </div>
+
+    <p class="sm mut mb"><a href="ops-abuse.html" style="color:var(--blue);font-weight:600">&larr; Abuse queue</a></p>
+
+    <div class="card" style="padding:20px;border-left:4px solid var(--bad)">
+      <div class="between" style="flex-wrap:wrap;gap:12px;align-items:flex-start">
+        <div>
+          <h2 class="mono" style="font-size:1.1rem;font-weight:500;word-break:break-all">info@quickloans-ng.com</h2>
+          <p class="sm mut" style="margin-top:4px">QuickLoans Nigeria &middot; Starter plan,
+            &#8358;16,125/year &middot; customer since 14 August 2026 &middot; 3 mailboxes</p>
+        </div>
+        <a class="btn btn-line btn-sm" href="ops-org.html">Organisation record</a>
+      </div>
+    </div>
+
+    <div class="ab-grid" style="margin-top:22px">
+      <div>
+        <section class="card" aria-labelledby="vol-h">
+          <h3 id="vol-h" style="font-size:1rem">Messages sent, last 24 hours</h3>
+          <p class="sm mut mt-s">Grey is this account's own 30-day hourly average. Red is today.</p>
+          <div class="hours" role="img" aria-label="Hourly sending volume: flat at around 1 message per hour until 07:00, then 1,900 messages in the 08:00 hour">
+            <span class="h base" style="height:2%"></span><span class="h base" style="height:1%"></span>
+            <span class="h base" style="height:1%"></span><span class="h base" style="height:1%"></span>
+            <span class="h base" style="height:1%"></span><span class="h base" style="height:2%"></span>
+            <span class="h base" style="height:3%"></span><span class="h base" style="height:2%"></span>
+            <span class="h base" style="height:2%"></span><span class="h base" style="height:3%"></span>
+            <span class="h base" style="height:2%"></span><span class="h base" style="height:2%"></span>
+            <span class="h base" style="height:3%"></span><span class="h base" style="height:2%"></span>
+            <span class="h base" style="height:2%"></span><span class="h base" style="height:1%"></span>
+            <span class="h base" style="height:1%"></span><span class="h base" style="height:1%"></span>
+            <span class="h base" style="height:1%"></span><span class="h base" style="height:1%"></span>
+            <span class="h base" style="height:1%"></span><span class="h base" style="height:1%"></span>
+            <span class="h hot" style="height:46%"></span><span class="h hot" style="height:100%"></span>
+          </div>
+          <div class="hrs-ax">
+            <span>09:00 yesterday</span><span>00:00</span><span>08:00 today</span>
+          </div>
+          <p class="hint">2,340 messages in two hours, against a 30-day average of 20 per day.
+            The account has never sent more than 46 messages in a day before today.</p>
+        </section>
+
+        <section class="card mt" aria-labelledby="rec-h">
+          <h3 id="rec-h" style="font-size:1rem">Who received them</h3>
+          <div class="kv mt-s">
+            <div class="r"><span>Distinct recipients</span><b>1,847</b></div>
+            <div class="r"><span>Recipients this account has ever mailed before</span><b>3</b></div>
+            <div class="r"><span>Addresses that do not exist</span><b>207 (11.2%)</b></div>
+            <div class="r"><span>Reported as spam by the recipient</span><b>11 (0.62%)</b></div>
+            <div class="r"><span>Recipient domains</span><b>Gmail 61%, Yahoo 24%, other 15%</b></div>
+            <div class="r"><span>Distinct message bodies</span><b>3</b></div>
+          </div>
+          <p class="hint">Three bodies, 1,847 strangers, one in nine addresses dead. A genuine
+            customer list does not look like this; a purchased one does.</p>
+        </section>
+
+        <section class="card mt" aria-labelledby="sig-h">
+          <h3 id="sig-h" style="font-size:1rem">Signals that did <em>not</em> fire</h3>
+          <p class="sm mut mt-s">Worth reading before you lock. These are the reasons this might
+            still be the account owner acting honestly.</p>
+          <div class="kv mt-s">
+            <div class="r"><span>Sign-in location</span><b>Lagos only, as always</b></div>
+            <div class="r"><span>Failed sign-in attempts</span><b>None</b></div>
+            <div class="r"><span>Password changed recently</span><b>No</b></div>
+            <div class="r"><span>Sent folder</span><b>Intact, nothing deleted</b></div>
+            <div class="r"><span>New forwarding rules</span><b>None</b></div>
+          </div>
+          <p class="hint">Nothing suggests a compromise. This is the account owner sending
+            marketing mail they are not allowed to send here &mdash; a terms problem, not a
+            security incident. Treat them as a customer who needs telling, not an attacker.</p>
+        </section>
+      </div>
+
+      <!-- decision column -->
+      <div class="stack">
+        <div class="card">
+          <h3 style="font-size:1rem">Decide</h3>
+          <p class="sm mut mt-s">Sending is already rate limited to 20 messages an hour, applied
+            automatically at 07:48. Choose what happens next.</p>
+          <div class="stack mt">
+            <button class="btn btn-danger full" type="button">Lock sending</button>
+            <button class="btn btn-pri full" type="button">Keep the limit, email a warning</button>
+            <button class="btn btn-line full" type="button">Lift the limit &mdash; not abuse</button>
+          </div>
+          <p class="hint">Whichever you pick, write a sentence saying why. It appears in the audit
+            trail and in the email the customer receives.</p>
+          <label class="sr-only" for="reason">Reason for this decision</label>
+          <textarea class="input mt-s" id="reason" rows="3"
+                    placeholder="Bulk marketing to a purchased list, against clause 4.2…"></textarea>
+        </div>
+
+        <div class="note note-warn">
+          <h4>What a lock does</h4>
+          <p>Sending stops immediately. Mail still arrives, sign-in still works and nothing is
+            deleted. The owner gets an email with the reason and a reply address. Support can lift
+            a lock; only an owner-level account can delete data.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Account history</h3>
+          <div class="feed-lite mt-s" style="font-size:.86rem;color:var(--tx-2)">
+            <p style="padding:9px 0;border-bottom:1px solid var(--line)"><b>07:48 today</b> &mdash;
+              rate limit applied automatically.</p>
+            <p style="padding:9px 0;border-bottom:1px solid var(--line)"><b>24 Sep</b> &mdash;
+              warned about an 8.4% bounce rate on a different mailbox.</p>
+            <p style="padding:9px 0;border-bottom:1px solid var(--line)"><b>2 Sep</b> &mdash;
+              asked support whether bulk sending was allowed. Told no.</p>
+            <p style="padding:9px 0"><b>14 Aug</b> &mdash; signed up, paid yearly by card.</p>
+          </div>
+          <p class="hint">They asked, were told no, and did it anyway. That is relevant to whether
+            this is a warning or a lock.</p>
+        </div>
+
+        <div class="note note-bad">
+          <h4>If this reaches a blocklist</h4>
+          <p>102.89.44.12 to .15 carry all 412 customers. A Spamhaus listing caused by this account
+            puts every other customer's mail in the spam folder within hours, and delisting takes
+            days. The cost of locking wrongly is one annoyed customer; the cost of waiting is all
+            of them.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

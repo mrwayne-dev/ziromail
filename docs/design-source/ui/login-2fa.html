@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-factor check — Ziroemail</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .shell { min-height: 100vh; display: flex; flex-direction: column; }
+  .shell-top { padding: 28px var(--gutter) 0; }
+  .shell-body { flex: 1; display: grid; place-items: center; padding: 40px var(--gutter) 70px; }
+  .card-auth { width: 100%; max-width: 420px; }
+  .card-auth h1 { font-size: clamp(1.6rem, 1.4rem + 1vw, 2rem); }
+
+  /* Six single-character boxes, one per digit.
+     An <input> has an intrinsic width of about twenty characters, and
+     flex-basis alone does not beat it — flex-grow only hands out space left
+     over after that intrinsic width is honoured. So the width is zeroed
+     outright and the boxes are grown back from nothing; without this they
+     each sit at ~335px and the row runs off the side of the card.
+
+     The row then fits any width: 280px on a 320px phone, 420px in the card. */
+  .code { display: flex; gap: clamp(5px, 2vw, 9px); margin-top: 8px; }
+  .code input {
+    flex: 1 1 0; width: 0; min-width: 0; max-width: 100%;
+    box-sizing: border-box; text-align: center;
+    height: clamp(50px, 14vw, 62px);
+    font-size: clamp(1.1rem, 4.6vw, 1.5rem);
+    font-weight: 650; font-variant-numeric: tabular-nums;
+    padding: 0; /* keeps the digit centred once the box is narrow */
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); background: #fff; color: var(--tx-1);
+  }
+  /* Once the card is at its full 420px the boxes have room to settle. */
+  @media (min-width: 420px) {
+    .code input { height: 62px; font-size: 1.5rem; }
+  }
+  .code input:focus { outline: none; border-color: var(--blue); box-shadow: var(--sh-focus); }
+  .code input:not(:placeholder-shown) { border-color: var(--blue); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+  <div class="shell-top">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+  </div>
+
+  <main class="shell-body" id="main">
+    <div class="card-auth">
+      <h1>Enter your code</h1>
+      <p class="lead mt-s" style="font-size:1rem">
+        Open your authenticator app and type the six digits shown for
+        <b style="color:var(--tx-1)">victory@adaobifoods.com</b>.
+      </p>
+
+      <form class="mt-l" data-demo-form data-next="mailadmin/admin.html" novalidate>
+        <fieldset style="border:0;padding:0;margin:0">
+          <legend class="label">Six-digit code</legend>
+          <div class="code">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 1" autocomplete="one-time-code">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 2">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 3">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 4">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 5">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" placeholder=" " aria-label="Digit 6">
+          </div>
+          <p class="hint">The code changes every 30 seconds. Paste works too.</p>
+        </fieldset>
+
+        <button class="btn btn-pri full btn-lg mt-l" type="submit">Verify and sign in</button>
+
+        <div class="banner banner-info mt" data-demo-note hidden>
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+          <span class="bd">
+            <b>This is a design prototype</b>
+            <p>In the built product this completes sign-in.</p>
+            <a class="btn btn-pri btn-sm mt-s" href="mail/mail.html">Open the mailbox &rarr;</a>
+          </span>
+        </div>
+      </form>
+
+      <div class="note mt-l">
+        <h4>Lost your phone?</h4>
+        <p>Use one of the recovery codes you saved when you turned on two-factor.
+          <a href="login-recovery.html">Enter a recovery code</a>, or ask whoever
+          administers your domain to reset it.</p>
+      </div>
+
+      <p class="center sm mut mt-l"><a href="login.html" style="color:var(--blue);font-weight:600">&larr; Back to sign in</a></p>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

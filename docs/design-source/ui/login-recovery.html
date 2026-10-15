@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use a recovery code — Ziroemail</title>
+<meta name="description" content="Sign in with one of the recovery codes you saved when you turned on two-factor authentication.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .shell { min-height: 100vh; display: flex; flex-direction: column; }
+  .shell-top { padding: 28px var(--gutter) 0; }
+  .shell-body { flex: 1; display: grid; place-items: center; padding: 40px var(--gutter) 70px; }
+  .card-auth { width: 100%; max-width: 430px; }
+  .card-auth h1 { font-size: clamp(1.6rem, 1.4rem + 1vw, 2rem); }
+
+  /* recovery codes are long and unfamiliar, so give them room and mono */
+  .code-in {
+    font-family: var(--mono); font-size: 1.15rem; letter-spacing: .12em;
+    text-align: center; height: 62px;
+  }
+  .used { display: flex; align-items: center; gap: 9px; font-size: .86rem; color: var(--tx-3); margin-top: 12px; }
+  .pips { display: flex; gap: 4px; }
+  .pips i { width: 16px; height: 5px; border-radius: 3px; background: var(--blue); }
+  .pips i.spent { background: var(--line-2); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+  <div class="shell-top">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+  </div>
+
+  <main class="shell-body" id="main">
+    <div class="card-auth" data-hero>
+      <h1>Use a recovery code</h1>
+      <p class="lead mt-s" style="font-size:1rem">
+        Enter one of the codes you saved when you turned on two-factor authentication for
+        <b style="color:var(--tx-1)">victory@adaobifoods.com</b>.
+      </p>
+
+      <form class="mt-l" data-demo-form data-next="mailadmin/admin.html" novalidate>
+        <div class="field">
+          <label class="label" for="code">Recovery code</label>
+          <input class="input code-in" id="code" name="code" type="text"
+                 placeholder="xxxx-xxxx-xxxx" autocomplete="one-time-code"
+                 spellcheck="false" autocapitalize="off" required>
+          <p class="hint">Each code works once. Dashes optional.</p>
+
+          <p class="used">
+            <span class="pips" aria-hidden="true">
+              <i class="spent"></i><i class="spent"></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i>
+            </span>
+            8 of 10 codes still unused
+          </p>
+        </div>
+
+        <button class="btn btn-pri full btn-lg mt-l" type="submit">Sign in</button>
+
+        <div class="banner banner-info mt" data-demo-note hidden>
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+          <span class="bd">
+            <b>This is a design prototype</b>
+            <p>In the built product this signs you in and marks the code as used.</p>
+            <a class="btn btn-pri btn-sm mt-s" href="mail/mail.html">Open the mailbox &rarr;</a>
+          </span>
+        </div>
+      </form>
+
+      <div class="note note-warn mt-l">
+        <h4>Out of codes, or never saved them?</h4>
+        <p>Ask whoever administers your domain to reset two-factor on your mailbox. If you are
+          the owner and locked out of your own account,
+          <a href="contact.html">contact us</a> &mdash; we will verify who you are before
+          changing anything, which takes a little time but is the point.</p>
+      </div>
+
+      <p class="center sm mut mt-l">
+        <a href="login-2fa.html" style="color:var(--blue);font-weight:600">&larr; Back to the code screen</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

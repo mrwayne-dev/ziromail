@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sales@adaobifoods.com — Ziroemail</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  /* The mailbox page has its own sections, so it carries a second, narrower
+     sidebar inside the main column. The app sidebar says where you are in the
+     account; this one says where you are inside this mailbox. */
+  .mb-layout { display: grid; gap: 20px; }
+  @media (min-width: 1040px) {
+    .mb-layout { grid-template-columns: 208px minmax(0, 1fr); align-items: start; gap: 28px; }
+  }
+
+  .mb-nav { position: relative; }
+  @media (min-width: 1040px) { .mb-nav { position: sticky; top: 92px; } }
+  .mb-nav .ttl {
+    font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--tx-3); padding: 0 12px; margin-bottom: 8px;
+  }
+  .mb-nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: var(--r-xs);
+    font-size: .9rem; font-weight: 550; color: var(--tx-2);
+  }
+  .mb-nav a:hover { background: var(--paper-soft); color: var(--tx-1); }
+  .mb-nav a[aria-current="true"] { background: var(--blue-050); color: var(--blue-700); font-weight: 650; }
+  .mb-nav a svg { flex: none; opacity: .75; }
+  .mb-nav a[aria-current="true"] svg { opacity: 1; }
+  .mb-nav .danger { color: var(--bad); }
+  .mb-nav .danger:hover { background: var(--bad-bg); color: var(--bad); }
+  .mb-nav hr { border: 0; border-top: 1px solid var(--line); margin: 10px 12px; }
+
+  /* on a phone the sections scroll sideways rather than stack into a wall */
+  @media (max-width: 1039px) {
+    .mb-nav { margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .mb-nav .ttl, .mb-nav hr { display: none; }
+    .mb-nav .mb-nav-in { display: flex; gap: 7px; width: max-content; padding-bottom: 4px; }
+    .mb-nav a { white-space: nowrap; border: 1px solid var(--line-2); background: #fff; }
+    .mb-nav a[aria-current="true"] { border-color: var(--blue); }
+  }
+
+  .mb-hero { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .mb-hero .av {
+    width: 54px; height: 54px; border-radius: 50%; background: var(--blue); color: #fff;
+    display: grid; place-items: center; font-size: 1.05rem; font-weight: 700; flex: none;
+    background-size: cover; background-position: center;
+  }
+
+  .row { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .row:last-child { border-bottom: none; padding-bottom: 0; }
+  .row .nm { flex: 1; min-width: 180px; }
+  .row .nm b { font-size: .94rem; color: var(--tx-1); display: block; }
+  .row .nm span { font-size: .85rem; color: var(--tx-3); }
+
+  /* quota editor: shows the floor you cannot drop below */
+  .q-edit { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+  .q-in { display: flex; }
+  .q-in .input { border-radius: var(--r-xs) 0 0 var(--r-xs); width: 110px; font-variant-numeric: tabular-nums; }
+  .q-in .gb {
+    display: flex; align-items: center; padding: 0 13px; font-size: .9rem; color: var(--tx-3);
+    background: var(--paper-2); border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+  }
+  .q-track { height: 9px; border-radius: 999px; background: var(--paper-2); overflow: hidden; position: relative; margin-top: 14px; }
+  .q-track .used { position: absolute; inset: 0 auto 0 0; background: var(--blue); border-radius: 999px; }
+  .q-track .floor { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--bad); }
+  .q-marks { display: flex; justify-content: space-between; font-size: .8rem; color: var(--tx-3); margin-top: 8px; }
+
+  /* picture: the letters are the default, an upload replaces them */
+  .pic-edit { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+  .pic-now {
+    width: 68px; height: 68px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: var(--blue); color: #fff; font-size: 1.3rem; font-weight: 700;
+    background-size: cover; background-position: center;
+  }
+  .pic-acts { display: flex; gap: 9px; flex-wrap: wrap; }
+
+  /* a labelled switch, used by the toggles */
+  .sw-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .sw-row:last-of-type { border-bottom: 0; }
+  .sw-row .tx { flex: 1; min-width: 0; }
+  .sw-row .tx b { display: block; font-size: .93rem; color: var(--tx-1); }
+  .sw-row .tx span { display: block; font-size: .84rem; color: var(--tx-3); margin-top: 3px; line-height: 1.5; }
+  .sw { position: relative; flex: none; width: 44px; height: 26px; }
+  .sw input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .sw .tr {
+    position: absolute; inset: 0; border-radius: 999px; background: var(--line-2);
+    transition: background .15s; pointer-events: none;
+  }
+  .sw .tr::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff; transition: transform .15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.22);
+  }
+  .sw input:checked + .tr { background: var(--blue); }
+  .sw input:checked + .tr::after { transform: translateX(18px); }
+  .sw input:focus-visible + .tr { outline: 2.5px solid var(--blue); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .sw .tr, .sw .tr::after { transition: none; } }
+
+  /* sending limit, stated as a figure not a slider */
+  .lim-grid { display: grid; gap: 12px; margin-top: 12px; }
+  @media (min-width: 560px) { .lim-grid { grid-template-columns: 1fr 1fr; } }
+
+  .sec + .sec { margin-top: 20px; }
+  .sec { scroll-margin-top: 92px; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <p class="sm mut mb"><a href="admin-mailboxes.html" style="color:var(--blue);font-weight:600">&larr; All mailboxes</a></p>
+
+      <div class="page-head">
+        <div class="mb-hero">
+          <span class="av" aria-hidden="true">SA</span>
+          <div>
+            <h1 class="mono" style="font-size:clamp(1.15rem,1rem + .9vw,1.55rem)">sales@adaobifoods.com</h1>
+            <p>Created 4 March 2026 &middot; last signed in today, 09:02</p>
+          </div>
+        </div>
+        <span class="pill pill-ok">Active</span>
+      </div>
+
+      <div class="mb-layout">
+        <!-- sections within this mailbox -->
+        <nav class="mb-nav" aria-label="Mailbox sections">
+          <div class="mb-nav-in">
+            <p class="ttl">This mailbox</p>
+            <a href="#overview" aria-current="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Overview</a>
+            <a href="#identity"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Name &amp; picture</a>
+            <a href="#security"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.6 16 5v4.6c0 3.6-2.5 6.6-6 7.8-3.5-1.2-6-4.2-6-7.8V5l6-2.4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m7.4 9.8 1.9 1.9 3.3-3.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Password &amp; security</a>
+            <a href="#storage"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><ellipse cx="10" cy="5.2" rx="6.6" ry="2.6" stroke="currentColor" stroke-width="1.7"/><path d="M3.4 5.2v9.6c0 1.4 3 2.6 6.6 2.6s6.6-1.2 6.6-2.6V5.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.4 10c0 1.4 3 2.6 6.6 2.6s6.6-1.2 6.6-2.6" stroke="currentColor" stroke-width="1.7"/></svg>Storage</a>
+            <a href="#routing"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h7a4 4 0 0 1 4 4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m11.6 12.4 2.4 2.4 2.4-2.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="3" cy="6" r="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Aliases &amp; forwarding</a>
+            <a href="#away"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-reply</a>
+            <a href="#filtering"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.6 17.4 15H2.6L10 2.6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 8v2.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="12.6" r="1" fill="currentColor"/></svg>Filtering &amp; limits</a>
+            <a href="#activity"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.6 10.6h3.2l2-4.8 3 9.2 2.2-5.4h4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity</a>
+            <hr>
+            <a href="#danger" class="danger"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 6.2h11.6M8 6.2V4.6h4v1.6M6.4 6.2l.7 9.4a1.4 1.4 0 0 0 1.4 1.3h3a1.4 1.4 0 0 0 1.4-1.3l.7-9.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Suspend or delete</a>
+          </div>
+        </nav>
+
+        <div data-stagger>
+          <!-- ============ OVERVIEW ============ -->
+          <section class="card sec" id="overview" aria-labelledby="ov-h">
+            <h2 id="ov-h" style="font-size:1.05rem">Overview</h2>
+            <p class="sm mut mt-s">How this mailbox is doing. Everything here is also
+              editable in the sections below.</p>
+
+            <div class="row" style="margin-top:8px">
+              <span class="nm"><b>Storage</b><span>6.1 GB used of an 8 GB quota</span></span>
+              <span class="pill pill-warn">76% full</span>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Received this month</b><span>Within normal range for a shared sales address</span></span>
+              <b class="num">1,284</b>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Sent this month</b><span>3 bounced</span></span>
+              <b class="num">402</b>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Devices signed in</b><span>Phone and desktop</span></span>
+              <b class="num">2</b>
+            </div>
+
+            <div class="btn-row mt">
+              <a class="btn btn-line btn-sm" href="../setup-device.html">Send a setup link</a>
+              <a class="btn btn-quiet btn-sm" href="#security">Reset the password</a>
+            </div>
+          </section>
+
+          <!-- ============ NAME & PICTURE ============ -->
+          <section class="card sec" id="identity" aria-labelledby="id-h">
+            <h2 id="id-h" style="font-size:1.05rem">Name &amp; picture</h2>
+            <p class="sm mut mt-s">What recipients see when this mailbox sends mail, and the
+              picture shown in the webmail and in your admin lists.</p>
+
+            <div class="field mt">
+              <label class="label" for="dispname">Display name</label>
+              <input class="input" id="dispname" type="text" value="Adaobi Foods — Sales" autocomplete="off">
+              <p class="hint">Shown as the sender name. The address itself cannot be changed
+                once mail has been delivered to it &mdash; create a new mailbox and an alias instead.</p>
+            </div>
+
+            <div class="field">
+              <label class="label" for="mbaddr">Address</label>
+              <input class="input mono" id="mbaddr" type="text" value="sales@adaobifoods.com" readonly
+                     style="background:var(--paper-2);color:var(--tx-3)">
+              <p class="hint">Fixed. Add another address in <a href="#routing">Aliases &amp; forwarding</a>.</p>
+            </div>
+
+            <fieldset style="border:0;padding:0;margin:18px 0 0">
+              <legend class="label">Picture</legend>
+              <div class="pic-edit">
+                <span class="pic-now" aria-hidden="true">SA</span>
+                <div>
+                  <div class="pic-acts">
+                    <button class="btn btn-line btn-sm" type="button">Upload a picture</button>
+                    <button class="btn btn-quiet btn-sm" type="button">Remove</button>
+                  </div>
+                  <p class="hint">Square, at least 200&times;200, under 2 MB. Without one we use
+                    the first two letters of the address.</p>
+                </div>
+              </div>
+            </fieldset>
+
+            <button class="btn btn-pri mt" type="button">Save changes</button>
+          </section>
+
+          <!-- ============ PASSWORD & SECURITY ============ -->
+          <section class="card sec" id="security" aria-labelledby="se-h">
+            <h2 id="se-h" style="font-size:1.05rem">Password &amp; security</h2>
+            <p class="sm mut mt-s">This mailbox is reached with its own address and password.
+              There is no separate list of people &mdash; whoever holds the password holds the mailbox,
+              which is why resetting it is how you take it back.</p>
+
+            <div class="field mt">
+              <label class="label" for="newpw">Set a new password</label>
+              <input class="input" id="newpw" type="password" autocomplete="new-password" placeholder="At least 12 characters">
+              <p class="hint">The user is signed out of every device and must sign in again.</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-pri" type="button">Set password</button>
+              <button class="btn btn-line" type="button">Generate a strong one</button>
+            </div>
+
+            <div class="sw-row" style="margin-top:18px">
+              <span class="tx">
+                <b>Require a new password at next sign-in</b>
+                <span>The user chooses their own, and you never know it.</span>
+              </span>
+              <label class="sw"><input type="checkbox" aria-label="Require a new password at next sign-in"><span class="tr"></span></label>
+            </div>
+            <div class="sw-row">
+              <span class="tx">
+                <b>Two-factor sign-in</b>
+                <span>An authenticator code on top of the password. Strongly recommended for any
+                  mailbox that sends invoices.</span>
+              </span>
+              <label class="sw"><input type="checkbox" checked aria-label="Two-factor sign-in"><span class="tr"></span></label>
+            </div>
+
+            <h3 style="font-size:.95rem;margin-top:20px">Signed-in devices</h3>
+            <div class="row" style="margin-top:4px">
+              <span class="nm"><b>iPhone &middot; Lagos</b><span>Mail app &middot; last active today, 09:02</span></span>
+              <button class="btn btn-line btn-sm" type="button">Sign out</button>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Windows &middot; Chrome</b><span>Webmail &middot; last active yesterday</span></span>
+              <button class="btn btn-line btn-sm" type="button">Sign out</button>
+            </div>
+            <button class="btn btn-line full mt" type="button">Sign out everywhere</button>
+          </section>
+
+          <!-- ============ STORAGE ============ -->
+          <section class="card sec" id="storage" aria-labelledby="q-h">
+            <h2 id="q-h" style="font-size:1.05rem">Storage</h2>
+            <p class="sm mut mt-s">Taken from the domain's 40 GB pool. There is 14 GB unassigned.</p>
+
+            <div class="q-edit mt">
+              <span class="q-in">
+                <input class="input" type="number" min="6.1" max="22" step="0.5" value="8" aria-label="Quota in gigabytes">
+                <span class="gb">GB</span>
+              </span>
+              <button class="btn btn-pri" type="button">Save quota</button>
+            </div>
+
+            <div class="q-track" data-meter role="img" aria-label="6.1 GB used of an 8 GB quota">
+              <span class="used" style="width:76%"></span>
+              <span class="floor" style="left:76%"></span>
+            </div>
+            <div class="q-marks">
+              <span>6.1 GB used &mdash; cannot go below this</span>
+              <span>8 GB assigned</span>
+            </div>
+
+            <div class="banner banner-warn mt">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M8 1.5 15 14H1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r=".9" fill="currentColor"/></svg>
+              <span class="bd">
+                <b>This mailbox is at 76%</b>
+                <p>Raise the quota, or ask the owner to clear old attachments. We warn the
+                  user again at 95% and stop delivery at 100% &mdash; queued mail is held,
+                  not discarded.</p>
+              </span>
+            </div>
+
+            <p class="sm mut mt">No room left in the pool?
+              <a href="admin-storage.html">Add extra storage</a> to this domain.</p>
+          </section>
+
+          <!-- ============ ALIASES & FORWARDING ============ -->
+          <section class="card sec" id="routing" aria-labelledby="ro-h">
+            <h2 id="ro-h" style="font-size:1.05rem">Aliases &amp; forwarding</h2>
+            <p class="sm mut mt-s">An alias is another address that delivers here. It uses no
+              storage of its own and is not charged.</p>
+
+            <div class="row" style="margin-top:8px">
+              <span class="nm"><b class="mono">orders@adaobifoods.com</b><span>Alias &middot; added 4 March 2026</span></span>
+              <button class="btn btn-line btn-sm" type="button">Remove</button>
+            </div>
+            <div class="row">
+              <span class="nm"><b class="mono">enquiries@adaobifoods.com</b><span>Alias &middot; added 12 days ago</span></span>
+              <button class="btn btn-line btn-sm" type="button">Remove</button>
+            </div>
+            <button class="btn btn-line full mt" type="button">Add an alias</button>
+
+            <h3 style="font-size:.95rem;margin-top:22px">Forwarding</h3>
+            <p class="sm mut mt-s">Send a copy of every message to another address.</p>
+            <div class="field mt-s">
+              <label class="label sr-only" for="fwd">Forward to</label>
+              <input class="input" id="fwd" type="email" placeholder="someone@example.com" autocomplete="off">
+            </div>
+            <div class="sw-row">
+              <span class="tx">
+                <b>Keep a copy here</b>
+                <span>Off means forwarded mail does not stay in this mailbox. Leave it on unless
+                  you are certain.</span>
+              </span>
+              <label class="sw"><input type="checkbox" checked aria-label="Keep a copy in this mailbox"><span class="tr"></span></label>
+            </div>
+            <button class="btn btn-pri mt" type="button">Save forwarding</button>
+          </section>
+
+          <!-- ============ AUTO-REPLY ============ -->
+          <section class="card sec" id="away" aria-labelledby="aw-h">
+            <h2 id="aw-h" style="font-size:1.05rem">Auto-reply</h2>
+            <p class="sm mut mt-s">An automatic answer to anyone who writes in. The user can also
+              set this themselves from their webmail.</p>
+
+            <div class="sw-row" style="margin-top:6px">
+              <span class="tx">
+                <b>Auto-reply is off</b>
+                <span>Turn it on to answer every incoming message once per sender per day.</span>
+              </span>
+              <label class="sw"><input type="checkbox" aria-label="Turn auto-reply on"><span class="tr"></span></label>
+            </div>
+
+            <div class="lim-grid">
+              <div class="field" style="margin:0">
+                <label class="label" for="ar-from">From</label>
+                <input class="input" id="ar-from" type="date">
+              </div>
+              <div class="field" style="margin:0">
+                <label class="label" for="ar-to">Until</label>
+                <input class="input" id="ar-to" type="date">
+              </div>
+            </div>
+            <div class="field mt-s">
+              <label class="label" for="ar-msg">Message</label>
+              <textarea class="input" id="ar-msg" rows="3" placeholder="Thank you for writing. We reply to orders within one working day."></textarea>
+            </div>
+            <button class="btn btn-pri" type="button">Save auto-reply</button>
+          </section>
+
+          <!-- ============ FILTERING & LIMITS ============ -->
+          <section class="card sec" id="filtering" aria-labelledby="fl-h">
+            <h2 id="fl-h" style="font-size:1.05rem">Filtering &amp; limits</h2>
+            <p class="sm mut mt-s">What arrives, and how much this mailbox may send. Sending
+              limits are what stop one compromised password from damaging every other customer's
+              delivery.</p>
+
+            <div class="sw-row" style="margin-top:6px">
+              <span class="tx">
+                <b>Spam filtering</b>
+                <span>Suspected spam goes to the Spam folder rather than the inbox.</span>
+              </span>
+              <label class="sw"><input type="checkbox" checked aria-label="Spam filtering"><span class="tr"></span></label>
+            </div>
+            <div class="sw-row">
+              <span class="tx">
+                <b>Reject executable attachments</b>
+                <span>Blocks <span class="mono">.exe</span>, <span class="mono">.scr</span> and
+                  similar before they reach the inbox.</span>
+              </span>
+              <label class="sw"><input type="checkbox" checked aria-label="Reject executable attachments"><span class="tr"></span></label>
+            </div>
+
+            <h3 style="font-size:.95rem;margin-top:20px">Sending limits</h3>
+            <div class="lim-grid">
+              <div class="field" style="margin:0">
+                <label class="label" for="lim-h">Messages an hour</label>
+                <input class="input" id="lim-h" type="number" value="100" min="1" step="10">
+              </div>
+              <div class="field" style="margin:0">
+                <label class="label" for="lim-d">Messages a day</label>
+                <input class="input" id="lim-d" type="number" value="500" min="1" step="50">
+              </div>
+            </div>
+            <p class="hint">The plan default is 100 an hour and 500 a day. A mailbox that suddenly
+              sends far above its own pattern is locked automatically and we tell you.</p>
+            <button class="btn btn-pri mt-s" type="button">Save limits</button>
+          </section>
+
+          <!-- ============ ACTIVITY ============ -->
+          <section class="card sec" id="activity" aria-labelledby="ac-h">
+            <h2 id="ac-h" style="font-size:1.05rem">Activity</h2>
+            <div class="row" style="margin-top:8px">
+              <span class="nm"><b>Quota raised from 6 GB to 8 GB</b><span>By you &middot; 12 days ago</span></span>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Password reset</b><span>By you &middot; 4 March 2026</span></span>
+            </div>
+            <div class="row">
+              <span class="nm"><b>Mailbox created</b><span>During setup &middot; 4 March 2026</span></span>
+            </div>
+            <a class="tlink mt" href="admin-audit.html">See the full log</a>
+          </section>
+
+          <!-- ============ SUSPEND OR DELETE ============ -->
+          <section class="sec" id="danger" aria-labelledby="dg-h">
+            <div class="note note-bad">
+              <h4 id="dg-h">Suspending or deleting</h4>
+              <p><b>Suspend</b> stops sign-in and sending; mail still arrives and nothing is lost.
+                <b>Delete</b> removes the mailbox and its contents permanently after 30 days, and
+                returns its quota to the pool.</p>
+              <div class="btn-row mt">
+                <button class="btn btn-line btn-sm" type="button">Suspend</button>
+                <button class="btn btn-danger btn-sm" type="button">Delete</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

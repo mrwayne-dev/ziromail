@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mailboxes — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .bar-mini { height: 6px; border-radius: 999px; background: var(--paper-2); overflow: hidden; width: 74px; display: inline-block; vertical-align: middle; margin-right: 8px; }
+  .bar-mini i { display: block; height: 100%; background: var(--blue); border-radius: 999px; }
+  .bar-mini i.warn { background: var(--warn); }
+  .bar-mini i.bad { background: var(--bad); }
+  .use { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+  .chip { font-size: .8rem; font-weight: 550; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--tx-2); background: #fff; cursor: pointer; }
+  .chip:hover { border-color: var(--tx-1); color: var(--tx-1); }
+  .chip[aria-pressed="true"] { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
+  .chip .c { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html" aria-current="page">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Mailboxes</h1>
+        <p>All 3,106 mailboxes on the platform. Sorted by the ones about to cause a problem &mdash; full, dormant, or never set up.</p>
+      </div>
+      <button class="btn btn-line btn-sm" type="button">Export as CSV</button>
+    </div>
+
+    <section aria-labelledby="mm-h">
+      <h2 id="mm-h" class="sr-only">Mailbox figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Total</span>
+          <span class="v">3,106</span>
+          <span class="d up">+64 this week</span>
+        </div>
+        <div class="metric">
+          <span class="k">Active in 30d</span>
+          <span class="v">2,847</span>
+          <span class="d">92% of the estate</span>
+        </div>
+        <div class="metric alert">
+          <span class="k">Over 90% full</span>
+          <span class="v">31</span>
+          <span class="d down">delivery stops at 100%</span>
+        </div>
+        <div class="metric">
+          <span class="k">Never signed in</span>
+          <span class="v">194</span>
+          <span class="d">created but unused</span>
+        </div>
+        <div class="metric">
+          <span class="k">Suspended</span>
+          <span class="v">6</span>
+          <span class="d">4 non-payment, 2 abuse</span>
+        </div>
+        <div class="metric">
+          <span class="k">Median size</span>
+          <span class="v">1.6&nbsp;GB</span>
+          <span class="d">against a 6 GB median quota</span>
+        </div>
+      </div>
+    </section>
+
+    <form action="ops-mailboxes.html" method="get" style="margin-top:22px">
+      <label class="sr-only" for="mq">Search mailboxes by address or domain</label>
+      <input class="input" type="search" id="mq" name="q" autocomplete="off" spellcheck="false"
+             placeholder="Address or domain…" style="max-width:460px">
+      <div class="chips">
+        <button class="chip" type="button" aria-pressed="true">Needs attention<span class="c">231</span></button>
+        <button class="chip" type="button" aria-pressed="false">Over 90% full<span class="c">31</span></button>
+        <button class="chip" type="button" aria-pressed="false">Never signed in<span class="c">194</span></button>
+        <button class="chip" type="button" aria-pressed="false">Suspended<span class="c">6</span></button>
+        <button class="chip" type="button" aria-pressed="false">All<span class="c">3,106</span></button>
+      </div>
+    </form>
+
+    <div class="tbl-wrap mt">
+      <table class="ops">
+        <caption class="sr-only">Mailboxes needing attention</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="wide">Address</th>
+            <th scope="col">Organisation</th>
+            <th scope="col">Storage</th>
+            <th scope="col">Last sign-in</th>
+            <th scope="col">State</th>
+            <th scope="col"><span class="sr-only">Action</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sev-high">
+            <td class="mono">orders@citymartng.com</td>
+            <td class="wide">CityMart Nigeria</td>
+            <td class="use"><span class="bar-mini"><i class="bad" style="width:98%"></i></span>9.8 / 10 GB</td>
+            <td>Today</td>
+            <td><span class="pill pill-bad">98% full</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+          </tr>
+          <tr class="sev-high">
+            <td class="mono">info@zionschools.edu.ng</td>
+            <td class="wide">Zion Schools</td>
+            <td class="use"><span class="bar-mini"><i class="bad" style="width:94%"></i></span>7.5 / 8 GB</td>
+            <td>Today</td>
+            <td><span class="pill pill-bad">94% full</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+          </tr>
+          <tr class="sev-med">
+            <td class="mono">accounts@lagospropertyhub.com</td>
+            <td class="wide">Lagos Property Hub</td>
+            <td class="use"><span class="bar-mini"><i class="warn" style="width:87%"></i></span>10.4 / 12 GB</td>
+            <td>Today</td>
+            <td><span class="pill pill-warn">87% full</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+          </tr>
+          <tr class="sev-med">
+            <td class="mono">sales@adaobifoods.com</td>
+            <td class="wide">Adaobi Foods Ltd</td>
+            <td class="use"><span class="bar-mini"><i class="warn" style="width:76%"></i></span>6.1 / 8 GB</td>
+            <td>Today</td>
+            <td><span class="pill pill-warn">76% full</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+          </tr>
+          <tr class="sev-high">
+            <td class="mono">info@quickloans-ng.com</td>
+            <td class="wide">QuickLoans Nigeria</td>
+            <td class="use"><span class="bar-mini"><i style="width:21%"></i></span>0.7 / 3.3 GB</td>
+            <td>Today</td>
+            <td><span class="pill pill-bad">Rate limited</span></td>
+            <td><a class="btn btn-pri btn-sm" href="ops-abuse-detail.html">Review</a></td>
+          </tr>
+          <tr class="sev-low">
+            <td class="mono">hr@adaobifoods.com</td>
+            <td class="wide">Adaobi Foods Ltd</td>
+            <td class="use"><span class="bar-mini"><i style="width:45%"></i></span>0.9 / 2 GB</td>
+            <td>Never</td>
+            <td><span class="pill">Not set up</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+          </tr>
+          <tr class="sev-low">
+            <td class="mono">promo@citymartng.com</td>
+            <td class="wide">CityMart Nigeria</td>
+            <td class="use"><span class="bar-mini"><i style="width:12%"></i></span>0.4 / 3 GB</td>
+            <td>26 Sep</td>
+            <td><span class="pill pill-bad">Locked &mdash; abuse</span></td>
+            <td><a class="btn btn-line btn-sm" href="ops-abuse.html">History</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note mt" style="max-width:62ch">
+      <h4>What happens when a mailbox fills up</h4>
+      <p>At 90% the owner is emailed. At 100% incoming mail is held in the queue for 72&nbsp;hours
+        rather than rejected, so nothing is lost while somebody frees space or raises the quota
+        from the pool. If the pool itself is full, that is a sales conversation, not a support
+        one &mdash; 10 GB is &#8358;1,000 a year.</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

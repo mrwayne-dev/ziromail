@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abuse queue — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  /* each flag is a card, not a table row — you need the evidence to decide */
+  .flag {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs);
+    padding: 20px; border-left: 4px solid var(--line-2);
+  }
+  .flag + .flag { margin-top: 14px; }
+  .flag.high { border-left-color: var(--bad); }
+  .flag.med  { border-left-color: var(--warn); }
+  .flag.low  { border-left-color: var(--blue-300); }
+
+  .flag-top { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; justify-content: space-between; }
+  .flag-top h3 { font-size: 1rem; font-family: var(--mono); font-weight: 500; letter-spacing: -.01em; word-break: break-all; }
+  .flag-top .sub { font-size: .85rem; color: var(--tx-3); margin-top: 3px; }
+
+  /* the evidence: what tripped, and by how much */
+  .ev { display: grid; gap: 1px; background: var(--line); border-radius: var(--r-xs); overflow: hidden; margin-top: 16px; }
+  @media (min-width: 620px) { .ev { grid-template-columns: repeat(4, 1fr); } }
+  .ev .c { background: var(--paper-soft); padding: 12px 14px; }
+  .ev .c .k { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tx-3); display: block; }
+  .ev .c .v { font-size: 1.05rem; font-weight: 650; color: var(--tx-1); font-variant-numeric: tabular-nums; margin-top: 4px; display: block; line-height: 1.2; }
+  .ev .c .v.hot { color: var(--bad); }
+  .ev .c .n { font-size: .76rem; color: var(--tx-3); display: block; margin-top: 2px; }
+
+  /* sample subject lines — the human judgement call */
+  .samples { margin-top: 16px; padding: 14px 16px; background: var(--paper-2); border-radius: var(--r-xs); }
+  .samples .k { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tx-3); }
+  .samples ul { list-style: none; margin-top: 9px; display: grid; gap: 7px; }
+  .samples li { font-size: .875rem; color: var(--tx-2); padding-left: 16px; position: relative; }
+  .samples li::before { content: "\201C"; position: absolute; left: 0; top: 1px; color: var(--tx-3); font-size: 1.1rem; line-height: 1; }
+  .samples li .rp { color: var(--tx-3); font-size: .8rem; }
+
+  .flag-acts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); align-items: center; }
+  .flag-acts .sp { margin-left: auto; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html" aria-current="page">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Abuse queue</h1>
+        <p>Accounts sending unlike themselves. Anomaly detection flags; a person decides.
+          Locking is one click because the cost of waiting is a blocklisting.</p>
+      </div>
+      <span class="pill pill-bad">3 waiting</span>
+    </div>
+
+    <div class="banner banner-warn" role="status">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M8 1.5 15 14H1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r=".9" fill="currentColor"/></svg>
+      <span class="bd">
+        <b>A lock stops sending, not receiving</b>
+        <p>Locked accounts keep receiving mail and nothing is deleted. The owner is emailed with
+          the reason and a way to reply. Every lock is recorded in the
+          <a href="ops-audit.html">audit trail</a> with the name of the person who did it.</p>
+      </span>
+    </div>
+
+    <section style="margin-top:24px" aria-labelledby="fl-h">
+      <h2 id="fl-h" class="sr-only">Flagged accounts</h2>
+
+      <!-- 1. clear-cut: purchased list, high complaints -->
+      <article class="flag high" aria-labelledby="f1-h">
+        <div class="flag-top">
+          <div>
+            <h3 id="f1-h">info@quickloans-ng.com</h3>
+            <p class="sub">QuickLoans Nigeria &middot; Starter plan &middot; customer since 14 August 2026</p>
+          </div>
+          <span class="pill pill-bad">Rate limited 07:48</span>
+        </div>
+
+        <div class="ev">
+          <div class="c">
+            <span class="k">Sent last hour</span>
+            <span class="v hot">1,900</span>
+            <span class="n">normal is 20</span>
+          </div>
+          <div class="c">
+            <span class="k">Bounce rate</span>
+            <span class="v hot">11.2%</span>
+            <span class="n">limit 2%</span>
+          </div>
+          <div class="c">
+            <span class="k">Complaints</span>
+            <span class="v hot">0.62%</span>
+            <span class="n">limit 0.10%</span>
+          </div>
+          <div class="c">
+            <span class="k">Distinct recipients</span>
+            <span class="v">1,847</span>
+            <span class="n">3 repeat</span>
+          </div>
+        </div>
+
+        <div class="samples">
+          <span class="k">Sample subject lines from the last hour</span>
+          <ul>
+            <li>Get ₦500,000 today &mdash; no collateral needed <span class="rp">&times;842</span></li>
+            <li>FINAL NOTICE: your loan pre-approval expires <span class="rp">&times;611</span></li>
+            <li>Dear customer, claim your instant credit <span class="rp">&times;447</span></li>
+          </ul>
+        </div>
+
+        <p class="sm mut mt">Three identical bodies to 1,847 addresses with no prior correspondence,
+          and 11 recipients reported it as spam. This is a purchased list, not a customer base.
+          Business email hosting is not a bulk sending service &mdash; our terms say so.</p>
+
+        <div class="flag-acts">
+          <button class="btn btn-danger btn-sm" type="button">Lock sending now</button>
+          <a class="btn btn-line btn-sm" href="ops-abuse-detail.html">Full sending history</a>
+          <span class="sp"><button class="btn btn-quiet btn-sm" type="button">Not abuse &mdash; clear the flag</button></span>
+        </div>
+      </article>
+
+      <!-- 2. ambiguous: legitimate business with a real spike -->
+      <article class="flag med" aria-labelledby="f2-h">
+        <div class="flag-top">
+          <div>
+            <h3 id="f2-h">accounts@lagospropertyhub.com</h3>
+            <p class="sub">Lagos Property Hub &middot; Business plan &middot; customer since 2 February 2026</p>
+          </div>
+          <span class="pill pill-warn">Flagged 06:20</span>
+        </div>
+
+        <div class="ev">
+          <div class="c">
+            <span class="k">Sent last hour</span>
+            <span class="v">340</span>
+            <span class="n">normal is 60</span>
+          </div>
+          <div class="c">
+            <span class="k">Bounce rate</span>
+            <span class="v">4.8%</span>
+            <span class="n">limit 2%</span>
+          </div>
+          <div class="c">
+            <span class="k">Complaints</span>
+            <span class="v">0.09%</span>
+            <span class="n">under the limit</span>
+          </div>
+          <div class="c">
+            <span class="k">Distinct recipients</span>
+            <span class="v">312</span>
+            <span class="n">94% seen before</span>
+          </div>
+        </div>
+
+        <div class="samples">
+          <span class="k">Sample subject lines from the last hour</span>
+          <ul>
+            <li>Rent renewal for Flat 4B, Admiralty Way <span class="rp">&times;1</span></li>
+            <li>September statement &mdash; Ikoyi units <span class="rp">&times;1</span></li>
+            <li>Service charge invoice, Q4 2026 <span class="rp">&times;118</span></li>
+          </ul>
+        </div>
+
+        <p class="sm mut mt">Volume is up five times, but 94% of recipients have corresponded with
+          this domain before and complaints are within limits. This reads like a quarterly invoice
+          run. The bounces are old tenant addresses, which is a list hygiene problem, not abuse.</p>
+
+        <div class="flag-acts">
+          <button class="btn btn-pri btn-sm" type="button">Email them about the bounces</button>
+          <a class="btn btn-line btn-sm" href="ops-abuse-detail.html">Full sending history</a>
+          <span class="sp"><button class="btn btn-quiet btn-sm" type="button">Not abuse &mdash; clear the flag</button></span>
+        </div>
+      </article>
+
+      <!-- 3. different failure mode entirely: compromised, not abusive -->
+      <article class="flag high" aria-labelledby="f3-h">
+        <div class="flag-top">
+          <div>
+            <h3 id="f3-h">tunde@bellohaulage.com</h3>
+            <p class="sub">Bello Haulage Ltd &middot; Starter plan &middot; customer since 9 May 2026</p>
+          </div>
+          <span class="pill pill-bad">Sign-in anomaly 04:11</span>
+        </div>
+
+        <div class="ev">
+          <div class="c">
+            <span class="k">Sent last hour</span>
+            <span class="v hot">460</span>
+            <span class="n">normal is 8</span>
+          </div>
+          <div class="c">
+            <span class="k">Sending from</span>
+            <span class="v hot">4 countries</span>
+            <span class="n">normally Nigeria only</span>
+          </div>
+          <div class="c">
+            <span class="k">Failed sign-ins</span>
+            <span class="v hot">218</span>
+            <span class="n">before one succeeded</span>
+          </div>
+          <div class="c">
+            <span class="k">Sent folder</span>
+            <span class="v">Empty</span>
+            <span class="n">deliberately cleared</span>
+          </div>
+        </div>
+
+        <div class="samples">
+          <span class="k">Sample subject lines from the last hour</span>
+          <ul>
+            <li>Updated bank details for outstanding invoice <span class="rp">&times;204</span></li>
+            <li>Re: payment &mdash; please use the account below <span class="rp">&times;181</span></li>
+            <li>Document shared with you <span class="rp">&times;75</span></li>
+          </ul>
+        </div>
+
+        <p class="sm mut mt">This is not the customer. A password was guessed after 218 attempts,
+          the Sent folder was emptied to hide the activity, and the mail is invoice fraud aimed at
+          this haulage company's own contacts. Lock it, force a password reset, and telephone the
+          owner &mdash; do not only email, because the attacker can read that mailbox.</p>
+
+        <div class="flag-acts">
+          <button class="btn btn-danger btn-sm" type="button">Lock and force password reset</button>
+          <a class="btn btn-line btn-sm" href="ops-abuse-detail.html">Sign-in and sending history</a>
+          <span class="sp"><a class="btn btn-quiet btn-sm" href="ops-org.html">Owner's phone number</a></span>
+        </div>
+      </article>
+    </section>
+
+    <!-- what has already been handled -->
+    <section style="margin-top:36px" aria-labelledby="rs-h">
+      <div class="between" style="flex-wrap:wrap;gap:10px">
+        <h2 id="rs-h" style="font-size:1.05rem">Resolved this week</h2>
+        <a class="tlink" href="ops-audit.html">Audit trail</a>
+      </div>
+      <p class="sm mut mt-s">Kept visible so patterns are obvious. Two of these were the same
+        customer.</p>
+
+      <div class="tbl-wrap mt">
+        <table class="ops">
+          <caption class="sr-only">Abuse flags resolved in the last seven days</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="wide">Address</th>
+              <th scope="col">Flagged for</th>
+              <th scope="col">Outcome</th>
+              <th scope="col">By</th>
+              <th scope="col" class="num">When</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">promo@citymartng.com</td>
+              <td class="wide">4,200 messages in 20 minutes</td>
+              <td><span class="pill pill-bad">Locked</span></td>
+              <td>Chidi O.</td>
+              <td class="num">26 Sep</td>
+            </tr>
+            <tr>
+              <td class="mono">hr@adaobifoods.com</td>
+              <td class="wide">Volume spike, 180 recipients</td>
+              <td><span class="pill pill-ok">Cleared &mdash; staff memo</span></td>
+              <td>Yemi A.</td>
+              <td class="num">25 Sep</td>
+            </tr>
+            <tr>
+              <td class="mono">sales@citymartng.com</td>
+              <td class="wide">Bounce rate 8.4%</td>
+              <td><span class="pill pill-warn">Warned</span></td>
+              <td>Chidi O.</td>
+              <td class="num">24 Sep</td>
+            </tr>
+            <tr>
+              <td class="mono">admin@pearlclinic.com.ng</td>
+              <td class="wide">Sign-in from two countries</td>
+              <td><span class="pill pill-ok">Cleared &mdash; owner travelling</span></td>
+              <td>Yemi A.</td>
+              <td class="num">23 Sep</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="note mt" style="max-width:62ch">
+      <h4>What trips a flag</h4>
+      <p>Volume more than five times the account's own 30-day average, bounce rate above 5% in an
+        hour, complaints above 0.25%, sending from a country the account has never used, or a
+        successful sign-in after more than 50 failures. Thresholds are per account, not global, so
+        a business that always sends 500 invoices a month is not flagged for doing it again.</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

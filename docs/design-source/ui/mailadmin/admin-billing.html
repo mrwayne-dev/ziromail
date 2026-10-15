@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Billing — Ziroemail</title>
+<meta name="description" content="Your plan, storage, invoices and payment method.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .two { display: grid; gap: 20px; }
+  @media (min-width: 1000px) { .two { grid-template-columns: 1.45fr 1fr; align-items: start; } }
+
+  /* current plan, stated once and clearly */
+  .plan-now { background: var(--ink-900); color: #fff; border-radius: var(--r); padding: 26px; }
+  .plan-now h2 { color: #fff; font-size: 1.1rem; }
+  .plan-now .amt { display: flex; align-items: baseline; gap: 7px; margin-top: 16px; }
+  .plan-now .amt b { font-size: 2.1rem; font-weight: 650; letter-spacing: -.04em; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; }
+  .plan-now .amt span { font-size: .9rem; color: var(--tx-inv-3); }
+  .plan-row { display: flex; justify-content: space-between; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line-dark); font-size: .93rem; color: var(--tx-inv-2); }
+  .plan-row:last-of-type { border-bottom: none; }
+  .plan-row b { color: #fff; font-weight: 600; }
+
+  /* storage meter with the expansion ceiling marked */
+  .store-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 24px; }
+  .store-nums { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: baseline; }
+  .store-nums .k { font-size: .76rem; font-weight: 650; color: var(--tx-3); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+  .store-nums .v { font-size: 1.5rem; font-weight: 650; letter-spacing: -.035em; color: var(--tx-1); font-variant-numeric: tabular-nums; line-height: 1; }
+
+  .ceiling { position: relative; margin-top: 18px; }
+  .ceiling .track { height: 12px; border-radius: 999px; background: var(--paper-2); overflow: hidden; display: flex; }
+  .ceiling .fill { background: var(--blue); }
+  .ceiling .extra { background: var(--blue-300); }
+  .ceiling .marks { display: flex; justify-content: space-between; font-size: .78rem; color: var(--tx-3); margin-top: 8px; }
+
+  .blocks { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+  table.data td.r, table.data th.r { text-align: right; }
+  .inv-status { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* change plan */
+  .chg { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  .chg[hidden] { display: none; }
+  .chg-opts { display: grid; gap: 9px; margin-top: 16px; }
+  .chg-opt {
+    display: block; cursor: pointer; padding: 13px 15px; background: #fff;
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); position: relative;
+  }
+  .chg-opt:hover { border-color: var(--tx-3); }
+  .chg-opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .chg-opt:has(input:checked) { border-color: var(--ink-900); background: var(--paper-soft); }
+  .chg-opt:has(input:focus-visible) { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .chg-opt .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .chg-opt .top b { font-size: .95rem; color: var(--tx-1); }
+  .chg-opt .pr { font-size: .95rem; font-weight: 650; color: var(--tx-1); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .chg-opt .pr i { font-size: .78rem; font-weight: 500; color: var(--tx-3); font-style: normal; }
+  .chg-opt .ds { display: block; font-size: .82rem; color: var(--tx-3); margin-top: 4px; }
+  .chg-opt.is-current::after {
+    content: "Current"; position: absolute; top: -8px; right: 12px; font-size: .66rem;
+    font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #fff;
+    background: var(--ink-900); padding: 2px 7px; border-radius: 999px;
+  }
+
+  .chg-out { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .chg-out[hidden] { display: none; }
+  .chg-when {
+    font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 999px; display: inline-block; margin-bottom: 12px;
+  }
+  .chg-when.now { background: var(--ok-bg); color: var(--ok); }
+  .chg-when.later { background: var(--warn-bg); color: var(--warn); }
+  .chg-list { list-style: none; display: grid; gap: 9px; margin-bottom: 16px; }
+  .chg-list li { font-size: .86rem; color: var(--tx-2); padding-left: 20px; position: relative; line-height: 1.5; }
+  .chg-list li::before {
+    content: ""; position: absolute; left: 4px; top: 8px; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--tx-3);
+  }
+  .chg-list li.warn::before { background: var(--warn); }
+  .chg-list li.warn { color: var(--tx-1); }
+  .chg-list li b { color: var(--tx-1); }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <div class="page-head">
+        <div>
+          <h1>Plan &amp; storage</h1>
+          <p>One plan covering <span class="mono">adaobifoods.com</span>.</p>
+        </div>
+        <a class="btn btn-line" href="#">Download invoices</a>
+      </div>
+
+      <div class="two" data-stagger>
+        <div>
+          <!-- storage, with the ceiling made explicit -->
+          <section class="store-card" aria-labelledby="st-h">
+            <div class="between" style="align-items:flex-start;flex-wrap:wrap">
+              <h2 id="st-h" style="font-size:1.05rem">Storage</h2>
+              <span class="pill pill-info">Expandable to 100 GB</span>
+            </div>
+
+            <div class="store-nums mt">
+              <div>
+                <span class="k">In your pool</span>
+                <span class="v">40 GB</span>
+              </div>
+              <div>
+                <span class="k">Assigned</span>
+                <span class="v">26 GB</span>
+              </div>
+              <div>
+                <span class="k">Actually used</span>
+                <span class="v">13.5 GB</span>
+              </div>
+            </div>
+
+            <div class="ceiling">
+              <div class="track" data-meter role="img" aria-label="40 GB pool: 30 GB from the Business plan plus 10 GB bought, out of a 100 GB ceiling">
+                <span class="fill" style="width:30%"></span>
+                <span class="extra" style="width:10%"></span>
+              </div>
+              <div class="marks">
+                <span>30 GB plan &middot; 10 GB bought</span>
+                <span>100 GB ceiling</span>
+              </div>
+            </div>
+
+            <div class="blocks">
+              <div style="flex:1;min-width:190px">
+                <b style="font-size:.95rem;color:var(--tx-1);display:block">Need more room?</b>
+                <span class="sm mut">&#8358;100 a gigabyte a year, renewing with the plan. Added to the pool immediately.</span>
+              </div>
+              <a class="btn btn-pri" href="#">Add 10 GB</a>
+            </div>
+          </section>
+
+          <!-- invoices -->
+          <h2 style="font-size:1.05rem;margin-top:34px">Invoices</h2>
+          <div class="tbl-wrap mt">
+            <table class="data">
+              <caption class="sr-only">Invoice history</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">What for</th>
+                  <th scope="col" class="r">Amount</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"><span class="sr-only">Download</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="num">4 Mar 2026</td>
+                  <td>Business plan &middot; 1 year</td>
+                  <td class="r num">&#8358;29,670</td>
+                  <td><span class="inv-status"><span class="pill pill-ok">Paid</span></span></td>
+                  <td class="r"><a class="btn btn-line btn-sm" href="#">PDF</a></td>
+                </tr>
+                <tr>
+                  <td class="num">4 Mar 2026</td>
+                  <td>Extra storage &middot; 10 GB</td>
+                  <td class="r num">&#8358;1,075</td>
+                  <td><span class="inv-status"><span class="pill pill-ok">Paid</span></span></td>
+                  <td class="r"><a class="btn btn-line btn-sm" href="#">PDF</a></td>
+                </tr>
+                <tr>
+                  <td class="num">4 Mar 2025</td>
+                  <td>Business plan &middot; 1 year</td>
+                  <td class="r num">&#8358;29,670</td>
+                  <td><span class="inv-status"><span class="pill pill-ok">Paid</span></span></td>
+                  <td class="r"><a class="btn btn-line btn-sm" href="#">PDF</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">Amounts include VAT at 7.5%. Invoices are kept for as long as Nigerian
+            tax law requires, and you can download any of them at any time.</p>
+        </div>
+
+        <!-- right column -->
+        <div class="stack">
+          <section class="plan-now">
+            <h2>Your plan</h2>
+            <div class="amt">
+              <b>&#8358;29,670</b><span>/ year</span>
+            </div>
+            <p class="sm" style="color:var(--tx-inv-3);margin-top:6px">&#8358;27,600 plus VAT</p>
+
+            <div style="margin-top:20px">
+              <div class="plan-row"><span>Plan</span><b>Business</b></div>
+              <div class="plan-row"><span>Domain</span><b class="mono" style="font-size:.88rem">adaobifoods.com</b></div>
+              <div class="plan-row"><span>Renews</span><b>4 March 2027</b></div>
+              <div class="plan-row"><span>Paid by</span><b>Bank transfer</b></div>
+            </div>
+
+            <div class="btn-row" style="margin-top:22px">
+              <button class="btn btn-white btn-sm" type="button" data-change-plan>Change plan</button>
+              <a class="btn btn-line btn-sm" href="#">Payment method</a>
+            </div>
+          </section>
+
+          <div class="note">
+            <h4>Yearly and monthly cost the same</h4>
+            <p>There is no discount for paying yearly &mdash; it is simply one payment to
+              remember instead of twelve. Switch whenever it suits your cash flow.</p>
+          </div>
+
+          <!-- change plan: upgrade now, downgrade at renewal -->
+          <section class="chg" data-plan-panel hidden aria-labelledby="chg-h">
+            <h3 id="chg-h" style="font-size:1rem">Change plan</h3>
+            <p class="sm mut mt-s">You are on <b style="color:var(--tx-1)">Business</b>, 30 GB
+              for &#8358;27,600 a year.</p>
+
+            <div class="chg-opts" role="radiogroup" aria-label="Choose a plan">
+              <label class="chg-opt">
+                <input type="radio" name="chgplan" value="starter"
+                       data-dir="down" data-net="12000" data-pool="10" data-name="Starter">
+                <span class="bd">
+                  <span class="top"><b>Starter</b><span class="pr">&#8358;12,000<i> / yr</i></span></span>
+                  <span class="ds">10 GB pool &middot; expandable to 25 GB</span>
+                </span>
+              </label>
+              <label class="chg-opt is-current">
+                <input type="radio" name="chgplan" value="business" checked
+                       data-dir="same" data-net="27600" data-pool="30" data-name="Business">
+                <span class="bd">
+                  <span class="top"><b>Business</b><span class="pr">&#8358;27,600<i> / yr</i></span></span>
+                  <span class="ds">30 GB pool &middot; your plan today</span>
+                </span>
+              </label>
+              <label class="chg-opt">
+                <input type="radio" name="chgplan" value="premium"
+                       data-dir="up" data-net="54000" data-pool="100" data-name="Premium">
+                <span class="bd">
+                  <span class="top"><b>Premium</b><span class="pr">&#8358;54,000<i> / yr</i></span></span>
+                  <span class="ds">100 GB pool &middot; priority support</span>
+                </span>
+              </label>
+            </div>
+
+            <!-- what actually happens, stated before anything is confirmed -->
+            <div class="chg-out" data-plan-out hidden>
+              <div class="chg-when" data-plan-when></div>
+              <ul class="chg-list" data-plan-list></ul>
+              <button class="btn btn-pri full btn-sm" type="button" data-plan-confirm>
+                <span data-plan-cta>Confirm</span>
+              </button>
+            </div>
+
+            <button class="btn btn-quiet full btn-sm mt-s" type="button" data-plan-cancel>Cancel</button>
+          </section>
+
+          <div class="note note-warn" data-plan-note>
+            <h4>Extra storage does not carry over</h4>
+            <p>The 10 GB you bought is attached to your current plan. Changing plan releases it,
+              and you would buy it again at &#8358;100 a gigabyte a year if you still need it. We say so
+              plainly before you confirm.</p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:1rem">Need a VAT invoice in the company name?</h3>
+            <p class="sm mut mt-s">Every invoice already carries your registered business name
+              and our VAT details. If something needs correcting,
+              <a href="../contact.html">tell us</a> and we will reissue it.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

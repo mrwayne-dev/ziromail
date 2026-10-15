@@ -1,0 +1,15 @@
+# Ziroemail
+User-agent: *
+Allow: /
+
+# The operations console is staff-only; signed-in surfaces hold no public content
+Disallow: /ops/
+Disallow: /mailadmin/
+Disallow: /mail/
+Disallow: /onboarding/
+Disallow: /checkout-payment.html
+Disallow: /checkout-transfer.html
+Disallow: /setup-device.html
+Disallow: /_screens.html
+
+Sitemap: https://ziroemail.com/sitemap.xml

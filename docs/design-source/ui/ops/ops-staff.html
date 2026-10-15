@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .person {
+    display: flex; gap: 15px; align-items: flex-start; padding: 18px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs); flex-wrap: wrap;
+  }
+  .person + .person { margin-top: 12px; }
+  .person .av { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: .92rem; flex: none; }
+  .person .bd { flex: 1; min-width: 190px; }
+  .person .bd b { font-size: .98rem; color: var(--tx-1); display: block; }
+  .person .bd .em { font-size: .85rem; color: var(--tx-3); }
+  .person .bd .last { font-size: .8rem; color: var(--tx-3); margin-top: 6px; display: block; }
+
+  .perms { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+  .perms span { font-size: .74rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--paper-2); color: var(--tx-2); border: 1px solid var(--line); }
+  .perms span.strong { background: var(--bad-bg); color: var(--bad); border-color: var(--bad-line); }
+
+  .grid-roles { display: grid; gap: 14px; margin-top: 16px; }
+  @media (min-width: 760px) { .grid-roles { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html" aria-current="page">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Staff and permissions</h1>
+        <p>Who works here and what each person can do. Anything that touches customer mail needs owner-level access and is always recorded.</p>
+      </div>
+      <button class="btn btn-pri btn-sm" type="button">Invite somebody</button>
+    </div>
+
+    <section aria-labelledby="pp-h">
+      <h2 id="pp-h" style="font-size:1.05rem">People</h2>
+      <p class="sm mut mt-s">Four accounts. Every sign-in requires two-factor authentication
+        &mdash; there is no way to turn that off for a staff account.</p>
+
+      <div style="margin-top:16px">
+        <article class="person">
+          <span class="av" aria-hidden="true">CO</span>
+          <div class="bd">
+            <b>Chidi Okeke</b>
+            <span class="em">chidi@zirostack.com</span>
+            <div class="perms">
+              <span class="strong">Owner</span>
+              <span>All accounts</span>
+              <span>Lock and unlock</span>
+              <span>Approve refunds</span>
+              <span>Restore backups</span>
+              <span class="strong">Can view customer mail</span>
+            </div>
+            <span class="last">Signed in today at 07:31 from Port Harcourt &middot; passkey</span>
+          </div>
+          <span class="pill pill-info">You</span>
+        </article>
+
+        <article class="person">
+          <span class="av" aria-hidden="true">YA</span>
+          <div class="bd">
+            <b>Yemi Adeleke</b>
+            <span class="em">yemi@zirostack.com</span>
+            <div class="perms">
+              <span class="strong">Owner</span>
+              <span>All accounts</span>
+              <span>Lock and unlock</span>
+              <span>Approve refunds</span>
+              <span>Restore backups</span>
+              <span class="strong">Can view customer mail</span>
+            </div>
+            <span class="last">Signed in today at 06:48 from Lagos &middot; authenticator app</span>
+          </div>
+          <button class="btn btn-line btn-sm" type="button">Change access</button>
+        </article>
+
+        <article class="person">
+          <span class="av" aria-hidden="true">NA</span>
+          <div class="bd">
+            <b>Ngozi Ani</b>
+            <span class="em">ngozi@zirostack.com</span>
+            <div class="perms">
+              <span>Support</span>
+              <span>Read accounts</span>
+              <span>Answer support messages</span>
+              <span>Request refunds</span>
+              <span>Re-check DNS</span>
+            </div>
+            <span class="last">Signed in yesterday at 17:02 from Port Harcourt &middot; authenticator app</span>
+          </div>
+          <button class="btn btn-line btn-sm" type="button">Change access</button>
+        </article>
+
+        <article class="person">
+          <span class="av" aria-hidden="true">TB</span>
+          <div class="bd">
+            <b>Tunde Balogun</b>
+            <span class="em">tunde@zirostack.com</span>
+            <div class="perms">
+              <span>Support</span>
+              <span>Read accounts</span>
+              <span>Answer support messages</span>
+              <span>Request refunds</span>
+            </div>
+            <span class="last">Invited 26 September &mdash; has not signed in yet</span>
+          </div>
+          <button class="btn btn-line btn-sm" type="button">Resend invitation</button>
+        </article>
+      </div>
+    </section>
+
+    <section style="margin-top:34px" aria-labelledby="rl-h">
+      <h2 id="rl-h" style="font-size:1.05rem">What each role can do</h2>
+      <div class="grid-roles">
+        <div class="card">
+          <h3 style="font-size:.98rem">Support</h3>
+          <p class="sm mut mt-s">Read any account, answer support messages, re-check DNS records, request a
+            refund, open a customer's admin dashboard read-only.</p>
+          <p class="sm mut mt-s"><b style="color:var(--tx-1)">Cannot</b> lock an account, approve
+            a refund, restore a backup, or read anybody's mail.</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:.98rem">Engineer</h3>
+          <p class="sm mut mt-s">Everything Support can do, plus lock and unlock accounts, restore
+            backups, and move a domain to the backup relay.</p>
+          <p class="sm mut mt-s"><b style="color:var(--tx-1)">Cannot</b> approve refunds, change
+            staff access, or read anybody's mail.</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:.98rem">Owner</h3>
+          <p class="sm mut mt-s">Everything, including approving refunds, changing staff access,
+            and &mdash; where a customer has asked in writing &mdash; opening a mailbox.</p>
+          <p class="sm mut mt-s">Two owners minimum, so nobody can lock themselves out and no
+            single person can act unchecked.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="note note-bad mt" style="max-width:62ch">
+      <h4>Reading a customer's mail</h4>
+      <p>Only an owner can, only with the customer's written request attached, and the customer is
+        emailed automatically when it happens. The mailbox owner sees a permanent entry in their
+        own activity log. This has been used twice since launch, both times to recover mail after
+        an account compromise, both times at the customer's request.</p>
+      <a class="tlink mt" href="ops-audit.html">Both occasions are in the audit trail</a>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

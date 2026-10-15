@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose your plan — Ziroemail</title>
+<meta name="description" content="Pick the plan for your domain and pay to activate it.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ob-hdr { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 60; }
+  .ob-hdr .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .ob-help { font-size: .88rem; font-weight: 600; color: var(--blue); display: inline-flex; align-items: center; gap: 8px; }
+
+  .ob { padding-block: 30px 90px; }
+  .ob-grid { display: grid; gap: 28px; }
+  @media (min-width: 1000px) { .ob-grid { grid-template-columns: 1.55fr 1fr; align-items: start; gap: 46px; } }
+
+  /* the domain this plan is for, stated once at the top so it is never ambiguous */
+  .for-dom {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: var(--paper-2); border-radius: var(--r-xs); margin-top: 20px;
+  }
+  .for-dom .k { font-size: .8rem; color: var(--tx-3); display: block; }
+  .for-dom .v { font-family: var(--mono); font-size: 1rem; color: var(--tx-1); font-weight: 500; }
+
+  /* plan cards as radios */
+  .plans { display: grid; gap: 12px; margin-top: 22px; }
+  .plan-opt {
+    display: flex; gap: 15px; align-items: flex-start; padding: 19px 20px; cursor: pointer;
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); background: #fff;
+    transition: border-color .16s, background .16s;
+  }
+  .plan-opt:hover { border-color: var(--tx-3); }
+  .plan-opt input { margin: 3px 0 0; flex: none; width: 18px; height: 18px; accent-color: var(--blue); }
+  .plan-opt:has(input:checked) { border-color: var(--blue); background: var(--blue-050); }
+  .plan-opt:has(input:focus-visible) { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .plan-opt .bd { flex: 1; min-width: 0; }
+  .plan-opt .top { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; }
+  .plan-opt .nm { font-size: 1.05rem; font-weight: 650; color: var(--tx-1); }
+  .plan-opt .pr { font-size: 1.15rem; font-weight: 650; color: var(--tx-1); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .plan-opt .pr span { font-size: .84rem; font-weight: 500; color: var(--tx-3); }
+  .plan-opt .ds { font-size: .88rem; color: var(--tx-3); margin-top: 5px; }
+  .plan-opt .tag {
+    display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--blue); background: var(--blue-100);
+    padding: 2px 8px; border-radius: 999px; margin-left: 8px; vertical-align: middle;
+  }
+
+  /* billing term switch */
+  .term { display: inline-flex; padding: 4px; background: var(--paper-2); border-radius: 999px; gap: 3px; }
+  .term button {
+    border: 0; background: none; cursor: pointer; padding: 8px 18px; border-radius: 999px;
+    font-size: .89rem; font-weight: 600; color: var(--tx-3); font-family: inherit;
+  }
+  .term button[aria-pressed="true"] { background: #fff; color: var(--tx-1); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+  /* payment methods */
+  .pays { display: grid; gap: 10px; margin-top: 14px; }
+  .pay {
+    display: flex; gap: 13px; align-items: flex-start; padding: 15px 17px; cursor: pointer;
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); background: #fff;
+  }
+  .pay:hover { border-color: var(--tx-3); }
+  .pay input { margin: 2px 0 0; flex: none; width: 18px; height: 18px; accent-color: var(--blue); }
+  .pay:has(input:checked) { border-color: var(--blue); background: var(--blue-050); }
+  .pay .bd b { display: block; font-size: .95rem; color: var(--tx-1); }
+  .pay .bd span { display: block; font-size: .85rem; color: var(--tx-3); margin-top: 3px; }
+
+  /* order summary */
+  .sum { border: 1px solid var(--line); border-radius: var(--r); background: #fff; padding: 24px; position: sticky; top: 84px; }
+  .sum h2 { font-size: 1rem; }
+  .sum .row { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+  .sum .row span { color: var(--tx-3); }
+  .sum .row b { color: var(--tx-1); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .sum .tot { display: flex; justify-content: space-between; gap: 14px; align-items: baseline; padding-top: 16px; }
+  .sum .tot span { font-size: .95rem; color: var(--tx-1); font-weight: 600; }
+  .sum .tot b { font-size: 1.5rem; font-weight: 650; letter-spacing: -.03em; color: var(--tx-1); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ob-hdr">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html" aria-label="Ziroemail home">
+      <img class="logo" src="../assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="ob-help" href="../contact.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6.2 6a1.8 1.8 0 1 1 2.3 1.7c-.4.2-.5.5-.5.8v.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11.4" r=".9" fill="currentColor"/>
+      </svg>
+      Get help on WhatsApp
+    </a>
+  </div>
+</header>
+
+<main id="main" class="ob">
+  <div class="wrap">
+
+    <div class="steps" aria-label="Setup progress">
+      <span class="step done"><span class="n">1</span> Domain</span>
+      <span class="step-line"></span>
+      <span class="step now" aria-current="step"><span class="n">2</span> Plan &amp; payment</span>
+      <span class="step-line"></span>
+      <span class="step"><span class="n">3</span> Records</span>
+      <span class="step-line"></span>
+      <span class="step"><span class="n">4</span> Mailboxes</span>
+    </div>
+
+    <div class="ob-grid">
+      <div>
+        <h1 style="font-size:clamp(1.7rem,1.4rem + 1.3vw,2.3rem)">Choose your plan</h1>
+        <p class="lead mt-s" style="max-width:54ch">
+          One plan covers this domain and every mailbox on it. Storage is a single pool you
+          divide however you like &mdash; you are never charged per person.
+        </p>
+
+        <div class="for-dom">
+          <span>
+            <span class="k">Setting up</span>
+            <span class="v">adaobifoods.com</span>
+          </span>
+          <a class="btn btn-line btn-sm" href="onboard-domain.html">Change domain</a>
+        </div>
+
+        <form class="mt-l" data-demo-form data-next="onboard-records.html" novalidate>
+
+          <div class="between" style="flex-wrap:wrap;gap:12px;align-items:center">
+            <h2 style="font-size:1.1rem">Plans</h2>
+            <div class="term" role="group" aria-label="Billing period">
+              <button type="button" aria-pressed="true" data-term="year">Yearly</button>
+              <button type="button" aria-pressed="false" data-term="month">Monthly</button>
+            </div>
+          </div>
+          <p class="sm mut mt-s">Yearly and monthly cost the same. Yearly is simply one payment
+            to remember instead of twelve.</p>
+
+          <fieldset class="plans" style="border:0;padding:0;margin:0">
+            <legend class="sr-only">Choose a plan</legend>
+
+            <label class="plan-opt">
+              <input type="radio" name="plan" value="starter"
+                     data-year="12,000" data-month="1,100" data-pool="10 GB">
+              <span class="bd">
+                <span class="top">
+                  <span class="nm">Starter</span>
+                  <span class="pr"><span data-price>&#8358;12,000</span><span data-per> / year</span></span>
+                </span>
+                <span class="ds">10 GB shared across unlimited mailboxes. Expandable to 25 GB.
+                  Right for a team of two to five.</span>
+              </span>
+            </label>
+
+            <label class="plan-opt">
+              <input type="radio" name="plan" value="business" checked
+                     data-year="27,600" data-month="2,500" data-pool="30 GB">
+              <span class="bd">
+                <span class="top">
+                  <span class="nm">Business <span class="tag">Most chosen</span></span>
+                  <span class="pr"><span data-price>&#8358;27,600</span><span data-per> / year</span></span>
+                </span>
+                <span class="ds">30 GB shared across unlimited mailboxes. Expandable to 100 GB.
+                  Right for most businesses.</span>
+              </span>
+            </label>
+
+            <label class="plan-opt">
+              <input type="radio" name="plan" value="premium"
+                     data-year="54,000" data-month="5,000" data-pool="100 GB">
+              <span class="bd">
+                <span class="top">
+                  <span class="nm">Premium</span>
+                  <span class="pr"><span data-price>&#8358;54,000</span><span data-per> / year</span></span>
+                </span>
+                <span class="ds">100 GB shared across unlimited mailboxes. Priority support
+                  and a named contact.</span>
+              </span>
+            </label>
+          </fieldset>
+
+          <h2 style="font-size:1.1rem;margin-top:34px">How would you like to pay?</h2>
+          <div class="pays">
+            <label class="pay">
+              <input type="radio" name="pay" value="card" checked>
+              <span class="bd">
+                <b>Card</b>
+                <span>Naira or dollar card. Your domain is active the moment payment clears.</span>
+              </span>
+            </label>
+            <label class="pay">
+              <input type="radio" name="pay" value="transfer">
+              <span class="bd">
+                <b>Bank transfer</b>
+                <span>We send account details and activate as soon as it lands &mdash; usually
+                  within a few hours on a working day.</span>
+              </span>
+            </label>
+          </div>
+
+          <button class="btn btn-pri btn-lg full mt-l" type="submit">Pay and continue setup</button>
+          <p class="hint" style="text-align:center">You can cancel within 14 days for a full
+            refund, no questions asked.</p>
+        </form>
+      </div>
+
+      <aside>
+        <div class="sum">
+          <h2>Your order</h2>
+          <div class="row">
+            <span>Domain</span><b class="mono" style="font-size:.85rem">adaobifoods.com</b>
+          </div>
+          <div class="row">
+            <span>Plan</span><b data-sum-plan>Business</b>
+          </div>
+          <div class="row">
+            <span>Storage pool</span><b data-sum-pool>30 GB</b>
+          </div>
+          <div class="row">
+            <span>Mailboxes</span><b>Unlimited</b>
+          </div>
+          <div class="row">
+            <span>Billed</span><b data-sum-term>Yearly</b>
+          </div>
+          <div class="row">
+            <span>VAT at 7.5%</span><b data-sum-vat>&#8358;2,250</b>
+          </div>
+          <div class="tot">
+            <span>Total</span><b data-sum-total>&#8358;29,670</b>
+          </div>
+          <p class="hint">Renews automatically. Cancel any time from your dashboard.</p>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

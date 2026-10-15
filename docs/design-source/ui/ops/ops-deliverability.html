@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deliverability — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .dl-grid { display: grid; gap: 18px; }
+  @media (min-width: 1040px) { .dl-grid { grid-template-columns: 1.5fr 1fr; align-items: start; } }
+
+  /* blocklist board: one row per IP, one cell per list */
+  .bl { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 620px; }
+  .bl th { text-align: left; padding: 9px 12px; font-size: .7rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--tx-2); border-bottom: 1px solid var(--line-2); }
+  .bl td { padding: 11px 12px; border-bottom: 1px solid var(--line); }
+  .bl tbody tr:last-child td { border-bottom: none; }
+  .lamp { display: inline-flex; align-items: center; gap: 7px; font-size: .82rem; font-weight: 600; }
+  .lamp::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .lamp.listed { color: var(--bad); }
+  .lamp.listed::before { background: var(--bad); }
+
+  /* inbox placement, one bar per provider */
+  .place { display: grid; gap: 14px; margin-top: 16px; }
+  .place .p { display: grid; grid-template-columns: 96px 1fr 52px; gap: 12px; align-items: center; }
+  .place .nm { font-size: .875rem; color: var(--tx-2); font-weight: 500; }
+  .place .track { height: 10px; border-radius: 999px; background: var(--paper-2); overflow: hidden; display: flex; }
+  .place .inbox { background: var(--ok); }
+  .place .spam { background: var(--warn); }
+  .place .miss { background: var(--bad); }
+  .place .pc { font-size: .85rem; font-weight: 650; text-align: right; font-variant-numeric: tabular-nums; color: var(--tx-1); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; font-size: .8rem; color: var(--tx-3); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  /* 14-day trend, drawn from the real figures */
+  .spark { width: 100%; height: 76px; display: block; margin-top: 14px; }
+  .spark .ln { fill: none; stroke: var(--blue); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .spark .lim { stroke: var(--bad); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+  .spark .ar { fill: var(--blue-050); }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html" aria-current="page">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Deliverability</h1>
+        <p>The numbers that decide whether the business lives. A blocklisting affects every
+          customer at once, so this page gets checked first, every day.</p>
+      </div>
+      <a class="btn btn-line btn-sm" href="ops-queue.html">Delivery log</a>
+    </div>
+
+    <section aria-labelledby="dm-h">
+      <h2 id="dm-h" class="sr-only">Headline deliverability figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Bounce rate</span>
+          <span class="v">1.4%</span>
+          <span class="d up">limit 2.0%</span>
+        </div>
+        <div class="metric">
+          <span class="k">Complaints</span>
+          <span class="v">0.04%</span>
+          <span class="d up">limit 0.10%</span>
+        </div>
+        <div class="metric alert">
+          <span class="k">Oldest in queue</span>
+          <span class="v">18m</span>
+          <span class="d down">target under 5m</span>
+        </div>
+        <div class="metric">
+          <span class="k">Inbox placement</span>
+          <span class="v">96%</span>
+          <span class="d">across five providers</span>
+        </div>
+        <div class="metric">
+          <span class="k">DKIM signed</span>
+          <span class="v">100%</span>
+          <span class="d">outbound, all domains</span>
+        </div>
+        <div class="metric">
+          <span class="k">TLS on delivery</span>
+          <span class="v">99.2%</span>
+          <span class="d">0.8% recipient refused</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="dl-grid" style="margin-top:26px">
+      <div>
+        <!-- blocklists: the existential check -->
+        <section aria-labelledby="bl-h">
+          <h2 id="bl-h" style="font-size:1.05rem">Blocklist status</h2>
+          <p class="sm mut mt-s">Every sending IP against the four lists that matter to Nigerian
+            and international recipients. Polled every 15&nbsp;minutes.</p>
+          <div class="tbl-wrap mt">
+            <table class="bl">
+              <caption class="sr-only">Sending IP addresses against four blocklists</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Sending IP</th>
+                  <th scope="col">Spamhaus</th>
+                  <th scope="col">Barracuda</th>
+                  <th scope="col">SORBS</th>
+                  <th scope="col">SpamCop</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono">102.89.44.12</td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">102.89.44.13</td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">102.89.44.14</td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">102.89.44.15</td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                  <td><span class="lamp">Clear</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">A listing pages the on-call engineer immediately. The delisting steps and
+            each list's contact form are in the runbook.</p>
+        </section>
+
+        <!-- bounce trend -->
+        <section style="margin-top:32px" aria-labelledby="bt-h">
+          <h2 id="bt-h" style="font-size:1.05rem">Bounce rate, last 14 days</h2>
+          <p class="sm mut mt-s">The dashed line is 2%. Above it, recipient providers start
+            throttling us.</p>
+          <div class="card mt" style="padding:18px">
+            <svg class="spark" viewBox="0 0 280 60" preserveAspectRatio="none" role="img"
+                 aria-label="Bounce rate over 14 days, between 1.1 and 1.9 per cent, staying below the 2 per cent limit">
+              <path class="ar" d="M0,48 20,42 40,54 60,36 80,30 100,44 120,26 140,20 160,32 180,24 200,14 220,28 240,18 260,22 280,24 V60 H0Z"/>
+              <path class="ln" d="M0,48 20,42 40,54 60,36 80,30 100,44 120,26 140,20 160,32 180,24 200,14 220,28 240,18 260,22 280,24"/>
+              <path class="lim" d="M0,4 H280"/>
+            </svg>
+            <div class="between" style="font-size:.8rem;color:var(--tx-3);margin-top:6px">
+              <span>15 Sep</span><span>Peak 1.9% on 17 Sep</span><span>29 Sep</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- worst offenders -->
+        <section style="margin-top:32px" aria-labelledby="wo-h">
+          <h2 id="wo-h" style="font-size:1.05rem">Domains raising our averages</h2>
+          <p class="sm mut mt-s">One customer with a bad list damages delivery for everybody on the
+            same IP. These get a conversation before they get a limit.</p>
+          <div class="tbl-wrap mt">
+            <table class="ops">
+              <caption class="sr-only">Customer domains with the highest bounce and complaint rates</caption>
+              <thead class="wide">
+                <tr>
+                  <th scope="col">Domain</th>
+                  <th scope="col" class="num">Sent 7d</th>
+                  <th scope="col" class="num">Bounce</th>
+                  <th scope="col" class="num">Complaints</th>
+                  <th scope="col">State</th>
+                  <th scope="col"><span class="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="sev-high">
+                  <td class="mono wide">quickloans-ng.com</td>
+                  <td class="num">18,400</td>
+                  <td class="num" style="color:var(--bad);font-weight:650">11.2%</td>
+                  <td class="num" style="color:var(--bad);font-weight:650">0.62%</td>
+                  <td><span class="pill pill-bad">Rate limited</span></td>
+                  <td><a class="btn btn-pri btn-sm" href="ops-abuse-detail.html">Review</a></td>
+                </tr>
+                <tr class="sev-med">
+                  <td class="mono wide">lagospropertyhub.com</td>
+                  <td class="num">6,110</td>
+                  <td class="num" style="color:var(--warn);font-weight:650">4.8%</td>
+                  <td class="num">0.09%</td>
+                  <td><span class="pill pill-warn">Watching</span></td>
+                  <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+                </tr>
+                <tr class="sev-low">
+                  <td class="mono wide">bellohaulage.com</td>
+                  <td class="num">890</td>
+                  <td class="num">2.6%</td>
+                  <td class="num">0.00%</td>
+                  <td><span class="pill">Normal</span></td>
+                  <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- right rail -->
+      <div class="stack">
+        <div class="card">
+          <h3 style="font-size:1rem">Inbox placement</h3>
+          <p class="sm mut mt-s">Weekly seed test: 40 addresses across five providers.</p>
+          <div class="place">
+            <div class="p">
+              <span class="nm">Gmail</span>
+              <span class="track" role="img" aria-label="Gmail: 98 per cent inbox, 2 per cent spam"><span class="inbox" style="width:98%"></span><span class="spam" style="width:2%"></span></span>
+              <span class="pc">98%</span>
+            </div>
+            <div class="p">
+              <span class="nm">Outlook</span>
+              <span class="track" role="img" aria-label="Outlook: 94 per cent inbox, 6 per cent spam"><span class="inbox" style="width:94%"></span><span class="spam" style="width:6%"></span></span>
+              <span class="pc">94%</span>
+            </div>
+            <div class="p">
+              <span class="nm">Yahoo</span>
+              <span class="track" role="img" aria-label="Yahoo: 96 per cent inbox, 4 per cent spam"><span class="inbox" style="width:96%"></span><span class="spam" style="width:4%"></span></span>
+              <span class="pc">96%</span>
+            </div>
+            <div class="p">
+              <span class="nm">Zoho</span>
+              <span class="track" role="img" aria-label="Zoho: 100 per cent inbox"><span class="inbox" style="width:100%"></span></span>
+              <span class="pc">100%</span>
+            </div>
+            <div class="p">
+              <span class="nm">Others</span>
+              <span class="track" role="img" aria-label="Other providers: 92 per cent inbox, 5 per cent spam, 3 per cent not delivered"><span class="inbox" style="width:92%"></span><span class="spam" style="width:5%"></span><span class="miss" style="width:3%"></span></span>
+              <span class="pc">92%</span>
+            </div>
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--ok)"></i> Inbox</span>
+            <span><i style="background:var(--warn)"></i> Spam folder</span>
+            <span><i style="background:var(--bad)"></i> Not delivered</span>
+          </div>
+          <p class="hint">Tested every Monday at 05:00. Outlook is the number worth watching &mdash;
+            most Nigerian businesses correspond with Outlook users.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Authentication</h3>
+          <div class="between mt-s" style="font-size:.9rem">
+            <span class="mut">Domains with SPF</span><b class="num">412 / 412</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">Domains with DKIM</span><b class="num">409 / 412</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">Domains with DMARC</span><b class="num">361 / 412</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">DMARC at p=reject</span><b class="num">88</b>
+          </div>
+          <a class="tlink mt" href="ops-domains.html">See which are missing</a>
+        </div>
+
+        <div class="note note-warn">
+          <h4>Queue age is over target</h4>
+          <p>One recipient domain began deferring at 07:12. Delivery is retrying on schedule and
+            nothing has been lost, but the oldest message is now 18&nbsp;minutes old. If it passes
+            45&nbsp;minutes, move that domain to the backup relay.</p>
+          <a class="tlink mt" href="ops-queue.html">Open the delivery log</a>
+        </div>
+
+        <div class="note">
+          <h4>Why this page exists</h4>
+          <p>Shared IP reputation is the largest technical risk in email hosting. One customer
+            sending a purchased list can put every other customer's mail in the spam folder.
+            Catching it here is cheaper than earning a reputation back.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

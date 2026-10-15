@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Switching to Ziroemail — Ziroemail</title>
+<meta name="description" content="Move from Google Workspace, cPanel or anywhere else without losing a day. Your old mail keeps working while we import your history.">
+<!-- seo:start -->
+<link rel="canonical" href="https://ziroemail.com/switching">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ziroemail">
+<meta property="og:locale" content="en_NG">
+<meta property="og:url" content="https://ziroemail.com/switching">
+<meta property="og:title" content="Switching to Ziroemail without losing a day">
+<meta property="og:description" content="Move from Google Workspace, cPanel or Microsoft 365. Your current email keeps working while we import your history.">
+<meta property="og:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Switching to Ziroemail without losing a day">
+<meta name="twitter:description" content="Move from Google Workspace, cPanel or Microsoft 365. Your current email keeps working while we import your history.">
+<meta name="twitter:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Ziroemail",
+  "url": "https://ziroemail.com",
+  "logo": "https://ziroemail.com/assets/img/ziroemail-icon.png",
+  "description": "Business email hosting for Nigerian companies, on your own domain.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Port Harcourt",
+    "addressRegion": "Rivers State",
+    "addressCountry": "NG"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "support@ziroemail.com",
+    "areaServed": "NG",
+    "availableLanguage": "English"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Will we lose any email during the move?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Your old mailbox keeps receiving until the MX record change takes effect, and anything that arrives there during the changeover is collected afterwards. Nothing is deleted at the old provider either — we copy, we do not move."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do my staff have to do anything?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each person sets up their phone once, which takes about thirty seconds from a WhatsApp link. On a computer, Outlook and Apple Mail usually find the new settings themselves after a password prompt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does the whole thing take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The setup is ten minutes. DNS changes usually take effect within thirty minutes, sometimes a few hours. The mail import runs in the background and depends on how much history you have — a few gigabytes is typically under an hour."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we keep our old addresses working for a while?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It is common to forward the old address into the new mailbox for a month or two while you update letterheads and tell customers. We will set that up with you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about calendars and contacts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Contacts come across with your mail. Calendars work through your phone's own calendar app using the standard protocols — we do not have a built-in calendar screen yet, and we would rather say so than imply otherwise."
+      }
+    }
+  ]
+}
+</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https:/images.unsplash.com">
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* set before first paint so the hero never flashes in unanimated */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .m-hero {
+    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
+    padding-block: calc(var(--hdr-h) + 56px) 84px;
+  }
+  .m-hero .wrap { position: relative; z-index: 2; }
+  .m-hero h1 { color: #fff; max-width: 15ch; }
+  .m-hero .lead { margin-top: 20px; max-width: 50ch; }
+  .m-hero .shape { color: var(--blue); }
+  .mh1 { width: 440px; height: 440px; right: -150px; top: -170px; }
+
+  /* timeline of the move */
+  .tl { position: relative; padding-left: 34px; }
+  .tl::before { content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .tl-step { position: relative; padding-bottom: 34px; }
+  .tl-step:last-child { padding-bottom: 0; }
+  .tl-step::before {
+    content: ""; position: absolute; left: -32px; top: 4px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff; border: 2px solid var(--blue);
+  }
+  .tl-step.done::before { background: var(--blue); }
+  .tl-step h3 { font-size: 1.1rem; }
+  .tl-step p { font-size: .95rem; color: var(--tx-2); margin-top: 7px; }
+  .tl-when { font-family: var(--mono); font-size: .76rem; color: var(--blue); letter-spacing: .08em; text-transform: uppercase; }
+
+  .from-grid { display: grid; gap: 16px; }
+  @media (min-width: 720px) { .from-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .from-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .split-photo { display: grid; gap: 0; }
+  @media (min-width: 940px) { .split-photo { grid-template-columns: 1fr 1fr; } }
+  .sp-photo { position: relative; min-height: 300px; }
+  .sp-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sp-copy { padding: 52px var(--gutter); display: flex; flex-direction: column; justify-content: center; }
+  @media (min-width: 940px) { .sp-copy { padding: 84px 60px; } }
+
+  details.faq { border-bottom: 1px solid var(--line); }
+  details.faq summary {
+    cursor: pointer; padding: 24px 0; font-weight: 600; font-size: 1.06rem; color: var(--tx-1);
+    list-style: none; display: flex; justify-content: space-between; gap: 20px; align-items: center;
+  }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary::after {
+    content: ""; flex: none; width: 12px; height: 12px; border-right: 2px solid var(--tx-3);
+    border-bottom: 2px solid var(--tx-3); transform: rotate(45deg) translateY(-3px); transition: transform .2s;
+  }
+  details.faq[open] summary::after { transform: rotate(225deg) translateY(-3px); }
+  details.faq .body { padding: 0 0 24px; font-size: 1rem; color: var(--tx-2); line-height: 1.66; max-width: 72ch; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="hdr hdr-ink hdr-over">
+  <div class="wrap wrap-wide bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo logo-light" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37"><img class="logo logo-dark" src="assets/img/ziroemail-wordmark-black.png" alt="" aria-hidden="true" width="150" height="37">
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="migrate.html" aria-current="page">Switching</a>
+      <a href="help.html">Help</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="btn btn-line btn-sm" href="login.html">Sign in</a>
+      <a class="btn btn-pri btn-sm" href="signup.html">Get started</a>
+    </div>
+    <button class="burger" data-nav-toggle aria-expanded="false" aria-controls="mnav" aria-label="Open menu">
+      <svg class="i-open" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-close" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mnav" id="mnav">
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="migrate.html">Switching</a>
+    <a href="help.html">Help centre</a>
+    <div class="btn-row">
+      <a class="btn btn-line full" href="login.html">Sign in</a>
+      <a class="btn btn-pri full" href="signup.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="m-hero">
+    <span class="shape shape-ring mh1" aria-hidden="true"></span>
+    <div class="wrap" data-hero>
+      <span class="eyebrow" style="margin-bottom:20px;display:block">Switching</span>
+      <h1>Move across without losing a day.</h1>
+      <p class="lead">Your current email keeps receiving the whole time. We import your
+        history in the background and only cut over once every record checks out.</p>
+      <div class="btn-row mt-l">
+        <a class="btn btn-pri btn-lg" href="signup.html">Start the move</a>
+        <a class="btn btn-line btn-lg" href="contact.html">Ask us to do it</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WHERE FROM ===== -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head mb-l" data-reveal>
+        <span class="eyebrow">Where you are now</span>
+        <h2>Wherever your mail lives today</h2>
+        <p class="lead">The process is the same in every case. Only the screen you click through on the
+          old provider changes.</p>
+      </div>
+
+      <div class="from-grid" data-stagger>
+        <div class="card">
+          <h4>Google Workspace</h4>
+          <p class="sm mut mt-s">Usually a cost decision. We import over IMAP and your
+            calendar keeps working through your phone.</p>
+        </div>
+        <div class="card">
+          <h4>cPanel or shared hosting</h4>
+          <p class="sm mut mt-s">The most common one. Mail moves off the web server, which
+            is normally where the spam problem started.</p>
+        </div>
+        <div class="card">
+          <h4>Microsoft 365</h4>
+          <p class="sm mut mt-s">Same import path. Outlook keeps working &mdash; it finds
+            the new settings by itself.</p>
+        </div>
+        <div class="card">
+          <h4>A free Gmail address</h4>
+          <p class="sm mut mt-s">Nothing to migrate from, really. We set up your domain and
+            you forward the old address for a while.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TIMELINE ===== -->
+  <section class="sec bg-soft">
+    <div class="wrap">
+      <div class="sec-head mb-l" data-reveal>
+        <span class="eyebrow">How it goes</span>
+        <h2>What actually happens, in order</h2>
+      </div>
+
+      <div class="split" style="align-items:start">
+        <div class="tl" data-stagger>
+          <div class="tl-step done" data-reveal="left">
+            <span class="tl-when">Day one &middot; 10 minutes</span>
+            <h3>You connect the domain</h3>
+            <p>We generate your records and show you where to paste them. Nothing has changed
+              for your staff yet &mdash; mail still arrives where it always did.</p>
+          </div>
+          <div class="tl-step done" data-reveal="left">
+            <span class="tl-when">Day one &middot; background</span>
+            <h3>We copy your old mail across</h3>
+            <p>Folders, attachments and history move over a secure connection. You watch the
+              progress per mailbox. Your old provider is untouched.</p>
+          </div>
+          <div class="tl-step" data-reveal="left">
+            <span class="tl-when">When records pass</span>
+            <h3>The switch happens</h3>
+            <p>Once all four records verify, new mail starts arriving at Ziroemail. Anything
+              still in flight to the old server is collected too.</p>
+          </div>
+          <div class="tl-step" data-reveal="left">
+            <span class="tl-when">Same afternoon</span>
+            <h3>Staff set up their phones</h3>
+            <p>Each person gets a link on WhatsApp and taps once. Most teams are fully moved
+              before the end of the working day.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="note">
+            <h4>There is no dark window</h4>
+            <p>This is the part people worry about, so it is worth stating plainly: at no
+              point does your business stop receiving email. The old mailbox keeps working
+              right up until the moment the new one takes over.</p>
+          </div>
+
+          <div class="note note-warn mt">
+            <h4>Large archives are quoted separately</h4>
+            <p>A normal migration is included. If you are moving tens of gigabytes or dozens
+              of mailboxes, we scope that as its own job and tell you the cost before starting
+              &mdash; we would rather quote it than rush it.</p>
+          </div>
+
+          <a class="tlink mt-l" href="contact.html">Talk to us about your move
+            <svg width="15" height="11" viewBox="0 0 17 13" fill="none" aria-hidden="true"><path d="M10.2 1 15.5 6.5 10.2 12M15 6.5H1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AUTOMATIC SETUP ===== -->
+  <section class="split-photo bg-ink">
+    <figure class="sp-photo" style="margin:0" data-reveal="left">
+      <img src="https:/images.unsplash.com/photo-1739301674182-452a0f2b14dd?w=1000&q=80&fm=jpg&fit=crop"
+           alt="Three colleagues reviewing something together on a laptop"
+           width="1000" height="760" loading="lazy" decoding="async">
+    </figure>
+    <div class="sp-copy" data-reveal="right">
+      <span class="eyebrow" style="margin-bottom:18px">Automatic setup</span>
+      <h2>Or do not touch it at all</h2>
+      <p class="lead mt">Pick your registrar and we hand you the exact records, or a link that
+        adds them in one click. Most domains verify within the hour.</p>
+      <ul class="ticks mt-l">
+        <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#3A86DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>You paste four records, or approve one link</span></li>
+        <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#3A86DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The import runs on its own and tells you when it is done</span></li>
+        <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#3A86DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nothing to arrange and nobody to wait for</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="sec">
+    <div class="wrap wrap-tight">
+      <div class="sec-head mb-l" data-reveal>
+        <span class="eyebrow">Questions</span>
+        <h2>The things people ask first</h2>
+      </div>
+
+      <details class="faq" open>
+        <summary>Will we lose any email during the move?</summary>
+        <div class="body">No. Your old mailbox keeps receiving until the MX record change takes
+          effect, and anything that arrives there during the changeover is collected afterwards.
+          Nothing is deleted at the old provider either &mdash; we copy, we do not move.</div>
+      </details>
+
+      <details class="faq">
+        <summary>Do my staff have to do anything?</summary>
+        <div class="body">Each person sets up their phone once, which takes about thirty seconds
+          from a WhatsApp link. On a computer, Outlook and Apple Mail usually find the new
+          settings themselves after a password prompt.</div>
+      </details>
+
+      <details class="faq">
+        <summary>How long does the whole thing take?</summary>
+        <div class="body">The setup is ten minutes. DNS changes usually take effect within thirty
+          minutes, sometimes a few hours. The mail import runs in the background and depends on
+          how much history you have &mdash; a few gigabytes is typically under an hour.</div>
+      </details>
+
+      <details class="faq">
+        <summary>Can we keep our old addresses working for a while?</summary>
+        <div class="body">Yes. It is common to forward the old address into the new mailbox for a
+          month or two while you update letterheads and tell customers. We will set that up with
+          you.</div>
+      </details>
+
+      <details class="faq">
+        <summary>What about calendars and contacts?</summary>
+        <div class="body">Contacts come across with your mail. Calendars work through your phone's
+          own calendar app using the standard protocols &mdash; we do not have a built-in calendar
+          screen yet, and we would rather say so than imply otherwise.</div>
+      </details>
+    </div>
+  </section>
+
+  <section class="sec bg-soft center">
+    <div class="wrap wrap-tight">
+      <h2>Ready when you are</h2>
+      <p class="lead mt">Start it yourself, or tell us about your setup and we will handle it.</p>
+      <div class="btn-row center mt-l">
+        <a class="btn btn-pri btn-lg" href="signup.html">Start the move</a>
+        <a class="btn btn-line btn-lg" href="contact.html">Ask a question first</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div>
+        <img class="logo" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+        <p class="sm" style="margin-top:16px;max-width:34ch;color:var(--tx-inv-3)">
+          Business email for Nigerian companies. Built and run by Zirostack in Port Harcourt, Rivers State.
+        </p>
+        <a class="tlink" style="margin-top:18px;color:var(--blue-300);font-size:.9rem" href="status.html">System status</a>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="setup-device.html">Phone setup</a>
+        <a href="migrate.html">Switching</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="help.html">Help centre</a>
+        <a href="contact.html">Contact us</a>
+        <a href="status.html">Status page</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="legal-terms.html">Terms of service</a>
+        <a href="legal-privacy.html">Privacy policy</a>
+        <a href="legal-aup.html">Acceptable use</a>
+        <a href="legal-refunds.html">Refund policy</a>
+      </div>
+    </div>
+    <div class="ftr-btm">
+      <span>&copy; 2026 Zirostack Ltd.</span>
+      <span>Port Harcourt, Rivers State &middot; VAT charged at 7.5%</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

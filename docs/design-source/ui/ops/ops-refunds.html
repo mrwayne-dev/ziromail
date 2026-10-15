@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refunds — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .rf {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs);
+    padding: 20px; border-left: 4px solid var(--warn);
+  }
+  .rf + .rf { margin-top: 14px; }
+  .rf.done { border-left-color: var(--ok); }
+  .rf-top { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-start; }
+  .rf-top h3 { font-size: 1.05rem; }
+  .rf-amt { font-size: 1.35rem; font-weight: 650; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--tx-1); white-space: nowrap; }
+
+  .kv { display: grid; gap: 0; margin-top: 14px; }
+  .kv .r { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: .87rem; }
+  .kv .r:last-child { border-bottom: none; }
+  .kv .r span { color: var(--tx-3); }
+  .kv .r b { color: var(--tx-1); font-weight: 600; text-align: right; }
+
+  .rf-acts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html" aria-current="page">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Refunds</h1>
+        <p>Money going back out. Anything above &#8358;20,000 needs a second person to approve it, and every refund records who asked and who agreed.</p>
+      </div>
+      <button class="btn btn-line btn-sm" type="button">Start a refund</button>
+    </div>
+
+    <section aria-labelledby="rm-h">
+      <h2 id="rm-h" class="sr-only">Refund figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Waiting</span>
+          <span class="v">2</span>
+          <span class="d">&#8358;48,375 total</span>
+        </div>
+        <div class="metric">
+          <span class="k">Paid this month</span>
+          <span class="v">3</span>
+          <span class="d">&#8358;64,500</span>
+        </div>
+        <div class="metric">
+          <span class="k">Refund rate</span>
+          <span class="v">1.2%</span>
+          <span class="d">of revenue this year</span>
+        </div>
+        <div class="metric">
+          <span class="k">Commonest reason</span>
+          <span class="v">DNS</span>
+          <span class="d">setup never finished</span>
+        </div>
+        <div class="metric">
+          <span class="k">Median time to pay</span>
+          <span class="v">2 days</span>
+          <span class="d">approval to bank</span>
+        </div>
+        <div class="metric">
+          <span class="k">Within 14 days</span>
+          <span class="v">4 of 5</span>
+          <span class="d">inside the guarantee</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:26px" aria-labelledby="pd-h">
+      <h2 id="pd-h" style="font-size:1.05rem">Waiting for a decision</h2>
+
+      <article class="rf" aria-labelledby="r1-h">
+        <div class="rf-top">
+          <div>
+            <h3 id="r1-h">Chioma Textiles</h3>
+            <p class="sm mut" style="margin-top:3px">
+              <span class="mono">chiomatextiles.ng</span> &middot; Business plan &middot; paid
+              20&nbsp;September 2026</p>
+          </div>
+          <span class="rf-amt">&#8358;29,670</span>
+        </div>
+
+        <div class="kv">
+          <div class="r"><span>Reason given</span><b style="max-width:28ch">Could not get the DNS records added, gave up after nine days</b></div>
+          <div class="r"><span>Days since payment</span><b>9 &mdash; inside the 14-day guarantee</b></div>
+          <div class="r"><span>Mail ever delivered</span><b>No, not one message</b></div>
+          <div class="r"><span>Support contact</span><b>3 emails, no reply to any</b></div>
+          <div class="r"><span>Reached the records step</span><b>No &mdash; stopped at payment</b></div>
+          <div class="r"><span>Requested by</span><b>Yemi A. &middot; today, 07:40</b></div>
+        </div>
+
+        <p class="sm mut mt">Full refund is correct here. They paid, we never delivered a single
+          message, and it is within the guarantee. Worth one telephone call before paying it out
+          &mdash; if they simply never found the records page, that is worth knowing.</p>
+
+        <div class="rf-acts">
+          <button class="btn btn-pri btn-sm" type="button">Approve &#8358;29,670</button>
+          <button class="btn btn-line btn-sm" type="button">Call before deciding</button>
+          <button class="btn btn-quiet btn-sm" type="button">Decline with a reason</button>
+        </div>
+        <p class="hint">Over &#8358;20,000, so this needs a second approver. You are the second
+          approver on this one.</p>
+      </article>
+
+      <article class="rf" aria-labelledby="r2-h">
+        <div class="rf-top">
+          <div>
+            <h3 id="r2-h">Grace Interiors</h3>
+            <p class="sm mut" style="margin-top:3px">
+              <span class="mono">grace-interiors.com</span> &middot; Starter plan &middot; paid
+              22&nbsp;September 2026</p>
+          </div>
+          <span class="rf-amt">&#8358;16,125</span>
+        </div>
+
+        <div class="kv">
+          <div class="r"><span>Reason given</span><b style="max-width:28ch">Bought the wrong thing &mdash; wanted a website, not email</b></div>
+          <div class="r"><span>Days since payment</span><b>7 &mdash; inside the 14-day guarantee</b></div>
+          <div class="r"><span>Mail ever delivered</span><b>No</b></div>
+          <div class="r"><span>Mailboxes created</span><b>None</b></div>
+          <div class="r"><span>Requested by</span><b>Chidi O. &middot; yesterday, 16:12</b></div>
+        </div>
+
+        <p class="sm mut mt">Straightforward. Nothing was used, the reason is honest, and it is
+          inside the guarantee. Under &#8358;20,000, so one approver is enough.</p>
+
+        <div class="rf-acts">
+          <button class="btn btn-pri btn-sm" type="button">Approve &#8358;16,125</button>
+          <button class="btn btn-quiet btn-sm" type="button">Decline with a reason</button>
+        </div>
+      </article>
+    </section>
+
+    <section style="margin-top:34px" aria-labelledby="ph-h">
+      <h2 id="ph-h" style="font-size:1.05rem">Paid out this month</h2>
+      <div class="tbl-wrap mt">
+        <table class="ops">
+          <caption class="sr-only">Refunds paid this month</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="wide">Organisation</th>
+              <th scope="col">Reason</th>
+              <th scope="col" class="num">Amount</th>
+              <th scope="col">Approved by</th>
+              <th scope="col" class="num">Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Okonkwo &amp; Sons</td>
+              <td class="wide">Setup never completed</td>
+              <td class="num">&#8358;29,670</td>
+              <td>Yemi A. and Chidi O.</td>
+              <td class="num">18 Sep</td>
+            </tr>
+            <tr>
+              <td>Delta Print Works</td>
+              <td class="wide">Duplicate payment</td>
+              <td class="num">&#8358;16,125</td>
+              <td>Chidi O.</td>
+              <td class="num">11 Sep</td>
+            </tr>
+            <tr>
+              <td>Rivers Logistics</td>
+              <td class="wide">Closed the business</td>
+              <td class="num">&#8358;16,125</td>
+              <td>Yemi A.</td>
+              <td class="num">4 Sep</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="note mt" style="max-width:62ch">
+      <h4>What we promise</h4>
+      <p>Fourteen days, no questions, full amount &mdash; that is what the pricing page says, so
+        that is what we honour without argument. Outside fourteen days it is a judgement call, and
+        the deciding question is whether the service actually worked. If mail never flowed, refund
+        it however long ago they paid.</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your mailboxes — Ziroemail</title>
+<meta name="description" content="Create the first mailboxes on your domain and divide your storage pool between them.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ob-hdr { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 60; }
+  .ob-hdr .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .ob-help { font-size: .88rem; font-weight: 600; color: var(--blue); display: inline-flex; align-items: center; gap: 8px; }
+
+  .ob { padding-block: 30px 90px; }
+  .ob-grid { display: grid; gap: 28px; }
+  @media (min-width: 1040px) { .ob-grid { grid-template-columns: 1fr 300px; gap: 44px; align-items: start; } }
+
+  /* the pool summary sticks to the top of the column while you edit below */
+  .pool-card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r);
+    padding: 22px; margin-bottom: 22px;
+  }
+  .pool-nums { display: flex; flex-wrap: wrap; gap: 18px 34px; align-items: baseline; }
+  .pool-nums .k { font-size: .76rem; font-weight: 650; color: var(--tx-3); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+  .pool-nums .v { font-size: 1.55rem; font-weight: 650; letter-spacing: -.035em; color: var(--tx-1); font-variant-numeric: tabular-nums; line-height: 1; }
+
+  /* one editable mailbox row */
+  .mb-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
+  .mb-card + .mb-card { margin-top: 12px; }
+  .mb-top { display: grid; gap: 14px; }
+  @media (min-width: 720px) { .mb-top { grid-template-columns: 1.4fr 1fr; } }
+
+  .addr-field { display: flex; align-items: stretch; }
+  .addr-field .input { border-radius: var(--r-xs) 0 0 var(--r-xs); font-family: var(--mono); }
+  .addr-field .suffix {
+    display: flex; align-items: center; padding: 0 14px; font-family: var(--mono);
+    font-size: .92rem; color: var(--tx-3); background: var(--paper-2);
+    border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0; white-space: nowrap;
+  }
+
+  .quota-field { display: flex; align-items: stretch; gap: 8px; }
+  .quota-field .wrap-in { display: flex; flex: 1; min-width: 0; }
+  .quota-field .input { border-radius: var(--r-xs) 0 0 var(--r-xs); font-variant-numeric: tabular-nums; }
+  .quota-field .gb {
+    display: flex; align-items: center; padding: 0 13px; font-size: .9rem; color: var(--tx-3);
+    background: var(--paper-2); border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+  }
+
+  .mb-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .aside-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  .aside-card + .aside-card { margin-top: 16px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ob-hdr">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html" aria-label="Ziroemail home">
+      <img class="logo" src="../assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="ob-help" href="../contact.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6.2 6a1.8 1.8 0 1 1 2.3 1.7c-.4.2-.5.5-.5.8v.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11.4" r=".9" fill="currentColor"/>
+      </svg>
+      Get help on WhatsApp
+    </a>
+  </div>
+</header>
+
+<main id="main" class="ob">
+  <div class="wrap">
+
+    <div class="steps" aria-label="Setup progress">
+      <span class="step done"><span class="n">1</span> Domain</span>
+      <span class="step-line"></span>
+      <span class="step done"><span class="n">2</span> Plan &amp; payment</span>
+      <span class="step-line"></span>
+      <span class="step done"><span class="n">3</span> Records</span>
+      <span class="step-line"></span>
+      <span class="step now" aria-current="step"><span class="n">4</span> Mailboxes</span>
+    </div>
+
+    <div class="ob-grid">
+      <!-- the allocator: one pool, several mailboxes -->
+      <form data-pool="30" data-demo-form data-next="onboard-done.html" novalidate>
+        <div data-hero>
+          <h1 style="font-size:clamp(1.7rem,1.4rem + 1.3vw,2.3rem)">Create your first mailboxes</h1>
+          <p class="lead mt-s" style="max-width:54ch">
+            Your Business plan gives <span class="mono">adaobifoods.com</span> a pool of
+            <b style="color:var(--tx-1)">30&nbsp;GB</b>. Divide it however suits you &mdash;
+            you can change any of this later.
+          </p>
+        </div>
+
+        <!-- live pool summary -->
+        <div class="pool-card mt-l">
+          <div class="pool-nums">
+            <div>
+              <span class="k">Assigned</span>
+              <span class="v"><span data-pool-used>22</span> <span style="font-size:.95rem;color:var(--tx-3);font-weight:500">of 30 GB</span></span>
+            </div>
+            <div>
+              <span class="k">Still free</span>
+              <span class="v" data-pool-left>8</span>
+            </div>
+            <div style="margin-left:auto">
+              <span class="pill pill-info">Business &middot; expandable to 100 GB</span>
+            </div>
+          </div>
+
+          <div class="pool mt" data-pool-bar role="img" aria-label="Storage allocation"></div>
+
+          <div class="banner banner-bad mt" data-pool-warn hidden>
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.6v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="11.2" r=".9" fill="currentColor"/></svg>
+            <span class="bd">
+              <b>That is more than your pool holds</b>
+              <p>You are over by <b data-pool-over>0</b>&nbsp;GB. Lower a quota, or add a
+                10&nbsp;GB block on the next screen.</p>
+            </span>
+          </div>
+        </div>
+
+        <!-- mailbox rows -->
+        <div class="mt-l" data-mb-list>
+          <div class="mb-card" data-quota-row>
+            <div class="mb-top">
+              <div class="field" style="margin:0">
+                <label class="label" for="a1">Address</label>
+                <div class="addr-field">
+                  <input class="input" id="a1" type="text" value="victory" spellcheck="false" autocapitalize="off">
+                  <span class="suffix">@adaobifoods.com</span>
+                </div>
+              </div>
+              <div class="field" style="margin:0">
+                <label class="label" for="q1">Storage</label>
+                <div class="quota-field">
+                  <span class="wrap-in">
+                    <input class="input" id="q1" type="number" min="0" max="30" step="0.5" value="12" data-quota>
+                    <span class="gb">GB</span>
+                  </span>
+                  <button class="btn btn-line btn-sm" type="button" data-give-rest>Rest</button>
+                </div>
+              </div>
+            </div>
+            <div class="mb-foot">
+              <span class="sm mut">This will be the owner account</span>
+              <span class="pill pill-info">Owner</span>
+            </div>
+          </div>
+
+          <div class="mb-card" data-quota-row>
+            <div class="mb-top">
+              <div class="field" style="margin:0">
+                <label class="label" for="a2">Address</label>
+                <div class="addr-field">
+                  <input class="input" id="a2" type="text" value="sales" spellcheck="false" autocapitalize="off">
+                  <span class="suffix">@adaobifoods.com</span>
+                </div>
+              </div>
+              <div class="field" style="margin:0">
+                <label class="label" for="q2">Storage</label>
+                <div class="quota-field">
+                  <span class="wrap-in">
+                    <input class="input" id="q2" type="number" min="0" max="30" step="0.5" value="8" data-quota>
+                    <span class="gb">GB</span>
+                  </span>
+                  <button class="btn btn-line btn-sm" type="button" data-give-rest>Rest</button>
+                </div>
+              </div>
+            </div>
+            <div class="mb-foot">
+              <span class="sm mut">We will send a setup link when you finish</span>
+              <button class="btn btn-quiet btn-sm" type="button" data-mb-remove>Remove</button>
+            </div>
+          </div>
+
+          <div class="mb-card" data-quota-row>
+            <div class="mb-top">
+              <div class="field" style="margin:0">
+                <label class="label" for="a3">Address</label>
+                <div class="addr-field">
+                  <input class="input" id="a3" type="text" value="ngozi" spellcheck="false" autocapitalize="off">
+                  <span class="suffix">@adaobifoods.com</span>
+                </div>
+              </div>
+              <div class="field" style="margin:0">
+                <label class="label" for="q3">Storage</label>
+                <div class="quota-field">
+                  <span class="wrap-in">
+                    <input class="input" id="q3" type="number" min="0" max="30" step="0.5" value="2" data-quota>
+                    <span class="gb">GB</span>
+                  </span>
+                  <button class="btn btn-line btn-sm" type="button" data-give-rest>Rest</button>
+                </div>
+              </div>
+            </div>
+            <div class="mb-foot">
+              <span class="sm mut">We will send a setup link when you finish</span>
+              <button class="btn btn-quiet btn-sm" type="button" data-mb-remove>Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-line full mt" type="button" data-mb-add>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          Add another mailbox
+        </button>
+
+        <div class="btn-row mt-l">
+          <button class="btn btn-pri btn-lg" type="submit" data-pool-submit>Create these mailboxes</button>
+          <a class="btn btn-line btn-lg" href="onboard-records.html">Back to records</a>
+        </div>
+
+        <div class="banner banner-ok mt" data-demo-note hidden>
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M13.5 4.5 6.2 11.8 2.5 8.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="bd">
+            <b>This is a design prototype</b>
+            <p>In the built product this creates the mailboxes and sends each person a setup link.</p>
+            <a class="btn btn-pri btn-sm mt-s" href="onboard-done.html">See the finished state &rarr;</a>
+          </span>
+        </div>
+      </form>
+
+      <aside>
+        <div class="aside-card">
+          <h2 style="font-size:1rem">There is no seat limit</h2>
+          <p class="sm mut mt-s">Create as many mailboxes as you like. The pool is the only
+            limit &mdash; ten people sharing 30 GB is fine if their quotas add up.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Start small</h2>
+          <p class="sm mut mt-s">Give each person a little less than you think. Raising a quota
+            takes two seconds later; you cannot lower one below what a mailbox already holds.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Leave some unassigned</h2>
+          <p class="sm mut mt-s">Storage you do not hand out stays in the pool, ready for a new
+            hire or a mailbox that fills faster than expected.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Shared addresses cost nothing</h2>
+          <p class="sm mut mt-s">An address like <span class="mono">info@</span> that just
+            forwards into an existing mailbox is not a mailbox and uses no storage of its own.
+            Add those from the dashboard afterwards.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

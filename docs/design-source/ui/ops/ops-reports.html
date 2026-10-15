@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reports — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .rp-grid { display: grid; gap: 18px; }
+  @media (min-width: 980px) { .rp-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+  .kv { display: grid; gap: 0; margin-top: 12px; }
+  .kv .r { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .89rem; }
+  .kv .r:last-child { border-bottom: none; }
+  .kv .r span { color: var(--tx-3); }
+  .kv .r b { color: var(--tx-1); font-weight: 650; text-align: right; font-variant-numeric: tabular-nums; }
+  .kv .r b.up { color: var(--ok); } .kv .r b.down { color: var(--bad); }
+
+  /* growth bars, month by month */
+  .bars { display: flex; align-items: flex-end; justify-content: center; gap: 24px; height: 132px; margin-top: 18px; }
+  .bars .b { flex: 1; max-width: 72px; background: var(--blue-200); border-radius: 3px 3px 0 0; min-width: 0; }
+  .bars .b.now { background: var(--blue); }
+  .bars-ax { display: flex; justify-content: center; gap: 24px; margin-top: 8px; }
+  .bars-ax span { flex: 1; max-width: 72px; text-align: center; font-size: .72rem; color: var(--tx-3); min-width: 0; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html" aria-current="page">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Monthly report</h1>
+        <p>September 2026, to 29&nbsp;September. The numbers a founder actually needs: who joined, who left, what it earned, and whether it stayed up.</p>
+      </div>
+      <button class="btn btn-line btn-sm" type="button">Download as PDF</button>
+    </div>
+
+    <section aria-labelledby="hm-h">
+      <h2 id="hm-h" class="sr-only">Headline figures for September</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">New customers</span>
+          <span class="v">38</span>
+          <span class="d up">+12 on August</span>
+        </div>
+        <div class="metric">
+          <span class="k">Left</span>
+          <span class="v">6</span>
+          <span class="d">1.5% of the base</span>
+        </div>
+        <div class="metric">
+          <span class="k">Billed</span>
+          <span class="v">&#8358;1.09m</span>
+          <span class="d up">+18% on August</span>
+        </div>
+        <div class="metric">
+          <span class="k">Refunded</span>
+          <span class="v">&#8358;64.5k</span>
+          <span class="d">5.9% of billings</span>
+        </div>
+        <div class="metric">
+          <span class="k">Uptime</span>
+          <span class="v">99.97%</span>
+          <span class="d up">13 minutes down</span>
+        </div>
+        <div class="metric">
+          <span class="k">Storage sold</span>
+          <span class="v">180&nbsp;GB</span>
+          <span class="d">18 add-ons</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:30px" aria-labelledby="gr-h">
+      <h2 id="gr-h" style="font-size:1.05rem">Customers, month by month</h2>
+      <p class="sm mut mt-s">Total paying organisations at the end of each month since launch.</p>
+      <div class="card mt" style="padding:20px">
+        <div class="bars" role="img" aria-label="Customer growth from 34 in March 2026 to 412 in September 2026, rising every month">
+          <span class="b" style="height:8%"></span>
+          <span class="b" style="height:19%"></span>
+          <span class="b" style="height:33%"></span>
+          <span class="b" style="height:50%"></span>
+          <span class="b" style="height:68%"></span>
+          <span class="b" style="height:84%"></span>
+          <span class="b now" style="height:100%"></span>
+        </div>
+        <div class="bars-ax">
+          <span>Mar<br>34</span><span>Apr<br>79</span><span>May<br>136</span>
+          <span>Jun<br>206</span><span>Jul<br>280</span><span>Aug<br>346</span>
+          <span>Sep<br>412</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="rp-grid" style="margin-top:28px">
+      <section class="card" aria-labelledby="mn-h">
+        <h3 id="mn-h" style="font-size:1rem">Money</h3>
+        <div class="kv">
+          <div class="r"><span>Billed in September</span><b>&#8358;1,092,400</b></div>
+          <div class="r"><span>From new customers</span><b>&#8358;886,500</b></div>
+          <div class="r"><span>From renewals</span><b>&#8358;89,400</b></div>
+          <div class="r"><span>From storage add-ons</span><b>&#8358;116,500</b></div>
+          <div class="r"><span>Refunded</span><b class="down">&#8358;64,500</b></div>
+          <div class="r"><span>Outstanding, unpaid</span><b>&#8358;112,875</b></div>
+          <div class="r"><span>Paid in naira</span><b>94%</b></div>
+          <div class="r"><span>Paid in dollars</span><b>6%</b></div>
+        </div>
+        <p class="hint">Storage add-ons are now a tenth of monthly revenue and cost nothing extra
+          to serve. That is the clearest signal in this report.</p>
+      </section>
+
+      <section class="card" aria-labelledby="ch-h">
+        <h3 id="ch-h" style="font-size:1rem">Who left, and why</h3>
+        <div class="kv">
+          <div class="r"><span>Setup never completed</span><b>3</b></div>
+          <div class="r"><span>Business closed</span><b>1</b></div>
+          <div class="r"><span>Moved to Google Workspace</span><b>1</b></div>
+          <div class="r"><span>Bought the wrong product</span><b>1</b></div>
+          <div class="r"><span>Left over price</span><b>0</b></div>
+          <div class="r"><span>Left over deliverability</span><b>0</b></div>
+        </div>
+        <p class="hint">Half of September's departures never got mail flowing at all. That is a
+          setup problem showing up as churn, and the records step is where they stop &mdash; it is free
+          for us to offer and we are not offering it loudly enough.</p>
+      </section>
+
+      <section class="card" aria-labelledby="sv-h">
+        <h3 id="sv-h" style="font-size:1rem">Service</h3>
+        <div class="kv">
+          <div class="r"><span>Uptime</span><b class="up">99.97%</b></div>
+          <div class="r"><span>Longest outage</span><b>9 minutes, 14 Sep</b></div>
+          <div class="r"><span>Messages delivered</span><b>7.4 million</b></div>
+          <div class="r"><span>Average bounce rate</span><b class="up">1.4%</b></div>
+          <div class="r"><span>Blocklist incidents</span><b class="up">0</b></div>
+          <div class="r"><span>Backups failed</span><b>1 of 30, re-run same night</b></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="sp-h">
+        <h3 id="sp-h" style="font-size:1rem">Support</h3>
+        <div class="kv">
+          <div class="r"><span>Support messages</span><b>187</b></div>
+          <div class="r"><span>Closed</span><b>175</b></div>
+          <div class="r"><span>Median first reply</span><b class="up">41 minutes</b></div>
+          <div class="r"><span>Missed the 4-hour promise</span><b class="down">9</b></div>
+          <div class="r"><span>Commonest subject</span><b>DNS records</b></div>
+          <div class="r"><span>Second commonest</span><b>Outlook setup</b></div>
+          <div class="r"><span>Migrations completed</span><b>22</b></div>
+        </div>
+        <p class="hint">DNS is the top support subject and the top reason customers leave. The
+          same problem is showing up in both columns.</p>
+      </section>
+    </div>
+
+    <div class="note mt" style="max-width:66ch">
+      <h4>What this month says</h4>
+      <p>Growth is steady and nobody has left over price or deliverability &mdash; the two things
+        that would be hardest to fix. Every departure traces back to the same place: customers who
+        pay and then cannot get their DNS records right. One-click setup at more registrars would
+          have kept three of September&rsquo;s six.</p>
+    </div>
+
+    <section style="margin-top:32px" aria-labelledby="ar-h">
+      <h2 id="ar-h" style="font-size:1.05rem">Earlier reports</h2>
+      <div class="tbl-wrap mt">
+        <table class="ops">
+          <caption class="sr-only">Previous monthly reports</caption>
+          <thead>
+            <tr>
+              <th scope="col">Month</th>
+              <th scope="col" class="num">Customers</th>
+              <th scope="col" class="num">Billed</th>
+              <th scope="col" class="num">Left</th>
+              <th scope="col" class="num">Uptime</th>
+              <th scope="col"><span class="sr-only">Download</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>August 2026</td>
+              <td class="num">346</td>
+              <td class="num">&#8358;925,600</td>
+              <td class="num">4</td>
+              <td class="num">99.99%</td>
+              <td><button class="btn btn-line btn-sm" type="button">PDF</button></td>
+            </tr>
+            <tr>
+              <td>July 2026</td>
+              <td class="num">280</td>
+              <td class="num">&#8358;781,200</td>
+              <td class="num">5</td>
+              <td class="num">99.95%</td>
+              <td><button class="btn btn-line btn-sm" type="button">PDF</button></td>
+            </tr>
+            <tr>
+              <td>June 2026</td>
+              <td class="num">206</td>
+              <td class="num">&#8358;612,750</td>
+              <td class="num">2</td>
+              <td class="num">99.98%</td>
+              <td><button class="btn btn-line btn-sm" type="button">PDF</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Domain status — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .recs { display: flex; gap: 5px; }
+  .rec {
+    font-size: .68rem; font-weight: 800; letter-spacing: .04em; padding: 3px 7px;
+    border-radius: 3px; font-family: var(--mono); white-space: nowrap;
+  }
+  .rec.ok { background: var(--ok-bg); color: #1B6B38; }
+  .rec.no { background: var(--bad-bg); color: var(--bad); }
+  .rec.na { background: var(--paper-2); color: var(--tx-3); }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html" aria-current="page">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Domain status</h1>
+        <p>DNS state for all 412 customer domains. Incomplete setups first &mdash; those are the accounts most likely to churn or ask for a refund.</p>
+      </div>
+      <button class="btn btn-line btn-sm" type="button">Re-check all records</button>
+    </div>
+
+    <section aria-labelledby="dm-h">
+      <h2 id="dm-h" class="sr-only">Domain figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Domains</span>
+          <span class="v">412</span>
+          <span class="d">across 412 organisations</span>
+        </div>
+        <div class="metric">
+          <span class="k">Fully configured</span>
+          <span class="v">387</span>
+          <span class="d up">94% of the estate</span>
+        </div>
+        <div class="metric alert">
+          <span class="k">Never finished</span>
+          <span class="v">11</span>
+          <span class="d down">paid, no mail flowing</span>
+        </div>
+        <div class="metric">
+          <span class="k">Missing DMARC</span>
+          <span class="v">51</span>
+          <span class="d">works, but unprotected</span>
+        </div>
+        <div class="metric">
+          <span class="k">Records broke</span>
+          <span class="v">3</span>
+          <span class="d down">was working, now not</span>
+        </div>
+        <div class="metric">
+          <span class="k">Median setup time</span>
+          <span class="v">41m</span>
+          <span class="d">signup to first mail</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="banner banner-warn mt" role="status">
+      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M8 1.5 15 14H1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r=".9" fill="currentColor"/></svg>
+      <span class="bd">
+        <b>Three domains that were working have stopped</b>
+        <p>Records that verified before are now missing. Usually a domain transfer to a new
+          registrar, or a web developer replacing the zone file. Telephone these &mdash; their mail
+          is not being delivered right now and they may not know.</p>
+      </span>
+    </div>
+
+    <section style="margin-top:30px" aria-labelledby="br-h">
+      <h2 id="br-h" style="font-size:1.05rem">Records that stopped working</h2>
+      <div class="tbl-wrap mt">
+        <table class="ops">
+          <caption class="sr-only">Domains whose DNS records were previously verified and are now missing</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="wide">Domain</th>
+              <th scope="col">Organisation</th>
+              <th scope="col">Records</th>
+              <th scope="col" class="num">Broken since</th>
+              <th scope="col"><span class="sr-only">Action</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="sev-high">
+              <td class="mono">citymartng.com</td>
+              <td class="wide">CityMart Nigeria</td>
+              <td><span class="recs"><span class="rec no">MX</span><span class="rec ok">SPF</span><span class="rec ok">DKIM</span><span class="rec ok">DMARC</span></span></td>
+              <td class="num">6 hours</td>
+              <td><a class="btn btn-pri btn-sm" href="ops-org.html">Call them</a></td>
+            </tr>
+            <tr class="sev-high">
+              <td class="mono">nnamdiautoparts.com</td>
+              <td class="wide">Nnamdi Auto Parts</td>
+              <td><span class="recs"><span class="rec ok">MX</span><span class="rec no">SPF</span><span class="rec no">DKIM</span><span class="rec na">DMARC</span></span></td>
+              <td class="num">2 days</td>
+              <td><a class="btn btn-pri btn-sm" href="ops-org.html">Call them</a></td>
+            </tr>
+            <tr class="sev-med">
+              <td class="mono">zionschools.edu.ng</td>
+              <td class="wide">Zion Schools</td>
+              <td><span class="recs"><span class="rec ok">MX</span><span class="rec ok">SPF</span><span class="rec no">DKIM</span><span class="rec na">DMARC</span></span></td>
+              <td class="num">4 days</td>
+              <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top:34px" aria-labelledby="ns-h">
+      <div class="between" style="flex-wrap:wrap;gap:10px">
+        <h2 id="ns-h" style="font-size:1.05rem">Never finished setup</h2>
+        <span class="pill pill-bad">11 domains &middot; &#8358;318,750 at risk</span>
+      </div>
+      <p class="sm mut mt-s">Paid for, but mail has never flowed. Every day here makes a refund
+        request more likely. The registrar column tells you which instructions to read out.</p>
+
+      <div class="tbl-wrap mt">
+        <table class="ops">
+          <caption class="sr-only">Paid domains where DNS setup was never completed</caption>
+          <thead class="wide">
+            <tr>
+              <th scope="col">Domain</th>
+              <th scope="col">Records</th>
+              <th scope="col">Registrar</th>
+              <th scope="col" class="num">Paid</th>
+              <th scope="col" class="num">Waiting</th>
+              <th scope="col"><span class="sr-only">Action</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="sev-high">
+              <td class="mono wide">chiomatextiles.ng</td>
+              <td><span class="recs"><span class="rec no">MX</span><span class="rec no">SPF</span><span class="rec no">DKIM</span><span class="rec na">DMARC</span></span></td>
+              <td>Whogohost</td>
+              <td class="num">&#8358;29,670</td>
+              <td class="num">9 days</td>
+              <td><a class="btn btn-pri btn-sm" href="ops-org.html">Call</a></td>
+            </tr>
+            <tr class="sev-high">
+              <td class="mono wide">grace-interiors.com</td>
+              <td><span class="recs"><span class="rec no">MX</span><span class="rec no">SPF</span><span class="rec no">DKIM</span><span class="rec na">DMARC</span></span></td>
+              <td>GoDaddy</td>
+              <td class="num">&#8358;16,125</td>
+              <td class="num">7 days</td>
+              <td><a class="btn btn-pri btn-sm" href="ops-org.html">Call</a></td>
+            </tr>
+            <tr class="sev-med">
+              <td class="mono wide">bellohaulage.com</td>
+              <td><span class="recs"><span class="rec ok">MX</span><span class="rec ok">SPF</span><span class="rec no">DKIM</span><span class="rec na">DMARC</span></span></td>
+              <td>Namecheap</td>
+              <td class="num">&#8358;16,125</td>
+              <td class="num">4 days</td>
+              <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+            </tr>
+            <tr class="sev-low">
+              <td class="mono wide">pearlclinic.com.ng</td>
+              <td><span class="recs"><span class="rec ok">MX</span><span class="rec ok">SPF</span><span class="rec ok">DKIM</span><span class="rec no">DMARC</span></span></td>
+              <td>Qservers</td>
+              <td class="num">&#8358;29,670</td>
+              <td class="num">2 days</td>
+              <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">DMARC shown in grey is not yet required &mdash; we only ask for it once MX, SPF
+        and DKIM verify. A domain is counted as finished without it.</p>
+    </section>
+
+    <div class="note mt" style="max-width:62ch">
+      <h4>Most of these never opened the records page</h4>
+      <p>Where a customer gives us registrar access, setup takes minutes instead of days. Nine of
+        the eleven unfinished domains never reached the records step at all. Worth asking on the
+        call where they stopped &mdash; that is a product problem we can fix.</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

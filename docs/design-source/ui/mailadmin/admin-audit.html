@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activity log — Ziroemail</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .row { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .row:last-child { border-bottom: none; }
+  .row .nm { flex: 1; min-width: 180px; }
+  .row .nm b { font-size: .94rem; color: var(--tx-1); display: block; }
+  .row .nm span { font-size: .85rem; color: var(--tx-3); }
+
+  .log { border: 1px solid var(--line); border-radius: var(--r); background: #fff; overflow: hidden; }
+  .log-row { display: flex; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .log-row:last-child { border-bottom: none; }
+  .log-when { font-family: var(--mono); font-size: .8rem; color: var(--tx-3); width: 132px; flex: none; }
+  .log-what { flex: 1; min-width: 200px; font-size: .93rem; color: var(--tx-2); }
+  .log-what b { color: var(--tx-1); font-weight: 650; }
+  .log-who { font-size: .84rem; color: var(--tx-3); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .filters button { border: 1px solid var(--line-2); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: .85rem; font-weight: 550; color: var(--tx-2); cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <div class="page-head" data-reveal>
+        <div>
+          <h1>Activity log</h1>
+          <p>Everything that changed on this account, and who changed it.</p>
+        </div>
+        <button class="btn btn-line" type="button">Export as CSV</button>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter the log">
+        <button type="button" aria-pressed="true">Everything</button>
+        <button type="button" aria-pressed="false">Mailboxes</button>
+        <button type="button" aria-pressed="false">Storage</button>
+        <button type="button" aria-pressed="false">Billing</button>
+        <button type="button" aria-pressed="false">Access</button>
+        <button type="button" aria-pressed="false">Domain</button>
+      </div>
+
+      <div class="log">
+        <div class="log-row">
+          <span class="log-when">Today 09:14</span>
+          <span class="log-what"><b>Victory Okeke</b> signed in<br><span class="log-who">Chrome on Windows &middot; Port Harcourt</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">Yesterday 14:20</span>
+          <span class="log-what">SPF record for <b>adaobifoods.com</b> stopped verifying<br><span class="log-who">Detected automatically &middot; changed outside Ziroemail</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">12 days ago</span>
+          <span class="log-what"><b>Victory Okeke</b> raised the quota on <b>sales@</b> from 6 GB to 8 GB<br><span class="log-who">Pool unassigned went from 16 GB to 14 GB</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">14 days ago</span>
+          <span class="log-what"><b>Victory Okeke</b> bought 10 GB of extra storage<br><span class="log-who">Pool went from 30 GB to 40 GB &middot; &#8358;1,075 inc. VAT</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">4 Mar 2026</span>
+          <span class="log-what"><b>Victory Okeke</b> granted delegated access to <b>Techsavii Ltd</b><br><span class="log-who">Can be withdrawn at any time from Team &amp; access</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">4 Mar 2026</span>
+          <span class="log-what">Four mailboxes created during setup<br><span class="log-who">victory@, sales@, ngozi@, emeka@</span></span>
+        </div>
+        <div class="log-row">
+          <span class="log-when">4 Mar 2026</span>
+          <span class="log-what">Domain <b>adaobifoods.com</b> verified<br><span class="log-who">All four authentication records passing</span></span>
+        </div>
+      </div>
+
+      <div class="note mt-l">
+        <h4>What is recorded, and for how long</h4>
+        <p>Every change to mailboxes, storage, billing, access and domain records, kept for
+          12 months. We record that something changed and who did it &mdash; never the
+          contents of anybody's mail.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

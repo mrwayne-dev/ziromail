@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Ziroemail</title>
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  /* The ink band. One black surface at the top of the page gives the dashboard
+     a front door, and makes a domain switch impossible to miss. */
+  .hero-band {
+    background: var(--ink-900); color: #fff; border-radius: var(--r);
+    padding: 28px 30px; margin-bottom: 22px; position: relative; overflow: hidden;
+  }
+  /* a single faint arc, the same device the marketing hero uses */
+  .hero-band::after {
+    content: ""; position: absolute; right: -90px; top: -120px; width: 320px; height: 320px;
+    border: 1px solid rgba(255,255,255,.10); border-radius: 50%; pointer-events: none;
+  }
+  .hb-top { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; justify-content: space-between; position: relative; }
+  .hb-eyebrow { font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--blue-300); }
+  .hb-dom {
+    font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.1rem); font-weight: 500; letter-spacing: -.02em;
+    color: #fff; margin-top: 9px; word-break: break-all; line-height: 1.1;
+  }
+  .hb-sub { font-size: .92rem; color: var(--tx-inv-3); margin-top: 9px; }
+  .hb-acts { display: flex; flex-wrap: wrap; gap: 9px; flex: none; }
+
+  .hb-figs {
+    display: grid; gap: 1px; background: rgba(255,255,255,.12); margin-top: 26px;
+    border-radius: var(--r-xs); overflow: hidden; position: relative;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 800px) { .hb-figs { grid-template-columns: repeat(4, 1fr); } }
+  .hb-fig { background: var(--ink-900); padding: 15px 17px; }
+  .hb-fig .k { display: block; font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--tx-inv-3); }
+  .hb-fig .v { display: block; font-size: 1.4rem; font-weight: 600; color: #fff; margin-top: 7px; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hb-fig .s { display: block; font-size: .78rem; color: var(--tx-inv-3); margin-top: 5px; }
+
+  /* the whole band settles when the domain changes, so the switch is felt */
+  .hero-band.is-swapping { opacity: .35; }
+  .hero-band { transition: opacity .18s cubic-bezier(.22,.7,.3,1); }
+  @media (prefers-reduced-motion: reduce) { .hero-band { transition: none; } }
+
+  .attention {
+    border: 1px solid var(--warn-line); background: #FFFCF3; border-radius: var(--r);
+    padding: 18px 20px; margin-bottom: 22px;
+  }
+  .attention h2 { font-size: 1rem; display: flex; align-items: center; gap: 9px; }
+  .att-item {
+    display: flex; gap: 12px; align-items: flex-start; justify-content: space-between;
+    padding: 13px 0; border-bottom: 1px solid var(--warn-line); flex-wrap: wrap;
+  }
+  .att-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .att-item .txt { min-width: 0; flex: 1 1 260px; }
+  .att-item b { font-size: .92rem; color: var(--ink); display: block; }
+  .att-item p { font-size: .85rem; color: var(--tx-3); margin-top: 2px; }
+
+  .qa-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 760px) { .qa-grid { grid-template-columns: repeat(4, 1fr); } }
+  /* Hover does not change colour. The card lifts a little, its edge firms up,
+     and a shadow builds underneath — the same thing a physical card does when
+     you pick it up. Nothing announces itself. */
+  .qa {
+    display: flex; flex-direction: column; gap: 9px; padding: 16px; text-align: left;
+    border: 1px solid var(--line); border-radius: var(--r); background: #fff; color: var(--ink-900);
+    position: relative;
+    transition: border-color .32s cubic-bezier(.22,.7,.3,1),
+                box-shadow .32s cubic-bezier(.22,.7,.3,1),
+                transform .32s cubic-bezier(.22,.7,.3,1);
+  }
+  .qa:hover, .qa:focus-visible {
+    border-color: var(--line-2);
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+  }
+  .qa .ic {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--paper-2); color: var(--ink-900);
+    display: grid; place-items: center; font-weight: 800; font-size: 1rem;
+    transition: background .32s cubic-bezier(.22,.7,.3,1), color .32s cubic-bezier(.22,.7,.3,1);
+  }
+  /* only the icon tile darkens, and only a little — it is the one part that
+     can carry the state without the card shouting */
+  .qa:hover .ic, .qa:focus-visible .ic { background: var(--ink-900); color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    .qa, .qa .ic { transition: none; }
+    .qa:hover, .qa:focus-visible { transform: none; }
+  }
+  .qa b { font-size: .9rem; }
+  .qa span { font-size: .8rem; color: var(--tx-3); }
+
+  .two { display: grid; gap: 20px; }
+  @media (min-width: 980px) { .two { grid-template-columns: 1.35fr 1fr; } }
+
+  .mini-row {
+    display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .mini-row:last-child { border-bottom: none; }
+  .mini-row .who { display: flex; gap: 11px; align-items: center; min-width: 0; }
+  /* --ink-3 was never a token, so this fell back to transparent and the
+     avatar vanished on every row after the first. */
+  .mini-av { width: 34px; height: 34px; border-radius: 50%; background: var(--ink-600); color: #fff;
+             display: grid; place-items: center; font-size: .74rem; font-weight: 800; flex: none; }
+  .mini-av.g { background: var(--blue); }
+  .mini-av.b { background: var(--blue); }
+  .mini-row b { font-size: .88rem; display: block; }
+  .mini-row .sub { font-size: .79rem; color: var(--tx-3); }
+
+  .act { display: flex; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
+  .act:last-child { border-bottom: none; }
+  .act .when { color: var(--tx-3); font-size: .78rem; flex: none; width: 62px; }
+  .act .what { color: var(--tx-3); }
+  .act .what b { color: var(--ink); font-weight: 650; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home"><img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37"></a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar" style="width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.76rem">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <!-- The domain this screen is about, stated in ink so switching domains
+           is felt rather than merely labelled. -->
+      <section class="hero-band" data-dom-scope data-hero>
+        <div class="hb-top">
+          <div>
+            <p class="hb-eyebrow">Adaobi Foods Ltd</p>
+            <h1 class="hb-dom mono" data-dom-name>adaobifoods.com</h1>
+            <p class="hb-sub">Good morning, Victory. Everything below is for this domain.</p>
+          </div>
+          <div class="hb-acts">
+            <a class="btn btn-white btn-sm" href="admin-mailboxes.html">Add a mailbox</a>
+            <a class="btn btn-line btn-sm" href="admin-domains.html">Switch domain</a>
+          </div>
+        </div>
+
+        <div class="hb-figs">
+          <div class="hb-fig">
+            <span class="k">Mailboxes</span>
+            <span class="v" data-dom-mb data-count-to="4">4</span>
+            <span class="s">no seat limit</span>
+          </div>
+          <div class="hb-fig">
+            <span class="k">Storage used</span>
+            <span class="v" data-dom-used>13.5 GB</span>
+            <span class="s" data-dom-pool>of a 40 GB pool</span>
+          </div>
+          <div class="hb-fig">
+            <span class="k">Plan</span>
+            <span class="v" data-dom-plan>Business</span>
+            <span class="s" data-dom-renew>renews 4 Mar 2027</span>
+          </div>
+          <div class="hb-fig">
+            <span class="k">Domain health</span>
+            <span class="v" data-dom-health>4 of 4</span>
+            <span class="s" data-dom-healthnote>all records passing</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- what needs attention on this domain; written by the domain scope -->
+      <section aria-labelledby="att-h">
+        <h2 id="att-h" class="sr-only">What needs your attention</h2>
+        <div class="stack" data-dom-alerts></div>
+      </section>
+
+      <!-- quick actions -->
+      <h2 style="font-size:1.05rem;margin:28px 0 12px">Quick actions</h2>
+      <div class="qa-grid" data-stagger>
+        <a class="qa" href="admin-mailboxes.html">
+          <span class="ic" aria-hidden="true">+</span>
+          <b>Add a mailbox</b>
+          <span>For a new staff member</span>
+        </a>
+        <a class="qa" href="../setup-device.html">
+          <span class="ic" aria-hidden="true">&#9783;</span>
+          <b>Resend setup link</b>
+          <span>By WhatsApp or email</span>
+        </a>
+        <a class="qa" href="#">
+          <span class="ic" aria-hidden="true">&#8634;</span>
+          <b>Reset a password</b>
+          <span>Without calling support</span>
+        </a>
+        <a class="qa" href="#">
+          <span class="ic" aria-hidden="true">&#8358;</span>
+          <b>View invoices</b>
+          <span>Download receipts</span>
+        </a>
+      </div>
+
+      <div class="two mt-l" data-stagger>
+        <!-- mailboxes -->
+        <section class="card">
+          <div class="between mb">
+            <h2 style="font-size:1.05rem">Your mailboxes</h2>
+            <a class="small" href="admin-mailboxes.html" style="font-weight:650">See all</a>
+          </div>
+
+          <div data-dom-minirows></div>
+        </section>
+
+        <!-- right column -->
+        <div class="stack">
+          <section class="card">
+            <h2 style="font-size:1.05rem" class="mb">Your plan</h2>
+            <div class="mini-row">
+              <div><b><span data-dom-plan>Business</span> &mdash; yearly</b><span class="sub" data-dom-plannote>40 GB pool, unlimited mailboxes</span></div>
+              <span class="pill pill-ok">Active</span>
+            </div>
+            <div class="mini-row">
+              <div><b><span data-dom-planprice>&#8358;27,600</span> per year</b><span class="sub">VAT included</span></div>
+            </div>
+            <div class="mini-row">
+              <div><b>Renews <span data-dom-renewdate>4 March 2027</span></b><span class="sub">We will remind you before</span></div>
+            </div>
+            <div class="btn-row mt">
+              <a class="btn btn-line btn-sm" href="admin-billing.html">Change plan</a>
+              <a class="btn btn-line btn-sm" href="#">Invoices</a>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 style="font-size:1.05rem" class="mb">Recent activity</h2>
+            <div data-dom-activity></div>
+            <a class="small mt-s" href="#" style="font-weight:650;display:inline-block">See the full log</a>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="#">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

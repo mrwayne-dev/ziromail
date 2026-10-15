@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings — Ziroemail</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .st { grid-column: 2/-1; overflow-y: auto; background: var(--paper-soft); min-width: 0; }
+  .st-in { max-width: 760px; padding: 30px var(--gutter) 80px; }
+  .st-in h1 { font-size: clamp(1.5rem,1.3rem + 1vw,1.9rem); }
+
+  .sec-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 24px; margin-top: 20px; }
+  .sec-card h2 { font-size: 1.05rem; }
+  .sec-card > p { font-size: .92rem; color: var(--tx-3); margin-top: 6px; }
+
+  .row {
+    display: flex; align-items: center; gap: 14px; padding: 15px 0;
+    border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .row:last-child { border-bottom: none; padding-bottom: 0; }
+  .row .nm { flex: 1; min-width: 180px; }
+  .row .nm b { font-size: .94rem; color: var(--tx-1); display: block; }
+  .row .nm span { font-size: .85rem; color: var(--tx-3); }
+
+  /* a plain switch, used for the small booleans */
+  .sw { width: 46px; height: 27px; border-radius: 999px; background: var(--line-2); border: none; position: relative; cursor: pointer; flex: none; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%; background: #fff; transition: transform .16s; }
+  .sw[aria-checked="true"] { background: var(--blue); }
+  .sw[aria-checked="true"]::after { transform: translateX(19px); }
+
+  /* storage: this mailbox's slice of the domain pool */
+  .slice-nums { display: flex; flex-wrap: wrap; gap: 14px 30px; align-items: baseline; }
+  .slice-nums .k { font-size: .75rem; font-weight: 650; color: var(--tx-3); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+  .slice-nums .v { font-size: 1.4rem; font-weight: 650; letter-spacing: -.035em; color: var(--tx-1); font-variant-numeric: tabular-nums; line-height: 1; }
+
+  .sig-box {
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); padding: 15px;
+    font-size: .93rem; line-height: 1.6; color: var(--tx-1); min-height: 100px; background: #fff;
+  }
+  .sig-box:focus { outline: none; border-color: var(--blue); box-shadow: var(--sh-focus); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="mail-shell">
+  <header class="mail-top">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5.2" stroke="#8A97A6" stroke-width="1.6"/>
+          <path d="m11 11 3.2 3.2" stroke="#8A97A6" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="sr-only">Search your mail</span>
+        <input type="search" placeholder="Search mail">
+      </label>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="acct" data-acct>
+          <button type="button" class="avatar" aria-expanded="false" aria-haspopup="true" aria-controls="acct-menu">
+            <span aria-hidden="true">AF</span>
+            <span class="sr-only">Account menu for sales@adaobifoods.com</span>
+          </button>
+          <div class="acct-menu" id="acct-menu" hidden>
+            <div class="who">
+              <span class="av" aria-hidden="true">VO</span>
+              <span class="bd">
+                <b>Victory Okeke</b>
+                <span class="mono">sales@adaobifoods.com</span>
+              </span>
+            </div>
+            <div class="sep"></div>
+            <a href="mail-settings.html">Mailbox settings</a>
+            <a href="../setup-device.html">Set up another device</a>
+            <a href="../mailadmin/admin.html">Business dashboard</a>
+            <div class="sep"></div>
+            <a class="out" href="../login.html">Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mail-body">
+    <nav class="folders" aria-label="Folders">
+      <a class="btn btn-white full" href="mail-compose.html">Compose</a>
+      <a href="mail.html"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><path d="M2.6 11.4h3.5l1.2 2.1h5.4l1.2-2.1h3.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M2.6 11.4 5 4.2a1.3 1.3 0 0 1 1.2-.9h7.6a1.3 1.3 0 0 1 1.2.9l2.4 7.2v3.8a1.3 1.3 0 0 1-1.3 1.3H3.9a1.3 1.3 0 0 1-1.3-1.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Inbox <span class="count">12</span></a>
+      <a href="mail.html#sent" data-folder-link="sent"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><path d="M17.4 2.6 9 11M17.4 2.6l-5.4 15.6-3-7-7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Sent</a>
+      <a href="mail.html#drafts" data-folder-link="drafts"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><path d="M13.6 2.9a1.9 1.9 0 0 1 2.7 2.7l-8.8 8.8-3.6.9.9-3.6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3.2 17.4h13.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Drafts <span class="count">3</span></a>
+      <a href="mail.html#archive" data-folder-link="archive"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><rect x="2.4" y="3.4" width="15.2" height="3.7" rx="1.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 7.1v8.2a1.3 1.3 0 0 0 1.3 1.3h9.4a1.3 1.3 0 0 0 1.3-1.3V7.1" stroke="currentColor" stroke-width="1.6"/><path d="M8.2 10.3h3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Archive</a>
+      <a href="mail.html#spam" data-folder-link="spam"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><path d="M10 2.4 17.6 16H2.4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 7.6v3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="13.6" r="1" fill="currentColor"/></svg>Spam <span class="count">4</span></a>
+      <a href="mail.html#trash" data-folder-link="trash"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><path d="M3.2 5.2h13.6M7.4 5.2V3.4h5.2v1.8M5 5.2v11a1.3 1.3 0 0 0 1.3 1.3h7.4a1.3 1.3 0 0 0 1.3-1.3v-11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Trash</a>
+      <p class="side-ttl" style="margin-top:20px">Account</p>
+      <a href="mail-contacts.html">Contacts</a>
+      <a href="mail-settings.html" aria-current="page"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="fi"><circle cx="10" cy="10" r="2.6" stroke="currentColor" stroke-width="1.6"/><path d="M15.7 12.3a1.3 1.3 0 0 0 .26 1.43l.05.05a1.55 1.55 0 1 1-2.2 2.2l-.05-.05a1.3 1.3 0 0 0-1.43-.26 1.3 1.3 0 0 0-.79 1.19v.13a1.55 1.55 0 0 1-3.1 0v-.07a1.3 1.3 0 0 0-.85-1.19 1.3 1.3 0 0 0-1.43.26l-.05.05a1.55 1.55 0 1 1-2.2-2.2l.05-.05a1.3 1.3 0 0 0 .26-1.43 1.3 1.3 0 0 0-1.19-.79H2.8a1.55 1.55 0 0 1 0-3.1h.07a1.3 1.3 0 0 0 1.19-.85 1.3 1.3 0 0 0-.26-1.43l-.05-.05a1.55 1.55 0 1 1 2.2-2.2l.05.05a1.3 1.3 0 0 0 1.43.26h.06a1.3 1.3 0 0 0 .79-1.19V2.8a1.55 1.55 0 0 1 3.1 0v.07a1.3 1.3 0 0 0 .79 1.19 1.3 1.3 0 0 0 1.43-.26l.05-.05a1.55 1.55 0 1 1 2.2 2.2l-.5.05a1.3 1.3 0 0 0-.26 1.43v.06a1.3 1.3 0 0 0 1.19.79h.13a1.55 1.55 0 0 1 0 3.1h-.07a1.3 1.3 0 0 0-1.19.79z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Settings</a>
+    </nav>
+
+    <section class="st" id="main">
+      <div class="st-in">
+        <h1>Settings</h1>
+        <p class="lead mt-s" style="font-size:1rem">
+          For <b class="mono" style="color:var(--tx-1);font-size:.94rem">sales@adaobifoods.com</b>.
+          These apply to this mailbox only.
+        </p>
+
+        <!-- who you appear to be: the first thing people come here for -->
+        <section class="sec-card" data-identity>
+          <h2>Your name and address</h2>
+          <p>What people see when your mail arrives.</p>
+
+          <div class="preview mt">
+            <span class="pv-av" aria-hidden="true">VO</span>
+            <span class="pv-bd">
+              <b data-pv-name>Victory Okeke</b>
+              <span class="pv-addr" data-pv-addr>sales@adaobifoods.com</span>
+            </span>
+            <span class="pv-tag">How it looks in their inbox</span>
+          </div>
+
+          <div class="field mt">
+            <label class="label" for="dispname">Display name</label>
+            <input class="input" id="dispname" type="text" value="Victory Okeke"
+                   autocomplete="name" data-pv-src>
+            <p class="hint">Use the name a customer would recognise. A company name works as
+              well as a person&rsquo;s &mdash; &ldquo;Adaobi Foods Sales&rdquo; is fine.</p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="addr">Email address</label>
+            <input class="input" id="addr" type="email" value="sales@adaobifoods.com" readonly
+                   aria-describedby="addr-hint">
+            <p class="hint" id="addr-hint">Set by whoever administers
+              <span class="mono">adaobifoods.com</span>. Extra addresses that deliver here can
+              be added from the business dashboard.</p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="replyto">Send replies to <span class="opt">&mdash; optional</span></label>
+            <input class="input" id="replyto" type="email" placeholder="Leave empty to use this address"
+                   autocomplete="email">
+            <p class="hint">Only needed if replies should land somewhere else &mdash; a shared
+              inbox, say, when you send on behalf of a team.</p>
+          </div>
+
+          <div class="row" style="border:none;padding-bottom:0">
+            <span class="nm"><b>Send from this address by default</b><span>You have two addresses on this mailbox</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Send from this address by default"></button>
+          </div>
+
+          <button class="btn btn-pri btn-sm mt" data-save>Save</button>
+        </section>
+
+        <!-- storage -->
+        <section class="sec-card">
+          <h2>Storage</h2>
+          <p>Your slice of the domain's shared pool.</p>
+
+          <div class="slice-nums mt">
+            <div><span class="k">Your quota</span><span class="v">8 GB</span></div>
+            <div><span class="k">Used</span><span class="v">6.1 GB</span></div>
+            <div><span class="k">Free</span><span class="v">1.9 GB</span></div>
+          </div>
+
+          <div class="meter meter-warn mt" style="height:9px">
+            <i style="width:76%"></i>
+          </div>
+
+          <div class="banner banner-warn mt">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M8 1.5 15 14H1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r=".9" fill="currentColor"/></svg>
+            <span class="bd">
+              <b>You are at 76% of your quota</b>
+              <p>We warn again at 95%. Clear some large attachments, or ask whoever manages
+                <span class="mono">adaobifoods.com</span> to move more of the pool your way
+                &mdash; it takes them a few seconds.</p>
+            </span>
+          </div>
+        </section>
+
+        <!-- signature -->
+        <section class="sec-card">
+          <h2>Signature</h2>
+          <p>Added to new messages and replies from this mailbox.</p>
+          <div class="sig-box mt" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Your signature">
+            Victory Okeke<br>
+            Adaobi Foods Ltd &middot; Port Harcourt<br>
+            sales@adaobifoods.com
+          </div>
+          <div class="row" style="border:none;padding-bottom:0">
+            <span class="nm"><b>Include on replies too</b><span>Some people prefer it only on new messages</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Include signature on replies"></button>
+          </div>
+          <button class="btn btn-pri btn-sm mt" data-save>Save signature</button>
+        </section>
+
+        <!-- out of office -->
+        <section class="sec-card">
+          <h2>Out of office</h2>
+          <p>An automatic reply, sent once per sender per day.</p>
+          <div class="row">
+            <span class="nm"><b>Auto-reply is off</b><span>Turn it on and set the dates below</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="false" aria-label="Turn on auto-reply"></button>
+          </div>
+          <div class="grid g2 mt">
+            <div class="field" style="margin:0">
+              <label class="label" for="from">From</label>
+              <input class="input" id="from" type="date" disabled>
+            </div>
+            <div class="field" style="margin:0">
+              <label class="label" for="to">Until</label>
+              <input class="input" id="to" type="date" disabled>
+            </div>
+          </div>
+        </section>
+
+        <!-- devices -->
+        <section class="sec-card">
+          <h2>Your devices</h2>
+          <p>Where this mailbox is signed in.</p>
+          <div class="row">
+            <span class="nm"><b>iPhone &middot; Apple Mail</b><span>Port Harcourt &middot; last synced 4 minutes ago</span></span>
+            <span class="pill pill-ok">Active</span>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Chrome on Windows</b><span>Port Harcourt &middot; this browser</span></span>
+            <span class="pill pill-info">You</span>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Android &middot; Gmail app</b><span>Last synced 3 weeks ago</span></span>
+            <button class="btn btn-line btn-sm" type="button">Sign out</button>
+          </div>
+          <a class="btn btn-line full mt" href="../setup-device.html">Set up another device</a>
+        </section>
+
+        <!-- security -->
+        <section class="sec-card">
+          <h2>Security</h2>
+          <div class="row">
+            <span class="nm"><b>Password</b><span>Last changed 3 months ago</span></span>
+            <button class="btn btn-line btn-sm" type="button">Change</button>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Two-factor authentication</b><span>On &middot; 8 of 10 recovery codes unused</span></span>
+            <span class="pill pill-ok">On</span>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Block remote images</b><span>Stops senders knowing when you opened a message</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Block remote images"></button>
+          </div>
+        </section>
+
+        <!-- sync -->
+        <section class="sec-card">
+          <h2>Manual settings</h2>
+          <p>Only needed if an app cannot configure itself.</p>
+          <div class="stack mt">
+            <div>
+              <p class="label">Incoming (IMAP)</p>
+              <div class="copyrow"><code>imap.ziroemail.com &middot; port 993 &middot; SSL/TLS</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+            </div>
+            <div>
+              <p class="label">Outgoing (SMTP)</p>
+              <div class="copyrow"><code>smtp.ziroemail.com &middot; port 587 &middot; STARTTLS</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+            </div>
+            <div>
+              <p class="label">Contacts (CardDAV)</p>
+              <div class="copyrow"><code>dav.ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+            </div>
+          </div>
+          <p class="hint">Your username is always your full email address.</p>
+        </section>
+
+        <!-- how the mailbox behaves -->
+        <section class="sec-card">
+          <h2>Reading and writing</h2>
+          <p>Small preferences that change how the mailbox feels day to day.</p>
+
+          <div class="row">
+            <span class="nm"><b>Ask before sending without a subject</b><span>Catches the one you meant to fill in</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Ask before sending without a subject"></button>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Undo send</b><span>Hold each message for ten seconds so you can take it back</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Undo send"></button>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Mark as read when opened</b><span>Off means you mark them yourself</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="true" aria-label="Mark as read when opened"></button>
+          </div>
+          <div class="row">
+            <span class="nm"><b>Ask for a read receipt on every message</b><span>Normally better chosen per message</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="false" aria-label="Ask for a read receipt on every message"></button>
+          </div>
+          <div class="row" style="border:none;padding-bottom:0">
+            <span class="nm"><b>Confirm a read receipt when asked</b><span>Off means senders are never told when you open their mail</span></span>
+            <button class="sw" type="button" data-switch role="switch" aria-checked="false" aria-label="Confirm a read receipt when asked"></button>
+          </div>
+        </section>
+
+        <!-- leaving -->
+        <section class="sec-card">
+          <h2>This session</h2>
+          <p>You are signed in on this browser as <span class="mono">sales@adaobifoods.com</span>.</p>
+
+          <div class="row">
+            <span class="nm"><b>Signed in since</b><span>Today at 07:58 &middot; Chrome on Windows &middot; Port Harcourt</span></span>
+            <span class="pill pill-ok">This device</span>
+          </div>
+          <div class="row" style="border:none;padding-bottom:0">
+            <span class="nm"><b>Other places you are signed in</b><span>iPhone &middot; last used yesterday</span></span>
+            <button class="btn btn-line btn-sm" type="button">Sign out everywhere</button>
+          </div>
+
+          <div class="btn-row mt-l">
+            <a class="btn btn-ink" href="../login.html">Sign out</a>
+            <a class="btn btn-line" href="../mailadmin/admin.html">Business dashboard</a>
+          </div>
+          <p class="hint">Signing out here does not affect your phone or any other device.</p>
+        </section>
+
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

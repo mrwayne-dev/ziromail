@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Domain health — Ziroemail</title>
+<meta name="description" content="Authentication records, delivery health and DNS monitoring for your domain.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .two { display: grid; gap: 20px; }
+  @media (min-width: 1040px) { .two { grid-template-columns: 1.5fr 1fr; align-items: start; } }
+
+  /* record rows — same language as onboarding so it is recognisable */
+  .rec { border-bottom: 1px solid var(--line); }
+  .rec:last-child { border-bottom: none; }
+  .rec-head {
+    display: flex; gap: 14px; align-items: center; padding: 17px 20px;
+    cursor: pointer; list-style: none; flex-wrap: wrap;
+  }
+  .rec-head::-webkit-details-marker { display: none; }
+  .rec-head:hover { background: var(--paper-soft); }
+  .rec-head .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .ic-ok { background: var(--ok-bg); color: var(--ok); }
+  .ic-bad { background: var(--bad-bg); color: var(--bad); }
+  .rec-head .nm { flex: 1; min-width: 150px; }
+  .rec-head .nm b { font-size: .96rem; color: var(--tx-1); display: block; }
+  .rec-head .nm span { font-size: .84rem; color: var(--tx-3); }
+  .rec-head .chev { transition: transform .2s; color: var(--tx-3); flex: none; }
+  .rec[open] .chev { transform: rotate(180deg); }
+  .rec-body { padding: 4px 20px 22px; display: grid; gap: 13px; }
+  .rec-field .k { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tx-3); margin-bottom: 6px; display: block; }
+
+  /* inbox placement, per provider */
+  .place { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  @media (min-width: 620px) { .place { grid-template-columns: repeat(3, 1fr); } }
+  .place-i { background: #fff; padding: 20px; text-align: center; }
+  .place-i b { display: block; font-size: 1.6rem; font-weight: 650; letter-spacing: -.035em; color: var(--ok); font-variant-numeric: tabular-nums; }
+  .place-i span { font-size: .86rem; color: var(--tx-3); display: block; margin-top: 5px; }
+
+  .hist { display: flex; gap: 2px; align-items: flex-end; height: 26px; margin-top: 12px; }
+  .hist i { flex: 1; height: 100%; border-radius: 2px; background: var(--ok); opacity: .8; }
+  .hist i.bad { background: var(--bad); }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <div class="page-head">
+        <div>
+          <h1 class="mono" style="font-size:clamp(1.3rem,1.1rem + 1vw,1.8rem)" data-dom-name>adaobifoods.com</h1>
+          <p>Authentication and delivery health for your domain.</p>
+        </div>
+        <button class="btn btn-line" type="button">Re-check now</button>
+      </div>
+
+      <!-- the live problem on this domain, if there is one -->
+      <div class="stack mb" data-dom-alerts></div>
+
+      <div class="two" data-stagger>
+        <div>
+          <section style="border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden">
+            <div style="padding:17px 20px;border-bottom:1px solid var(--line);background:var(--paper-soft)">
+              <div class="between" style="flex-wrap:wrap">
+                <h2 style="font-size:1rem">Authentication records</h2>
+                <span class="pill pill-ok" data-dom-healthpill>4 of 4 passing</span>
+              </div>
+            </div>
+
+            <details class="rec" data-rec="spf" open>
+              <summary class="rec-head">
+                <span class="ic ic-bad" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                </span>
+                <span class="nm">
+                  <b>SPF &mdash; who may send as you</b>
+                  <span>Broken since yesterday, 14:20</span>
+                </span>
+                <span data-rec-pill class="pill pill-bad">Needs a fix</span>
+                <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="rec-body">
+                <div class="rec-field">
+                  <span class="k">What is there now</span>
+                  <div class="copyrow" style="background:var(--bad-bg);border-color:var(--bad-line)">
+                    <code style="color:var(--bad)">v=spf1 include:_spf.google.com ~all</code>
+                  </div>
+                </div>
+                <div class="rec-field">
+                  <span class="k">What it should be</span>
+                  <div class="copyrow"><code>v=spf1 include:_spf.google.com include:_spf.ziroemail.com ~all</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+                  <p class="hint">This keeps Google working alongside us &mdash; replace the whole
+                    value, do not add a second SPF record.</p>
+                </div>
+              </div>
+            </details>
+
+            <details class="rec" data-rec="mx">
+              <summary class="rec-head">
+                <span class="ic ic-ok" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 4.8 6.4 11.4 3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="nm">
+                  <b>MX &mdash; where your mail is delivered</b>
+                  <span>Verified &middot; last checked 3 minutes ago</span>
+                </span>
+                <span data-rec-pill class="pill pill-ok">Passing</span>
+                <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="rec-body">
+                <div class="rec-field">
+                  <span class="k">Value</span>
+                  <div class="copyrow"><code>mx.ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+                </div>
+              </div>
+            </details>
+
+            <details class="rec" data-rec="dkim">
+              <summary class="rec-head">
+                <span class="ic ic-ok" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 4.8 6.4 11.4 3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="nm">
+                  <b>DKIM &mdash; the signature on every message</b>
+                  <span>Verified &middot; last checked 3 minutes ago</span>
+                </span>
+                <span data-rec-pill class="pill pill-ok">Passing</span>
+                <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="rec-body">
+                <div class="rec-field">
+                  <span class="k">Host</span>
+                  <div class="copyrow"><code>ziro._domainkey</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+                </div>
+              </div>
+            </details>
+
+            <details class="rec" data-rec="dmarc">
+              <summary class="rec-head">
+                <span class="ic ic-ok" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 4.8 6.4 11.4 3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="nm">
+                  <b>DMARC &mdash; what to do with failures</b>
+                  <span>Verified &middot; last checked 3 minutes ago</span>
+                </span>
+                <span data-rec-pill class="pill pill-ok">Passing</span>
+                <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </summary>
+              <div class="rec-body">
+                <div class="rec-field">
+                  <span class="k">Value</span>
+                  <div class="copyrow"><code>v=DMARC1; p=none; rua=mailto:dmarc@ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- delivery evidence -->
+          <h2 style="font-size:1.05rem;margin-top:34px">Inbox placement</h2>
+          <p class="sm mut mt-s">We send test messages to seeded accounts every day and record
+            where they land. This is evidence, not a promise.</p>
+
+          <div class="place mt">
+            <div class="place-i">
+              <b data-place="gmail">99%</b>
+              <span>Gmail</span>
+              <span class="hist" role="img" aria-label="30 day history, all inbox">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </span>
+            </div>
+            <div class="place-i">
+              <b data-place="outlook">98%</b>
+              <span>Outlook</span>
+              <span class="hist" role="img" aria-label="30 day history, one bad day">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i class="bad"></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </span>
+            </div>
+            <div class="place-i">
+              <b data-place="yahoo">99%</b>
+              <span>Yahoo</span>
+              <span class="hist" role="img" aria-label="30 day history, all inbox">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- right column -->
+        <div class="stack">
+          <div class="card">
+            <h3 style="font-size:1rem">Sending reputation</h3>
+            <div class="between mt" style="font-size:.92rem">
+              <span class="mut">Bounce rate</span><b class="num" data-dom-bounce>0.4%</b>
+            </div>
+            <div class="between" style="font-size:.92rem;margin-top:9px">
+              <span class="mut">Complaint rate</span><b class="num" data-dom-complaint>0.02%</b>
+            </div>
+            <div class="between" style="font-size:.92rem;margin-top:9px">
+              <span class="mut">Blocklists</span><span class="pill pill-ok">Clear</span>
+            </div>
+            <p class="hint" data-dom-repnote>Both well inside safe limits. We alert you before they become a problem.</p>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:1rem">Not confident doing this?</h3>
+            <p class="sm mut mt-s">Send us a screenshot of your DNS page and we will tell you
+              exactly which field to change, and re-check until it passes.</p>
+            <a class="btn btn-line full mt" href="../contact.html">Message us</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

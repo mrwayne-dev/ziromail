@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ziroemail — Mail that arrives</title>
+<meta name="description" content="Business email on your own domain for Nigerian companies. Mail that reaches the inbox, phones that set themselves up, and payment in naira.">
+<!-- seo:start -->
+<link rel="canonical" href="https://ziroemail.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ziroemail">
+<meta property="og:locale" content="en_NG">
+<meta property="og:url" content="https://ziroemail.com/">
+<meta property="og:title" content="Ziroemail — Business email that reaches the inbox">
+<meta property="og:description" content="Professional email on your own domain for Nigerian businesses. Storage you share between mailboxes, phones that set themselves up, and payment in naira or dollars.">
+<meta property="og:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ziroemail — Business email that reaches the inbox">
+<meta name="twitter:description" content="Professional email on your own domain for Nigerian businesses. Storage you share between mailboxes, phones that set themselves up, and payment in naira or dollars.">
+<meta name="twitter:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Ziroemail",
+  "url": "https://ziroemail.com",
+  "logo": "https://ziroemail.com/assets/img/ziroemail-icon.png",
+  "description": "Business email hosting for Nigerian companies, on your own domain.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Port Harcourt",
+    "addressRegion": "Rivers State",
+    "addressCountry": "NG"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "support@ziroemail.com",
+    "areaServed": "NG",
+    "availableLanguage": "English"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Ziroemail business email",
+  "description": "Business email hosting priced per domain, with a storage pool shared across unlimited mailboxes.",
+  "brand": {
+    "@type": "Brand",
+    "name": "Ziroemail"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "price": "18000",
+      "priceCurrency": "NGN",
+      "description": "10 GB shared storage, expandable to 25 GB. One domain.",
+      "url": "https://ziroemail.com/pricing",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "name": "Business",
+      "price": "27600",
+      "priceCurrency": "NGN",
+      "description": "30 GB shared storage, expandable to 100 GB. One domain.",
+      "url": "https://ziroemail.com/pricing",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "name": "Premium",
+      "price": "54000",
+      "priceCurrency": "NGN",
+      "description": "100 GB shared storage, no expansion ceiling. One domain.",
+      "url": "https://ziroemail.com/pricing",
+      "availability": "https://schema.org/InStock"
+    }
+  ]
+}
+</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https:/images.unsplash.com">
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* set before first paint so the hero never flashes in unanimated */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  /* Apple rules applied: 17px body, ~80px section rhythm, one accent, one
+     shadow, 2–3 sentences per section. */
+
+  /* ============ HERO — type only ============ */
+  .hero {
+    position: relative; background: var(--ink-900); color: #fff; overflow: hidden;
+    padding-top: calc(var(--hdr-h) + 56px); padding-bottom: 72px;
+    display: flex; align-items: center;
+  }
+  /* Only reserve a tall viewport where there is room for it. */
+  @media (min-width: 700px) { .hero { min-height: min(80vh, 720px); } }
+  @media (min-width: 900px) { .hero { padding-top: calc(var(--hdr-h) + 110px); padding-bottom: 120px; } }
+  .hero .wrap { position: relative; z-index: 2; }
+
+  .hero h1 {
+    color: #fff; font-size: clamp(3.2rem, 1.6rem + 7.4vw, 8rem);
+    line-height: .96; letter-spacing: -.045em; font-weight: 650;
+  }
+  .hero .sub {
+    margin-top: 26px; max-width: 40ch; color: var(--tx-inv-2);
+    font-size: clamp(1.05rem, 1rem + .35vw, 1.2rem); line-height: 1.5;
+  }
+  .hero .btn-row { margin-top: 38px; }
+
+  /* geometric marks, echoing the logo's circle and envelope flap */
+  .hero .shape { color: var(--blue); }
+  .s1 { width: 520px; height: 520px; right: -170px; top: -190px; }
+  .s2 { width: 200px; height: 200px; right: 34%; bottom: -100px; }
+  /* the envelope flap sits in clear space to the right, below the ring */
+  .s3 { right: 8%; bottom: 8%; width: 170px; height: 170px; opacity: .2; }
+  @media (max-width: 899px) { .s1 { width: 320px; height: 320px; right: -120px; top: -120px; } .s2, .s3 { display: none; } }
+
+  /* ============ CHOOSE-US CYCLER ============ */
+  .choose { background: #fff; }
+  .choose-in {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px;
+    font-size: clamp(1.6rem, 1.05rem + 2.6vw, 3.4rem);
+    font-weight: 600; letter-spacing: -.035em; line-height: 1.16; color: var(--tx-1);
+  }
+  .choose-in .lead-in { color: var(--tx-3); font-weight: 500; }
+  .cycler { color: var(--blue); font-weight: 650; }
+
+  /* ============ OFFER GRID ============ */
+  .offer { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+  @media (min-width: 720px) { .offer { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1080px) { .offer { grid-template-columns: repeat(4, 1fr); } }
+  .offer-i { background: #fff; padding: 40px 30px; }
+  .offer-i .n { font-family: var(--mono); font-size: .76rem; color: var(--blue); letter-spacing: .12em; }
+  .offer-i h3 { margin-top: 16px; font-size: 1.16rem; }
+  .offer-i p { margin-top: 10px; font-size: .96rem; color: var(--tx-3); }
+
+  /* ============ STATEMENT ============ */
+  .statement { background: var(--blue); padding-block: 96px; }
+  @media (min-width: 900px) { .statement { padding-block: 140px; } }
+  .statement .big em { color: #BFD8F7; }
+  .statement .sub {
+    margin: 30px auto 0; max-width: 52ch; color: #D9E8FA;
+    font-size: clamp(1.05rem, 1rem + .4vw, 1.25rem); line-height: 1.55;
+  }
+  .statement .shape { color: #fff; }
+  .st1 { width: 420px; height: 420px; left: -150px; top: -150px; }
+  .st2 { width: 300px; height: 300px; right: -90px; bottom: -130px; }
+
+  /* ============ PROOF SPLIT ============ */
+  .proof { display: grid; gap: 0; }
+  @media (min-width: 940px) { .proof { grid-template-columns: 1fr 1fr; } }
+  .proof-photo { position: relative; min-height: 340px; }
+  .proof-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .proof-copy { padding: 64px var(--gutter); display: flex; flex-direction: column; justify-content: center; }
+  @media (min-width: 940px) { .proof-copy { padding: 96px 64px; } }
+
+  /* ============ STORAGE MODEL ============ */
+  .model { display: grid; gap: 30px; }
+  @media (min-width: 980px) { .model { grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; } }
+
+  /* ============ PLANS ============ */
+  .plans { display: grid; gap: 18px; }
+  @media (min-width: 900px) { .plans { grid-template-columns: repeat(3, 1fr); align-items: start; } }
+  .plan { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 34px 30px; display: flex; flex-direction: column; position: relative; }
+  .plan-hot { border-color: var(--blue); box-shadow: 0 0 0 1.5px var(--blue); }
+  .plan-flag { position: absolute; top: -12px; left: 30px; background: var(--blue); color: #fff; font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+  .plan .amt { display: flex; align-items: baseline; gap: 5px; margin-top: 20px; }
+  .plan .amt b { font-size: 2.6rem; font-weight: 650; letter-spacing: -.04em; color: var(--tx-1); line-height: 1; font-variant-numeric: tabular-nums; }
+  .plan .amt b span { font: inherit; color: inherit; letter-spacing: inherit; }
+  .plan .amt > span { font-size: .88rem; color: var(--tx-3); }
+  .plan .yr { font-size: .87rem; color: var(--tx-3); margin-top: 9px; }
+  .plan .ticks { margin-top: 24px; flex: 1; }
+  .plan .btn { margin-top: 28px; }
+
+  .toggles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+  .tg { display: inline-flex; background: var(--paper-2); border-radius: 999px; padding: 4px; border: 1px solid var(--line); }
+  .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--tx-3); cursor: pointer; min-height: 42px; }
+  .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
+
+  /* ============ CLOSE ============ */
+  .close-band { background: var(--ink-900); text-align: center; position: relative; overflow: hidden; }
+  .close-band h2 { color: #fff; max-width: 17ch; margin-inline: auto; }
+  .close-band .lead { color: var(--tx-inv-2); max-width: 48ch; margin: 20px auto 0; }
+  .close-band .shape { color: var(--blue); }
+  .c1 { width: 480px; height: 480px; left: 50%; transform: translateX(-50%); bottom: -300px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="hdr hdr-ink hdr-over">
+  <div class="wrap wrap-wide bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo logo-light" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37"><img class="logo logo-dark" src="assets/img/ziroemail-wordmark-black.png" alt="" aria-hidden="true" width="150" height="37">
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="migrate.html">Switching</a>
+      <a href="help.html">Help</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="btn btn-line btn-sm" href="login.html">Sign in</a>
+      <a class="btn btn-pri btn-sm" href="signup.html">Get started</a>
+    </div>
+    <button class="burger" data-nav-toggle aria-expanded="false" aria-controls="mnav" aria-label="Open menu">
+      <svg class="i-open" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-close" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mnav" id="mnav">
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="migrate.html">Switching</a>
+    <a href="help.html">Help centre</a>
+    <div class="btn-row">
+      <a class="btn btn-line full" href="login.html">Sign in</a>
+      <a class="btn btn-pri full" href="signup.html">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <span class="shape shape-ring s1" aria-hidden="true"></span>
+    <span class="shape shape-disc s2" aria-hidden="true"></span>
+    <svg class="shape shape-flap s3" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <path d="M8 30 L50 62 L92 30" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <div class="wrap wrap-wide" data-hero>
+      <h1>
+        <span class="rise"><i>Mail</i></span>
+        <span class="rise"><i>that</i></span>
+        <span class="rise"><i class="marked">arrives.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M6 17 C 58 6, 104 19, 150 11 C 196 4, 244 18, 294 9"/></svg></i></span>
+      </h1>
+
+      <p class="sub">
+        Business email on your own domain, set up so it reaches the inbox.
+        Built in Port Harcourt, paid for in naira or dollars.
+      </p>
+
+      <div class="btn-row">
+        <a class="btn btn-pri btn-lg" href="signup.html">
+          Get started
+          <svg class="arr" width="16" height="12" viewBox="0 0 17 13" fill="none" aria-hidden="true"><path d="M10.2 1 15.5 6.5 10.2 12M15 6.5H1" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="btn btn-line btn-lg" href="pricing.html">See pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHOOSE US ============ -->
+  <section class="choose sec-sm">
+    <div class="wrap wrap-wide">
+      <p class="choose-in">
+        <span class="lead-in">You choose us because</span>
+        <span class="cycler" data-cycle="2400" aria-live="polite">
+          <span>we are secure.</span>
+          <span>the interface is a pleasure.</span>
+          <span>support answers.</span>
+          <span>we simply work.</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT YOU GET ============ -->
+  <section class="offer">
+    <div class="offer-i">
+      <span class="n">01</span>
+      <h3>Your own domain</h3>
+      <p>Every mailbox on the name your customers already know, with the records
+        that prove the mail is really yours.</p>
+    </div>
+    <div class="offer-i">
+      <span class="n">02</span>
+      <h3>Every device</h3>
+      <p>Webmail, Outlook, Apple Mail and the Gmail app. Staff phones configure
+        themselves from a single link.</p>
+    </div>
+    <div class="offer-i">
+      <span class="n">03</span>
+      <h3>Paid in naira</h3>
+      <p>Bank transfer, USSD or card. No dollar card, no foreign limit failing
+        at renewal.</p>
+    </div>
+    <div class="offer-i">
+      <span class="n">04</span>
+      <h3>Answered by people</h3>
+      <p>WhatsApp support from the team that runs the servers, not a queue in
+        another time zone.</p>
+    </div>
+  </section>
+
+  <!-- ============ STATEMENT ============ -->
+  <section class="statement">
+    <span class="shape shape-ring st1" aria-hidden="true"></span>
+    <span class="shape shape-disc st2" aria-hidden="true"></span>
+    <div class="wrap">
+      <p class="big">Ziroemail.<br><em>Zero spam.</em></p>
+      <p class="sub">Authentication set up before your first message leaves, and sending
+        watched afterwards. Your invoices land where they belong.</p>
+    </div>
+  </section>
+
+  <!-- ============ PROOF ============ -->
+  <section class="proof">
+    <figure class="proof-photo" style="margin:0" data-reveal="left">
+      <img src="https:/images.unsplash.com/photo-1739303987861-1b0c1104b747?w=1000&q=80&fm=jpg&fit=crop"
+           alt="Two business owners working together on a laptop" width="1000" height="760" loading="lazy" decoding="async">
+    </figure>
+    <div class="proof-copy bg-soft" data-reveal="right">
+      <span class="eyebrow" style="margin-bottom:18px">Switching</span>
+      <h2>Move across without losing a day</h2>
+      <p class="lead mt">Your current email keeps working while we import your history.
+        We only cut over once every record checks out.</p>
+      <a class="tlink mt-l" href="migrate.html">How switching works
+        <svg width="15" height="11" viewBox="0 0 17 13" fill="none" aria-hidden="true"><path d="M10.2 1 15.5 6.5 10.2 12M15 6.5H1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ STORAGE MODEL ============ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head mb-l" data-reveal>
+        <span class="eyebrow">How it is sold</span>
+        <h2>One plan per domain. Split the storage however you like.</h2>
+        <p class="lead">You buy a pool for the domain, not an allowance per person. Give one
+          mailbox the lot, or spread it across twenty &mdash; and add more whenever you need it.</p>
+      </div>
+
+      <div class="model">
+        <div class="domain-card">
+          <p class="dom">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.5" stroke="#1066C6" stroke-width="1.5"/><path d="M1.5 8h13M8 1.5c1.8 2 2.6 4.2 2.6 6.5S9.8 12.5 8 14.5c-1.8-2-2.6-4.2-2.6-6.5S6.2 3.5 8 1.5z" stroke="#1066C6" stroke-width="1.3"/></svg>
+            adaobifoods.com
+            <span class="pill pill-info">Business &middot; 30 GB</span>
+          </p>
+
+          <div class="pool mt" role="img" aria-label="30 GB pool split: victory 12 GB, sales 8 GB, ngozi 4 GB, emeka 2 GB, 4 GB unassigned">
+            <span class="pool-seg s1" style="flex:12">12 GB</span>
+            <span class="pool-seg s2" style="flex:8">8 GB</span>
+            <span class="pool-seg s3" style="flex:4">4 GB</span>
+            <span class="pool-seg s4" style="flex:2">2</span>
+            <span class="pool-seg free" style="flex:4">4 free</span>
+          </div>
+
+          <div class="tbl-wrap" style="margin-top:20px;border-radius:var(--r-xs)">
+            <table class="data" style="min-width:0">
+              <caption class="sr-only">Storage assigned to each mailbox on adaobifoods.com</caption>
+              <thead>
+                <tr><th scope="col">Mailbox</th><th scope="col" class="c">Assigned</th><th scope="col" class="c">Used</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row" class="mono">victory@</th><td class="c num">12 GB</td><td class="c num">4.2 GB</td></tr>
+                <tr><th scope="row" class="mono">sales@</th><td class="c num">8 GB</td><td class="c num">6.1 GB</td></tr>
+                <tr><th scope="row" class="mono">ngozi@</th><td class="c num">4 GB</td><td class="c num">1.8 GB</td></tr>
+                <tr><th scope="row" class="mono">emeka@</th><td class="c num">2 GB</td><td class="c num">1.4 GB</td></tr>
+                <tr><th scope="row" style="color:var(--tx-3)">Unassigned</th><td class="c num" style="color:var(--tx-3)">4 GB</td><td class="c" style="color:var(--tx-3)">&mdash;</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="sm mut" style="margin-top:14px">Four mailboxes, one plan. Re-slice it any time
+            from the dashboard &mdash; no new purchase.</p>
+        </div>
+
+        <div>
+          <ul class="ticks">
+            <li>
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span><b>Unlimited mailboxes.</b> Ten users on the 10 GB plan is fine, as long as
+                their quotas add up to 10 GB. We do not charge per seat.</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span><b>Need more? Just add it.</b> Storage is sold by the gigabyte at the same price
+                on every plan, and joins the pool immediately.</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span><b>Two domains, two plans.</b> Storage never crosses a domain boundary &mdash;
+                that separation is what protects each domain's sending reputation.</span>
+            </li>
+          </ul>
+
+          <div class="tbl-wrap" style="margin-top:26px">
+            <table class="data" style="min-width:0">
+              <caption class="sr-only">Storage ceiling by plan</caption>
+              <thead>
+                <tr><th scope="col">Plan</th><th scope="col" class="c">Included</th><th scope="col" class="c">Expandable to</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Starter</th><td class="c num">10 GB</td><td class="c num">25 GB</td></tr>
+                <tr><th scope="row">Business</th><td class="c num">30 GB</td><td class="c num">100 GB</td></tr>
+                <tr><th scope="row">Premium</th><td class="c num">100 GB</td><td class="c">No limit</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <a class="tlink mt-l" href="pricing.html">See how storage is priced
+            <svg width="15" height="11" viewBox="0 0 17 13" fill="none" aria-hidden="true"><path d="M10.2 1 15.5 6.5 10.2 12M15 6.5H1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="sec bg-soft">
+    <div class="wrap">
+      <div class="sec-head center mb-l" data-reveal>
+        <span class="eyebrow">Pricing</span>
+        <h2>One plan per domain</h2>
+        <p class="lead">No setup fee and no per-seat charge. Monthly or yearly &mdash; the
+          price is the same.</p>
+      </div>
+
+      <div class="toggles">
+        <div class="tg" role="group" aria-label="Billing term">
+          <button type="button" data-set-term="annual" aria-pressed="true">Pay yearly</button>
+          <button type="button" data-set-term="monthly" aria-pressed="false">Pay monthly</button>
+        </div>
+        <div class="tg" role="group" aria-label="Currency">
+          <button type="button" data-set-currency="ngn" aria-pressed="true">&#8358; Naira</button>
+          <button type="button" data-set-currency="usd" aria-pressed="false">$ Dollar</button>
+        </div>
+      </div>
+
+      <div class="plans" data-stagger>
+        <article class="plan tilt">
+          <h3>Starter</h3>
+          <p class="sm mut mt-s">A proper address for a small team.</p>
+          <div class="amt">
+            <b><span data-cur-symbol>&#8358;</span><span data-ngn="1,100" data-usd="1.50" data-ngn-annual="12,000" data-usd-annual="12">12,000</span></b>
+            <span data-show-when="annual">/ domain / year</span><span data-show-when="monthly" hidden>/ domain / month</span>
+          </div>
+          <p class="yr">Storage expandable to <b style="color:var(--tx-1)">25 GB</b></p>
+          <ul class="ticks">
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>10&nbsp;GB</b> shared across the domain</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Authentication set up for you</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Phone setup by scanning a code</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>WhatsApp support</span></li>
+          </ul>
+          <a class="btn btn-line" href="signup.html?plan=starter">Choose Starter</a>
+        </article>
+
+        <article class="plan plan-hot tilt">
+          <span class="plan-flag">Most chosen</span>
+          <h3>Business</h3>
+          <p class="sm mut mt-s">For a business that lives in its inbox.</p>
+          <div class="amt">
+            <b><span data-cur-symbol>&#8358;</span><span data-ngn="2,500" data-usd="3.50" data-ngn-annual="27,600" data-usd-annual="30">27,600</span></b>
+            <span data-show-when="annual">/ domain / year</span><span data-show-when="monthly" hidden>/ domain / month</span>
+          </div>
+          <p class="yr">Storage expandable to <b style="color:var(--tx-1)">100 GB</b></p>
+          <ul class="ticks">
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>30&nbsp;GB</b> shared across the domain</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Everything in Starter</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>We import your old mail</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shared addresses and forwarding</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>More than one domain</span></li>
+          </ul>
+          <a class="btn btn-pri" href="signup.html?plan=business">Choose Business</a>
+        </article>
+
+        <article class="plan tilt">
+          <h3>Premium</h3>
+          <p class="sm mut mt-s">For teams that keep everything.</p>
+          <div class="amt">
+            <b><span data-cur-symbol>&#8358;</span><span data-ngn="5,000" data-usd="7" data-ngn-annual="54,000" data-usd-annual="60">54,000</span></b>
+            <span data-show-when="annual">/ domain / year</span><span data-show-when="monthly" hidden>/ domain / month</span>
+          </div>
+          <p class="yr">Storage expands <b style="color:var(--tx-1)">without a limit</b></p>
+          <ul class="ticks">
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>100&nbsp;GB</b> shared across the domain</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Everything in Business</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Automatic setup and migration</span></li>
+            <li><svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 4.6 6.4 11.3 3 7.9" stroke="#1066C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Roles, delegation and audit log</span></li>
+          </ul>
+          <a class="btn btn-line" href="signup.html?plan=premium">Choose Premium</a>
+        </article>
+      </div>
+
+      <p class="center sm mut mt-l">
+        Prices exclude VAT at 7.5%. One plan covers one domain.
+        <a class="tlink" href="pricing.html" style="border:none">Work out your total &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section class="sec close-band">
+    <span class="shape shape-ring c1" aria-hidden="true"></span>
+    <div class="wrap">
+      <h2>Set up in an afternoon</h2>
+      <p class="lead">Connect your domain, add your staff, and have every phone working
+        before you close for the day.</p>
+      <div class="btn-row center mt-l">
+        <a class="btn btn-pri btn-lg" href="signup.html">Get started</a>
+        <a class="btn btn-line btn-lg" href="contact.html">Talk to us</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div>
+        <img class="logo" src="assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+        <p class="sm" style="margin-top:16px;max-width:34ch;color:var(--tx-inv-3)">
+          Business email for Nigerian companies. Built and run by Zirostack in Port Harcourt, Rivers State.
+        </p>
+        <a class="tlink" style="margin-top:18px;color:var(--blue-300);font-size:.9rem" href="status.html">System status</a>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="setup-device.html">Phone setup</a>
+        <a href="migrate.html">Switching</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="help.html">Help centre</a>
+        <a href="contact.html">Contact us</a>
+        <a href="status.html">Status page</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="legal-terms.html">Terms of service</a>
+        <a href="legal-privacy.html">Privacy policy</a>
+        <a href="legal-aup.html">Acceptable use</a>
+        <a href="legal-refunds.html">Refund policy</a>
+      </div>
+    </div>
+    <div class="ftr-btm">
+      <span>&copy; 2026 Zirostack Ltd.</span>
+      <span>Port Harcourt, Rivers State &middot; VAT charged at 7.5%</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

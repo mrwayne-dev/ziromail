@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your account — Ziroemail</title>
+<meta name="description" content="Create a Ziroemail account for your business. Takes under a minute — your domain is set up in the next step.">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .auth { min-height: 100vh; display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 960px) { .auth { grid-template-columns: 1fr .82fr; } }
+
+  .auth-main { padding: 28px var(--gutter) 60px; display: flex; flex-direction: column; }
+  @media (min-width: 960px) { .auth-main { padding: 34px 56px 60px; } }
+  .auth-body { width: 100%; max-width: 440px; margin: auto; padding-block: 32px; }
+  .auth-body h1 { font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.1rem); }
+  .auth-body > p { margin-top: 10px; }
+
+  .auth-side {
+    display: none; background: var(--ink-900); color: #fff; padding: 48px 44px;
+    position: relative; overflow: hidden;
+  }
+  @media (min-width: 960px) { .auth-side { display: flex; flex-direction: column; justify-content: center; } }
+  /* flat geometric marks, matching the landing page — no soft gradient blobs */
+  .auth-side .shape { color: var(--blue); }
+  .a1 { width: 420px; height: 420px; right: -170px; top: -150px; }
+  .a2 { width: 150px; height: 150px; right: 12%; bottom: 8%; opacity: .2; }
+  /* content sits above the decorative shapes, which stay absolutely placed */
+  .auth-side > *:not(.shape) { position: relative; z-index: 1; }
+  .auth-side h2 { color: #fff; font-size: 1.5rem; }
+  .side-list { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 18px; }
+  .side-list li { display: flex; gap: 13px; align-items: flex-start; }
+  .side-list .tick {
+    width: 24px; height: 24px; border-radius: 50%; background: rgba(16,102,198,.18);
+    color: var(--blue); display: grid; place-items: center; flex: none; font-weight: 900; font-size: .8rem;
+  }
+  .side-list b { display: block; color: #fff; font-size: .95rem; }
+  .side-list span { color: #A9BACD; font-size: .88rem; line-height: 1.5; }
+  .side-quote {
+    margin-top: 38px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.14);
+    color: #C6D2E0; font-size: .9rem; line-height: 1.6;
+  }
+
+  .chosen-plan {
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+    border: 1px solid var(--blue-200); background: var(--blue-050);
+    border-radius: var(--r-sm); padding: 13px 16px; margin-bottom: 24px;
+  }
+  .chosen-plan b { color: var(--blue-700); font-size: .95rem; }
+  .chosen-plan .small { color: var(--blue-700); opacity: .85; }
+  .chosen-plan a { font-size: .85rem; font-weight: 650; white-space: nowrap; }
+
+  .pw-meter { display: flex; gap: 4px; margin-top: 8px; }
+  .pw-meter i { height: 4px; flex: 1; border-radius: 2px; background: var(--paper-2); }
+  .pw-meter.ok i:nth-child(-n+3) { background: var(--blue); }
+
+  .auth-foot { text-align: center; font-size: .9rem; color: var(--tx-3); margin-top: 24px; }
+  .legal-line { font-size: .8rem; color: var(--tx-3); line-height: 1.55; margin-top: 16px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="auth">
+  <div class="auth-main">
+    <a class="brand" href="index.html" aria-label="Ziroemail home"><img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37"></a>
+
+    <div class="auth-body" id="main">
+      <div class="chosen-plan">
+        <div>
+          <b>Business plan &mdash; yearly</b>
+          <div class="small">&#8358;27,600 per year &middot; 30 GB shared</div>
+        </div>
+        <a href="pricing.html">Change</a>
+      </div>
+
+      <h1>Create your account</h1>
+      <p class="lead" style="font-size:1rem">This takes under a minute. You will connect your
+        domain and add your staff in the next step.</p>
+
+      <form class="mt-l" data-demo-form data-next="verify-email.html" novalidate>
+        <div class="field">
+          <label class="label" for="business">Business name</label>
+          <input class="input" id="business" name="business" type="text" placeholder="Adaobi Foods Ltd" autocomplete="organization" required>
+        </div>
+
+        <!-- error state shown inline, tied to the input via aria-describedby -->
+        <div class="field field-err">
+          <label class="label" for="email">Your work email</label>
+          <input class="input" id="email" name="email" type="email" placeholder="you@adaobifoods.com"
+                 autocomplete="email" spellcheck="false" aria-invalid="true" aria-describedby="email-err" required>
+          <p class="err" id="email-err">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.6v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="11.2" r=".9" fill="currentColor"/></svg>
+            That address is already registered. <a href="login.html" style="color:inherit;text-decoration:underline">Sign in instead</a>?
+          </p>
+          <p class="hint">We send your receipt and setup link here. It can be your current
+            address &mdash; even a Gmail one for now.</p>
+        </div>
+
+        <div class="field">
+          <label class="label" for="phone">WhatsApp number</label>
+          <input class="input" id="phone" name="phone" type="tel" placeholder="0803 000 0000" autocomplete="tel" required>
+          <p class="hint">This is how we reach you about setup and renewals. We do not use it for marketing.</p>
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">Choose a password</label>
+          <input class="input" id="password" name="password" type="password" placeholder="At least 10 characters" autocomplete="new-password" minlength="10" required>
+          <div class="pw-meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="hint">Use something long that you do not use anywhere else.</p>
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" name="terms" required>
+            <span>I agree to the <a href="legal-terms.html">terms of service</a>,
+              the <a href="legal-aup.html">acceptable use policy</a> and the
+              <a href="legal-privacy.html">privacy policy</a>.</span>
+          </label>
+        </div>
+
+        <button class="btn btn-pri full btn-lg mt-l" type="submit">Create account</button>
+
+        <div class="note mt" data-demo-note hidden>
+          <h4>This is a design prototype</h4>
+          <p>In the built product this creates your account and sends a verification email.
+            Continue to the next screen to see what happens after that.</p>
+          <a class="btn btn-pri btn-sm mt-s" href="verify-email.html">Continue &rarr;</a>
+        </div>
+
+        <p class="legal-line">
+          We will never send marketing email to your customers, and we do not read your mail.
+          Your account is only created once you confirm your address.
+        </p>
+      </form>
+
+      <p class="auth-foot">Already have an account? <a href="login.html">Sign in</a></p>
+    </div>
+  </div>
+
+  <aside class="auth-side">
+    <span class="shape shape-ring a1" aria-hidden="true"></span>
+    <svg class="shape shape-flap a2" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <path d="M8 30 L50 62 L92 30" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="eyebrow">What happens next</span>
+    <h2>Three steps and your business is running on Ziroemail</h2>
+
+    <ul class="side-list">
+      <li>
+        <span class="tick" aria-hidden="true">1</span>
+        <div>
+          <b>Confirm your email</b>
+          <span>One click on the link we send you.</span>
+        </div>
+      </li>
+      <li>
+        <span class="tick" aria-hidden="true">2</span>
+        <div>
+          <b>Connect your domain</b>
+          <span>We generate the exact records to paste, show you where they go in your registrar,
+            and check them for you. Or hand it over and we will do it.</span>
+        </div>
+      </li>
+      <li>
+        <span class="tick" aria-hidden="true">3</span>
+        <div>
+          <b>Add your staff</b>
+          <span>Create their mailboxes and send each person a setup link on WhatsApp.
+            Their phone configures itself.</span>
+        </div>
+      </li>
+    </ul>
+
+    <p class="side-quote">
+      Your mailboxes do not go live until your domain records check out. That is deliberate &mdash;
+      it is the difference between mail that reaches the inbox and mail that lands in spam.
+    </p>
+  </aside>
+</div>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

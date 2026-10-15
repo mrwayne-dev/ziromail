@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delivery log — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .filters { display: grid; gap: 10px; padding: 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs); }
+  @media (min-width: 900px) { .filters { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; } }
+  .filters label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--tx-3); margin-bottom: 5px; }
+
+  /* the delivery state is the whole point — make it readable at a glance */
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 650; white-space: nowrap; }
+  .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .st.done::before { background: var(--ok); }
+  .st.wait::before { background: var(--warn); }
+  .st.fail::before { background: var(--bad); }
+  .st.done { color: var(--ok); }
+  .st.wait { color: var(--tx-2); }
+  .st.fail { color: var(--bad); }
+
+  /* expanded trace for one message */
+  .trace { border-left: 2px solid var(--line-2); margin-left: 6px; padding-left: 18px; display: grid; gap: 14px; }
+  .trace .hop { position: relative; }
+  .trace .hop::before {
+    content: ""; position: absolute; left: -24px; top: 5px; width: 9px; height: 9px;
+    border-radius: 50%; background: #fff; border: 2px solid var(--blue);
+  }
+  .trace .hop.pend::before { border-color: var(--warn); }
+  .trace .hop b { font-size: .9rem; color: var(--tx-1); display: block; }
+  .trace .hop .tm { font-size: .78rem; color: var(--tx-3); font-variant-numeric: tabular-nums; }
+  .trace .hop .raw {
+    font-family: var(--mono); font-size: .78rem; color: var(--tx-2); background: var(--paper-2);
+    padding: 8px 11px; border-radius: 4px; margin-top: 6px; display: block;
+    word-break: break-word; white-space: pre-wrap;
+  }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html" aria-current="page">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Delivery log</h1>
+        <p>Every message in and out, kept for 30&nbsp;days. This is how you answer &ldquo;did it send?&rdquo; with a fact rather than a guess.</p>
+      </div>
+      <a class="btn btn-line btn-sm" href="ops-deliverability.html">Deliverability</a>
+    </div>
+
+    <form class="filters" action="ops-queue.html" method="get">
+      <div>
+        <label for="f-q">Address, subject or message ID</label>
+        <input class="input" type="search" id="f-q" name="q" autocomplete="off" spellcheck="false"
+               placeholder="sales@adaobifoods.com…">
+      </div>
+      <div>
+        <label for="f-st">State</label>
+        <select class="input" id="f-st" name="state" style="background-color:#fff;color:var(--tx-1)">
+          <option>Any state</option>
+          <option>Delivered</option>
+          <option selected>Deferred</option>
+          <option>Bounced</option>
+          <option>Rejected</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-wh">Period</label>
+        <select class="input" id="f-wh" name="when" style="background-color:#fff;color:var(--tx-1)">
+          <option>Last hour</option>
+          <option selected>Last 24 hours</option>
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+        </select>
+      </div>
+      <button class="btn btn-pri" type="submit">Search</button>
+    </form>
+
+    <div class="between mt" style="flex-wrap:wrap;gap:10px">
+      <p class="sm mut">Showing <b>2,140 deferred</b> messages from the last 24&nbsp;hours. 2,108 are
+        waiting on one recipient domain.</p>
+      <button class="btn btn-line btn-sm" type="button">Export as CSV</button>
+    </div>
+
+    <div class="tbl-wrap mt">
+      <table class="ops">
+        <caption class="sr-only">Deferred messages in the last 24 hours</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="num">Time</th>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+            <th scope="col" class="wide">Subject</th>
+            <th scope="col">State</th>
+            <th scope="col" class="num">Attempts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="sev-med">
+            <td class="num mono">08:11</td>
+            <td class="mono">sales@adaobifoods.com</td>
+            <td class="mono">buyer@shoprite-ng.com</td>
+            <td class="wide">Pro forma invoice, October</td>
+            <td><span class="st wait">Deferred</span></td>
+            <td class="num">4</td>
+          </tr>
+          <tr class="sev-med">
+            <td class="num mono">08:09</td>
+            <td class="mono">tunde@bellohaulage.com</td>
+            <td class="mono">ops@shoprite-ng.com</td>
+            <td class="wide">Delivery schedule week 40</td>
+            <td><span class="st wait">Deferred</span></td>
+            <td class="num">4</td>
+          </tr>
+          <tr>
+            <td class="num mono">08:04</td>
+            <td class="mono">admin@pearlclinic.com.ng</td>
+            <td class="mono">ngozi.a@gmail.com</td>
+            <td class="wide">Appointment confirmed &mdash; 2 October</td>
+            <td><span class="st done">Delivered</span></td>
+            <td class="num">1</td>
+          </tr>
+          <tr class="sev-high">
+            <td class="num mono">07:58</td>
+            <td class="mono">info@quickloans-ng.com</td>
+            <td class="mono">c.okafor@yahoo.com</td>
+            <td class="wide">FINAL NOTICE: your loan pre-approval&hellip;</td>
+            <td><span class="st fail">Bounced</span></td>
+            <td class="num">1</td>
+          </tr>
+          <tr>
+            <td class="num mono">07:52</td>
+            <td class="mono">accounts@lagospropertyhub.com</td>
+            <td class="mono">tenant@outlook.com</td>
+            <td class="wide">Service charge invoice, Q4 2026</td>
+            <td><span class="st done">Delivered</span></td>
+            <td class="num">1</td>
+          </tr>
+          <tr class="sev-high">
+            <td class="num mono">07:44</td>
+            <td class="mono">accounts@lagospropertyhub.com</td>
+            <td class="mono">old.tenant@yahoo.com</td>
+            <td class="wide">Service charge invoice, Q4 2026</td>
+            <td><span class="st fail">Bounced</span></td>
+            <td class="num">1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- one message, traced -->
+    <section style="margin-top:34px" aria-labelledby="tr-h">
+      <h2 id="tr-h" style="font-size:1.05rem">Message trace</h2>
+      <p class="sm mut mt-s">Selected: the 08:11 message to
+        <span class="mono" style="font-size:.85rem">shoprite-ng.com</span>. Every hop, with the
+        receiving server's own words.</p>
+
+      <div class="card mt">
+        <div class="between" style="flex-wrap:wrap;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+          <div>
+            <b style="font-size:.95rem">Pro forma invoice, October</b>
+            <p class="sm mut" style="margin-top:3px">Message ID
+              <span class="mono" style="font-size:.8rem">3f9c1e@mx1.ziroemail.com</span></p>
+          </div>
+          <span class="pill pill-warn">Deferred &middot; retrying</span>
+        </div>
+
+        <div class="trace" style="margin-top:20px">
+          <div class="hop">
+            <b>Accepted from the sender</b>
+            <span class="tm">08:11:04 &middot; authenticated, TLS 1.3</span>
+            <code class="raw">250 2.0.0 Ok: queued as 3f9c1e</code>
+          </div>
+          <div class="hop">
+            <b>DKIM signed and queued for delivery</b>
+            <span class="tm">08:11:04 &middot; via 102.89.44.13</span>
+          </div>
+          <div class="hop">
+            <b>First attempt refused &mdash; temporary</b>
+            <span class="tm">08:11:09 &middot; mx.shoprite-ng.com</span>
+            <code class="raw">451 4.3.2 Too many concurrent connections, try again later</code>
+          </div>
+          <div class="hop">
+            <b>Retried three times</b>
+            <span class="tm">08:16, 08:26, 08:46 &middot; same response each time</span>
+          </div>
+          <div class="hop pend">
+            <b>Next attempt at 09:26</b>
+            <span class="tm">Retries continue for 72&nbsp;hours before the sender is told it failed</span>
+          </div>
+        </div>
+
+        <div class="note note-warn mt">
+          <h4>This is the recipient's limit, not ours</h4>
+          <p>A 451 is a temporary refusal &mdash; that server is asking us to slow down. The mail is
+            held and nothing is lost. If it persists past 45&nbsp;minutes, route this domain through
+            the backup relay, which opens fewer connections at once.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

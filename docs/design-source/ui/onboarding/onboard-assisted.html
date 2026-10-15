@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect your domain — Ziroemail</title>
+<meta name="description" content="Pick your registrar and we give you the exact records, or a one-click link.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ob-hdr { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 60; }
+  .ob-hdr .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .ob-help { font-size: .88rem; font-weight: 600; color: var(--blue); display: inline-flex; align-items: center; gap: 8px; }
+
+  .ob { padding-block: 30px 90px; }
+  .ob-grid { display: grid; gap: 28px; }
+  @media (min-width: 1000px) { .ob-grid { grid-template-columns: 1fr 300px; gap: 44px; align-items: start; } }
+
+  /* two ways to hand it over */
+  .ways { display: grid; gap: 14px; margin-top: 26px; }
+  @media (min-width: 720px) { .ways { grid-template-columns: repeat(2, 1fr); } }
+  .way {
+    border: 1.5px solid var(--line-2); border-radius: var(--r); background: #fff;
+    padding: 24px; display: flex; flex-direction: column; cursor: pointer;
+  }
+  .way:has(input:checked) { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(16,102,198,.14); background: var(--blue-050); }
+  .way input { position: absolute; opacity: 0; pointer-events: none; }
+  .way .ic { width: 42px; height: 42px; border-radius: 12px; background: var(--paper-2); color: var(--tx-2); display: grid; place-items: center; margin-bottom: 16px; }
+  .way:has(input:checked) .ic { background: #fff; color: var(--blue); }
+  .way h3 { font-size: 1.04rem; }
+  .way p { font-size: .9rem; color: var(--tx-3); margin-top: 8px; flex: 1; }
+  .way .when { font-size: .84rem; color: var(--blue-700); font-weight: 600; margin-top: 14px; }
+
+  .aside-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  .aside-card + .aside-card { margin-top: 16px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ob-hdr">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html" aria-label="Ziroemail home">
+      <img class="logo" src="../assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="ob-help" href="../contact.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6.2 6a1.8 1.8 0 1 1 2.3 1.7c-.4.2-.5.5-.5.8v.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11.4" r=".9" fill="currentColor"/>
+      </svg>
+      Get help on WhatsApp
+    </a>
+  </div>
+</header>
+
+<main id="main" class="ob">
+  <div class="wrap">
+
+    <div class="steps" aria-label="Setup progress">
+      <span class="step done"><span class="n">1</span> Domain</span>
+      <span class="step-line"></span>
+      <span class="step done"><span class="n">2</span> Plan &amp; payment</span>
+      <span class="step-line"></span>
+      <span class="step now" aria-current="step"><span class="n">3</span> Records</span>
+      <span class="step-line"></span>
+      <span class="step"><span class="n">4</span> Mailboxes</span>
+    </div>
+
+    <div class="ob-grid">
+      <div>
+        <div data-hero>
+          <h1 style="font-size:clamp(1.7rem,1.4rem + 1.3vw,2.3rem)">Connect it automatically</h1>
+          <p class="lead mt-s" style="max-width:54ch">
+            DNS is the one part of this that trips people up. Tell us where the domain is
+            registered and we hand you exactly what to paste &mdash; or a link that does it
+            in one click.
+          </p>
+        </div>
+
+        <form data-demo-form novalidate>
+          <h2 style="font-size:1.1rem;margin-top:26px">Where is the domain registered?</h2>
+          <p class="sm mut mt-s">We recognise most Nigerian and international registrars and
+            give you their exact steps, field by field.</p>
+
+          <div class="reg-grid mt" role="group" aria-label="Choose your registrar">
+            <button class="reg" type="button" aria-pressed="false" data-reg="whogohost">Whogohost</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="qservers">Qservers</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="godaddy">GoDaddy</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="namecheap">Namecheap</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="domainking">DomainKing</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="truehost">Truehost</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="cloudflare">Cloudflare</button>
+            <button class="reg" type="button" aria-pressed="false" data-reg="other">Somewhere else</button>
+          </div>
+
+          <!-- one-click, where the registrar supports it -->
+          <div class="auto-card" data-auto-one hidden>
+            <span class="ic" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="bd">
+              <b>This registrar supports one-click setup</b>
+              <p>Sign in at <span data-reg-name>your registrar</span>, approve the change, and
+                the four records are added for you. Nothing to copy.</p>
+            </span>
+            <a class="btn btn-pri" href="onboard-records.html">Add the records</a>
+          </div>
+
+          <!-- otherwise, the exact values with their own copy buttons -->
+          <div class="auto-card" data-auto-manual hidden>
+            <span class="ic" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.7"/></svg>
+            </span>
+            <span class="bd">
+              <b>Copy the four records across</b>
+              <p>We show each one with its own copy button and a picture of where it goes in
+                <span data-reg-name2>your registrar</span>. It takes about two minutes.</p>
+            </span>
+            <a class="btn btn-pri" href="onboard-records.html">Show me the records</a>
+          </div>
+
+          <div class="note mt-l">
+            <h4>We check until it works</h4>
+            <p>Once the records are in, we look for them every few minutes and tell you the
+              moment they pass. Most domains verify within the hour, some within seconds. You
+              do not need to sit and watch.</p>
+          </div>
+        </form>
+
+        <p class="sm mut mt-l" style="padding-top:22px;border-top:1px solid var(--line)">
+          Prefer to just read the values?
+          <a href="onboard-records.html" style="color:var(--blue);font-weight:600">See all four records</a>
+          &mdash; they are the same either way.
+        </p>
+      </div>
+
+      <aside>
+        <div class="aside-card">
+          <h2 style="font-size:1rem">No waiting on anybody</h2>
+          <p class="sm mut mt-s">Setting up a domain does not need us. Paste four records, or
+            approve one link, and it is done &mdash; at whatever hour you happen to be
+            working.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Only the mail records</h2>
+          <p class="sm mut mt-s">One-click setup adds MX, SPF, DKIM and DMARC, and nothing else.
+            Anything to do with your website is left exactly as it is.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Nothing breaks meanwhile</h2>
+          <p class="sm mut mt-s">Your current email keeps working the whole time. The switch only
+            happens once every record verifies.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operations — Ziroemail</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ops-grid { display: grid; gap: 18px; }
+  @media (min-width: 1000px) { .ops-grid { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+
+  /* the morning check: four things that must be true */
+  .checks { display: grid; gap: 10px; }
+  .check {
+    display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs);
+  }
+  .check .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; margin-top: 6px; }
+  .check .dot.ok { background: var(--ok); }
+  .check .dot.warn { background: var(--warn); }
+  .check .dot.bad { background: var(--bad); }
+  .check .bd { flex: 1; min-width: 0; }
+  .check .bd b { display: block; font-size: .92rem; color: var(--tx-1); }
+  .check .bd span { font-size: .84rem; color: var(--tx-3); }
+  .check .rt { font-size: .84rem; font-variant-numeric: tabular-nums; color: var(--tx-2); font-weight: 600; white-space: nowrap; }
+  .check.is-bad { border-color: var(--bad); background: var(--bad-bg); }
+
+  .feed { display: grid; gap: 0; }
+  .feed .it { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .feed .it:last-child { border-bottom: none; }
+  .feed .tm { font-size: .78rem; color: var(--tx-3); font-variant-numeric: tabular-nums; width: 46px; flex: none; padding-top: 2px; }
+  .feed .bd { flex: 1; min-width: 0; font-size: .875rem; color: var(--tx-2); }
+  .feed .bd b { color: var(--tx-1); font-weight: 600; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html" aria-current="page">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Operations</h1>
+        <p>Monday 29 September 2026 &middot; 08:14 WAT &middot; figures refresh every 60&nbsp;seconds.</p>
+      </div>
+      <a class="btn btn-line btn-sm" href="ops-reports.html">September report</a>
+    </div>
+
+    <section aria-labelledby="m-h">
+      <h2 id="m-h" class="sr-only">Platform figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Organisations</span>
+          <span class="v">412</span>
+          <span class="d up">+9 this week</span>
+        </div>
+        <div class="metric">
+          <span class="k">Mailboxes</span>
+          <span class="v">3,106</span>
+          <span class="d up">+64 this week</span>
+        </div>
+        <div class="metric">
+          <span class="k">Mail in 24h</span>
+          <span class="v">248k</span>
+          <span class="d">184k in &middot; 64k out</span>
+        </div>
+        <div class="metric">
+          <span class="k">Bounce rate</span>
+          <span class="v">1.4%</span>
+          <span class="d up">under the 2% line</span>
+        </div>
+        <div class="metric alert">
+          <span class="k">Queue age</span>
+          <span class="v">18m</span>
+          <span class="d down">target is under 5m</span>
+        </div>
+        <div class="metric">
+          <span class="k">Storage used</span>
+          <span class="v">4.8&nbsp;TB</span>
+          <span class="d">of 12&nbsp;TB provisioned</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="ops-grid" style="margin-top:26px">
+      <div>
+        <!-- the four things that must be true before anything else matters -->
+        <section aria-labelledby="ck-h">
+          <h2 id="ck-h" style="font-size:1.05rem">This morning's checks</h2>
+          <p class="sm mut mt-s">Four things decide whether the business is healthy. Everything
+            else on this console is detail.</p>
+
+          <div class="checks mt">
+            <div class="check">
+              <span class="dot ok" aria-hidden="true"></span>
+              <span class="bd">
+                <b>No blocklist entries</b>
+                <span>All four sending IPs clear on Spamhaus, Barracuda, SORBS and SpamCop.</span>
+              </span>
+              <span class="rt">checked 06:00</span>
+            </div>
+            <div class="check is-bad">
+              <span class="dot bad" aria-hidden="true"></span>
+              <span class="bd">
+                <b>Outbound queue is backing up</b>
+                <span>18 minutes oldest message, 2,140 waiting. One recipient domain is
+                  deferring &mdash; see the delivery log.</span>
+              </span>
+              <span class="rt"><a class="tlink" href="ops-queue.html">Open</a></span>
+            </div>
+            <div class="check">
+              <span class="dot warn" aria-hidden="true"></span>
+              <span class="bd">
+                <b>3 accounts flagged for review</b>
+                <span>Sending volume above their normal pattern. None locked yet.</span>
+              </span>
+              <span class="rt"><a class="tlink" href="ops-abuse.html">Review</a></span>
+            </div>
+            <div class="check">
+              <span class="dot ok" aria-hidden="true"></span>
+              <span class="bd">
+                <b>Last night's backup verified</b>
+                <span>Full snapshot at 02:00, restore test passed on a sample mailbox.</span>
+              </span>
+              <span class="rt">02:47</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- domains needing a nudge -->
+        <section style="margin-top:32px" aria-labelledby="dn-h">
+          <div class="between" style="flex-wrap:wrap;gap:10px">
+            <h2 id="dn-h" style="font-size:1.05rem">Domains stuck in setup</h2>
+            <a class="tlink" href="ops-domains.html">All domains</a>
+          </div>
+          <p class="sm mut mt-s">Paid, but records never finished. These are the accounts most
+            likely to ask for a refund.</p>
+
+          <div class="tbl-wrap mt">
+            <table class="ops">
+              <caption class="sr-only">Domains with incomplete DNS records</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="wide">Domain</th>
+                  <th scope="col">Organisation</th>
+                  <th scope="col">Missing</th>
+                  <th scope="col" class="num">Waiting</th>
+                  <th scope="col"><span class="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="sev-high">
+                  <td class="mono">chiomatextiles.ng</td>
+                  <td class="wide">Chioma Textiles</td>
+                  <td>MX, SPF, DKIM</td>
+                  <td class="num">9 days</td>
+                  <td><a class="btn btn-pri btn-sm" href="ops-org.html">Call them</a></td>
+                </tr>
+                <tr class="sev-med">
+                  <td class="mono">bellohaulage.com</td>
+                  <td class="wide">Bello Haulage Ltd</td>
+                  <td>DKIM</td>
+                  <td class="num">4 days</td>
+                  <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+                </tr>
+                <tr class="sev-low">
+                  <td class="mono">pearlclinic.com.ng</td>
+                  <td class="wide">Pearl Clinic</td>
+                  <td>DMARC</td>
+                  <td class="num">2 days</td>
+                  <td><a class="btn btn-line btn-sm" href="ops-org.html">Open</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- right rail -->
+      <div class="stack">
+        <div class="card">
+          <h3 style="font-size:1rem">Find an account</h3>
+          <form action="ops-orgs.html" method="get" style="margin-top:12px">
+            <label class="sr-only" for="q">Search by domain, email address or business name</label>
+            <input class="input" type="search" id="q" name="q" autocomplete="off" spellcheck="false"
+                   placeholder="Domain, address or business name…">
+            <button class="btn btn-pri full mt-s" type="submit">Search</button>
+          </form>
+          <p class="hint">Matches partial domains. A mailbox address opens the organisation it
+            belongs to.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Support load</h3>
+          <div class="between mt-s" style="font-size:.9rem">
+            <span class="mut">Unanswered on WhatsApp</span><b class="num" style="color:var(--bad)">4</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">Unanswered by email</span><b class="num">8</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">Median first reply</span><b class="num">41m</b>
+          </div>
+          <div class="between" style="font-size:.9rem;margin-top:9px">
+            <span class="mut">Migrations running</span><b class="num">5</b>
+          </div>
+          <p class="hint">Support runs on WhatsApp and
+            <span class="mono" style="font-size:.8rem">support@ziroemail.com</span>. These counts
+            come from both, and are answered there rather than here.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Last two hours</h3>
+          <div class="feed mt-s">
+            <div class="it">
+              <span class="tm">08:02</span>
+              <span class="bd"><b>Adaobi Foods</b> added 10 GB storage &mdash; &#8358;1,075 paid.</span>
+            </div>
+            <div class="it">
+              <span class="tm">07:48</span>
+              <span class="bd">Anomaly flag on <b class="mono" style="font-size:.82rem">info@quickloans-ng.com</b> &mdash; 1,900 messages in an hour.</span>
+            </div>
+            <div class="it">
+              <span class="tm">07:31</span>
+              <span class="bd"><b>Pearl Clinic</b> finished DNS setup. First mail delivered.</span>
+            </div>
+            <div class="it">
+              <span class="tm">07:12</span>
+              <span class="bd">Deferrals from one recipient domain began. Queue age started climbing.</span>
+            </div>
+            <div class="it">
+              <span class="tm">06:55</span>
+              <span class="bd"><b>Yemi O.</b> answered a WhatsApp message &mdash; Outlook setup.</span>
+            </div>
+          </div>
+          <a class="tlink mt" href="ops-audit.html">Full audit trail</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

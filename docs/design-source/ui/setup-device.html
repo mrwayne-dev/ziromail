@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up your email — Ziroemail</title>
+<meta name="description" content="Set up your Ziroemail address on your phone or computer.">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  /* This page is opened on a phone, by someone who may not be technical and
+     may not know their password yet. One decision per screen, big targets. */
+  .setup { max-width: 520px; margin-inline: auto; padding: 26px var(--gutter) 70px; }
+
+  .who-card {
+    background: var(--ink-900); color: #fff; border-radius: var(--r); padding: 20px; text-align: center;
+  }
+  .who-card .k { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: #9FB0C4; font-weight: 700; }
+  .who-card b { display: block; font-size: 1.1rem; margin-top: 6px; word-break: break-all; }
+
+  .dev { display: flex; gap: 15px; align-items: center; padding: 19px 18px;
+         border: 1.5px solid var(--line-2); border-radius: var(--r); background: #fff; margin-top: 12px; }
+  .dev:hover { border-color: var(--blue); background: #FAFEFB; text-decoration: none; }
+  .dev .ic { width: 46px; height: 46px; border-radius: 11px; background: var(--paper-2);
+             display: grid; place-items: center; flex: none; color: var(--ink-900); }
+  .dev b { font-size: 1rem; color: var(--ink); display: block; }
+  .dev span { font-size: .85rem; color: var(--tx-3); }
+  .dev .go { margin-left: auto; color: var(--tx-3); flex: none; }
+  .dev.primary { border-color: var(--blue); background: var(--blue-050); }
+  .dev.primary .ic { background: #fff; color: var(--blue-700); }
+
+  /* The number is a floated marker rather than a flex item, so inline <b> inside the
+     step text stays part of the sentence instead of becoming its own flex child. */
+  .steps-list { list-style: none; padding: 0; margin: 0; counter-reset: s; display: grid; gap: 15px; }
+  .steps-list li {
+    position: relative; padding-left: 40px; font-size: .94rem; color: var(--tx-3); line-height: 1.55;
+  }
+  .steps-list li::before {
+    counter-increment: s; content: counter(s);
+    position: absolute; left: 0; top: 0;
+    width: 27px; height: 27px; border-radius: 50%; background: var(--blue); color: #fff;
+    display: grid; place-items: center; font-size: .8rem; font-weight: 800;
+  }
+  .steps-list li b { color: var(--ink); font-weight: 700; }
+  .qr-box { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; text-align: center; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header style="background:#fff;border-bottom:1px solid var(--line);padding-block:13px">
+  <div class="wrap bar" style="display:flex;align-items:center;justify-content:center">
+    <a class="brand" href="index.html" aria-label="Ziroemail home"><img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37"></a>
+  </div>
+</header>
+
+<main id="main" class="setup">
+
+  <div class="who-card">
+    <span class="k">Setting up</span>
+    <b>ibrahim@adaobifoods.com</b>
+  </div>
+
+  <h1 style="font-size:1.5rem;margin-top:26px">Let's get your email on your phone</h1>
+  <p class="lead mt-s" style="font-size:1rem">Choose what you are using. It takes about
+    thirty seconds and you will not need to type any settings.</p>
+
+  <a class="dev primary" href="#ios">
+    <span class="ic" aria-hidden="true">
+      <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor" aria-hidden="true">
+        <path d="M18.2 13.6c0-3 2.4-4.4 2.5-4.5-1.4-2-3.5-2.3-4.2-2.3-1.8-.2-3.5 1-4.4 1-.9 0-2.3-1-3.8-1-2 0-3.8 1.1-4.8 2.9-2 3.5-.5 8.8 1.5 11.7 1 1.4 2.1 3 3.6 2.9 1.4-.1 2-.9 3.7-.9s2.2.9 3.7.9c1.5 0 2.5-1.4 3.4-2.9.7-1 1.2-2.2 1.5-3.2-3.3-1.3-2.7-5.5-2.7-5.6zM15.4 4.6c.8-1 1.3-2.3 1.2-3.6-1.2 0-2.6.8-3.4 1.7-.7.9-1.4 2.2-1.2 3.5 1.3.1 2.6-.7 3.4-1.6z"/>
+      </svg>
+    </span>
+    <span>
+      <b>iPhone or iPad</b>
+      <span>One tap &mdash; nothing to type</span>
+    </span>
+    <span class="go" aria-hidden="true">&rarr;</span>
+  </a>
+
+  <a class="dev" href="#android">
+    <span class="ic" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M6 9v8a1.5 1.5 0 0 0 1.5 1.5H8V22a1.5 1.5 0 0 0 3 0v-3.5h2V22a1.5 1.5 0 0 0 3 0v-3.5h.5A1.5 1.5 0 0 0 18 17V9zM3.5 9A1.5 1.5 0 0 0 2 10.5v5a1.5 1.5 0 0 0 3 0v-5A1.5 1.5 0 0 0 3.5 9zm17 0a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 3 0v-5A1.5 1.5 0 0 0 20.5 9zM15.6 3.2l1-1.7a.4.4 0 1 0-.7-.4l-1 1.8a6.9 6.9 0 0 0-5.8 0l-1-1.8a.4.4 0 1 0-.7.4l1 1.7A5.9 5.9 0 0 0 6 8h12a5.9 5.9 0 0 0-2.4-4.8zM9.5 6.2a.7.7 0 1 1 0-1.4.7.7 0 0 1 0 1.4zm5 0a.7.7 0 1 1 0-1.4.7.7 0 0 1 0 1.4z"/>
+      </svg>
+    </span>
+    <span>
+      <b>Android phone</b>
+      <span>Guided steps for Gmail and other apps</span>
+    </span>
+    <span class="go" aria-hidden="true">&rarr;</span>
+  </a>
+
+  <a class="dev" href="#desktop">
+    <span class="ic" aria-hidden="true">
+      <svg width="24" height="22" viewBox="0 0 24 22" fill="none" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="21" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M8 19.5h8M12 15.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>
+      <b>Computer</b>
+      <span>Outlook, Apple Mail or Thunderbird</span>
+    </span>
+    <span class="go" aria-hidden="true">&rarr;</span>
+  </a>
+
+  <!-- iOS -->
+  <section id="ios" style="margin-top:44px">
+    <h2 style="font-size:1.2rem">On your iPhone</h2>
+    <p class="small muted mt-s">Tap the button below on the phone itself. If you are reading
+      this on a computer, scan the code instead.</p>
+
+    <a class="btn btn-pri full btn-lg mt" href="mail/mail.html">Install the setup profile</a>
+
+    <ol class="steps-list" style="margin-top:30px">
+      <li>Tap the button. Your phone asks if you want to allow a download &mdash; tap <b>Allow</b>.</li>
+      <li>Open <b>Settings</b>. Near the top you will see <b>Profile Downloaded</b>. Tap it.</li>
+      <li>Tap <b>Install</b> in the top right, and enter your phone passcode.</li>
+      <li>Enter your email password when asked. Open the Mail app &mdash; your mail is there.</li>
+    </ol>
+
+    <div class="note mt-l">
+      <h4>Do not have your password?</h4>
+      <p>Ask whoever set up your account &mdash; they can reset it for you in seconds from
+        their dashboard, without contacting support.</p>
+    </div>
+  </section>
+
+  <!-- Android -->
+  <section id="android" style="margin-top:44px">
+    <h2 style="font-size:1.2rem">On your Android phone</h2>
+    <p class="small muted mt-s">These settings are already filled in for you. Tap any value to copy it.</p>
+
+    <ol class="steps-list mt">
+      <li>Open the <b>Gmail</b> app, tap your picture in the corner, then <b>Add another account</b>.</li>
+      <li>Choose <b>Other</b> &mdash; not Google.</li>
+      <li>Enter the address and password below, then tap <b>Next</b>.</li>
+      <li>If it asks for server settings, use the values underneath.</li>
+    </ol>
+
+    <div class="stack mt-l">
+      <div>
+        <p class="label">Your email address</p>
+        <div class="copyrow"><code>ibrahim@adaobifoods.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+      </div>
+      <div>
+        <p class="label">Incoming server (IMAP)</p>
+        <div class="copyrow"><code>imap.ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+        <p class="hint">Port 993, security SSL/TLS</p>
+      </div>
+      <div>
+        <p class="label">Outgoing server (SMTP)</p>
+        <div class="copyrow"><code>smtp.ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+        <p class="hint">Port 587, security STARTTLS</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Desktop -->
+  <section id="desktop" style="margin-top:44px">
+    <h2 style="font-size:1.2rem">On your computer</h2>
+    <p class="small muted mt-s">Outlook and Apple Mail usually configure themselves. Type your
+      address and password and they will find the rest.</p>
+
+    <div class="note mt">
+      <h4>If it asks for settings</h4>
+      <p>Incoming <span class="mono">imap.ziroemail.com</span> port 993 (SSL/TLS).<br>
+        Outgoing <span class="mono">smtp.ziroemail.com</span> port 587 (STARTTLS).<br>
+        Your username is your full email address.</p>
+    </div>
+  </section>
+
+  <!-- QR -->
+  <section class="qr-box" style="margin-top:44px">
+    <h2 style="font-size:1.05rem">Setting up from a computer?</h2>
+    <p class="small muted mt-s">Scan this with the phone you want to set up.</p>
+    <svg width="160" height="160" viewBox="0 0 29 29" shape-rendering="crispEdges" aria-label="QR code linking to this setup page" style="margin:18px auto 0">
+      <rect width="29" height="29" fill="#fff"/>
+      <g fill="#0B1017">
+        <path d="M0 0h7v7H0zM1 1v5h5V1z M2 2h3v3H2z"/>
+        <path d="M22 0h7v7h-7zM23 1v5h5V1z M24 2h3v3h-3z"/>
+        <path d="M0 22h7v7H0zM1 23v5h5v-5z M2 24h3v3H2z"/>
+        <path d="M9 0h1v1H9zM11 0h2v1h-2zM15 0h1v1h-1zM18 0h2v1h-2z"/>
+        <path d="M9 2h2v1H9zM13 2h1v1h-1zM16 2h3v1h-3z"/>
+        <path d="M10 4h1v1h-1zM12 4h3v1h-3zM17 4h1v1h-1zM19 4h1v1h-1z"/>
+        <path d="M9 6h3v1H9zM14 6h2v1h-2zM18 6h2v1h-2z"/>
+        <path d="M0 9h1v1H0zM2 9h2v1H2zM5 9h1v1H5zM8 9h3v1H8zM12 9h1v1h-1zM14 9h2v1h-2zM17 9h1v1h-1zM20 9h2v1h-2zM24 9h1v1h-1zM26 9h2v1h-2z"/>
+        <path d="M1 11h2v1H1zM4 11h1v1H4zM7 11h1v1H7zM10 11h2v1h-2zM13 11h3v1h-3zM18 11h1v1h-1zM21 11h1v1h-1zM23 11h2v1h-2zM27 11h1v1h-1z"/>
+        <path d="M0 13h2v1H0zM3 13h1v1H3zM6 13h2v1H6zM9 13h1v1H9zM11 13h1v1h-1zM14 13h1v1h-1zM16 13h3v1h-3zM20 13h1v1h-1zM22 13h1v1h-1zM25 13h3v1h-3z"/>
+        <path d="M2 15h1v1H2zM4 15h3v1H4zM8 15h2v1H8zM12 15h2v1h-2zM15 15h1v1h-1zM17 15h1v1h-1zM19 15h2v1h-2zM23 15h1v1h-1zM26 15h1v1h-1z"/>
+        <path d="M0 17h1v1H0zM3 17h2v1H3zM7 17h1v1H7zM9 17h2v1H9zM13 17h1v1h-1zM16 17h2v1h-2zM19 17h1v1h-1zM21 17h3v1h-3zM25 17h1v1h-1zM27 17h1v1h-1z"/>
+        <path d="M1 19h3v1H1zM5 19h1v1H5zM8 19h1v1H8zM10 19h1v1h-1zM12 19h3v1h-3zM17 19h2v1h-2zM20 19h1v1h-1zM24 19h2v1h-2z"/>
+        <path d="M9 21h2v1H9zM12 21h1v1h-1zM15 21h3v1h-3zM19 21h1v1h-1zM22 21h1v1h-1zM25 21h2v1h-2z"/>
+        <path d="M9 23h1v1H9zM11 23h3v1h-3zM16 23h1v1h-1zM18 23h2v1h-2zM21 23h2v1h-2zM24 23h1v1h-1zM27 23h1v1h-1z"/>
+        <path d="M10 25h2v1h-2zM13 25h2v1h-2zM17 25h1v1h-1zM20 25h3v1h-3zM25 25h1v1h-1z"/>
+        <path d="M9 27h3v1H9zM14 27h1v1h-1zM16 27h2v1h-2zM19 27h2v1h-2zM23 27h2v1h-2zM26 27h2v1h-2z"/>
+      </g>
+    </svg>
+  </section>
+
+  <div class="note note mt-l">
+    <h4>Something not working?</h4>
+    <p>Message us on WhatsApp if a device will not connect. This is the one thing we
+      really do not want you struggling with. <a href="contact.html">Get help &rarr;</a></p>
+  </div>
+
+</main>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

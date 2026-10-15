@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transfer to activate — Ziroemail</title>
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .checkout-header { background: #fff; border-bottom: 1px solid var(--line); padding-block: 14px; }
+  .checkout-header .bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .secure { display: flex; align-items: center; gap: 7px; font-size: .82rem; color: var(--tx-3); font-weight: 600; }
+
+  .co { display: grid; gap: 26px; padding-block: 30px 70px; }
+  @media (min-width: 940px) { .co { grid-template-columns: 1fr 340px; gap: 40px; align-items: start; } }
+
+  .acct {
+    background: var(--ink-900); color: #fff; border-radius: var(--r); padding: 26px; position: relative; overflow: hidden;
+  }
+  .acct::after {
+    content: ""; position: absolute; width: 340px; height: 340px; border-radius: 50%; right: -150px; top: -150px;
+    background: radial-gradient(circle, rgba(16,102,198,.20), rgba(16,102,198,0) 68%);
+  }
+  .acct > * { position: relative; z-index: 1; }
+  .acct .k { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: #9FB0C4; font-weight: 700; }
+  .acct .num {
+    font-family: var(--mono); font-size: clamp(1.6rem, 1.2rem + 2vw, 2.3rem); font-weight: 700;
+    letter-spacing: .06em; color: #fff; margin-top: 6px; word-break: break-all;
+  }
+  .acct-grid { display: grid; gap: 18px; margin-top: 22px; }
+  @media (min-width: 560px) { .acct-grid { grid-template-columns: 1fr 1fr; } }
+  .acct-grid b { display: block; color: #fff; font-size: 1.05rem; margin-top: 5px; }
+
+  .waiting {
+    display: flex; gap: 13px; align-items: flex-start;
+    border: 1px solid var(--warn-line); background: #FFFCF3; border-radius: var(--r-sm); padding: 16px 18px;
+  }
+  .spin {
+    width: 19px; height: 19px; border-radius: 50%; flex: none; margin-top: 2px;
+    border: 2.5px solid var(--warn-line); border-top-color: var(--warn); animation: sp 1s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* Floated marker, not a flex item — keeps inline <b> inside the sentence. */
+  .steps-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; counter-reset: s; }
+  .steps-list li {
+    position: relative; padding-left: 38px; font-size: .93rem; color: var(--tx-3); line-height: 1.55;
+  }
+  .steps-list li::before {
+    counter-increment: s; content: counter(s);
+    position: absolute; left: 0; top: 0;
+    width: 25px; height: 25px; border-radius: 50%; background: var(--paper-2); color: var(--ink-900);
+    display: grid; place-items: center; font-size: .78rem; font-weight: 800;
+  }
+  .steps-list li b { color: var(--ink); font-weight: 700; }
+
+  .order { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  @media (min-width: 940px) { .order { position: sticky; top: 22px; } }
+  .o-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: .9rem; color: var(--tx-3); border-bottom: 1px solid var(--line); }
+  .o-row b { color: var(--ink); font-weight: 650; }
+  .o-total { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding-top: 15px; }
+  .o-total b { font-size: 1.5rem; color: var(--ink); letter-spacing: -.03em; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="checkout-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home"><img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37"></a>
+    <span class="secure">
+      <svg width="13" height="16" viewBox="0 0 13 16" fill="none" aria-hidden="true">
+        <path d="M2 7V4.5a4.5 4.5 0 0 1 9 0V7" stroke="#6B7A8C" stroke-width="1.6"/>
+        <rect x="1" y="7" width="11" height="8" rx="2" fill="#6B7A8C"/>
+      </svg>
+      Secure checkout
+    </span>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap co">
+    <div>
+      <div class="steps" aria-label="Checkout progress">
+        <span class="step done"><span class="n">&#10003;</span> Plan</span>
+        <span class="step-line"></span>
+        <span class="step done"><span class="n">&#10003;</span> Details</span>
+        <span class="step-line"></span>
+        <span class="step active"><span class="n">3</span> Payment</span>
+      </div>
+
+      <h1>Transfer &#8358;29,670 to activate</h1>
+      <p class="lead mt-s">This account number belongs to your business alone. Transfer from
+        any Nigerian bank app and we detect it automatically &mdash; usually within a minute.</p>
+
+      <div class="acct mt-l">
+        <div class="k">Account number</div>
+        <div class="num" id="acct-num">9948 201 773</div>
+
+        <div class="acct-grid">
+          <div>
+            <span class="k">Bank</span>
+            <b>Wema Bank</b>
+          </div>
+          <div>
+            <span class="k">Account name</span>
+            <b>ZIRO / Adaobi Foods Ltd</b>
+          </div>
+          <div>
+            <span class="k">Amount</span>
+            <b>&#8358;29,670.00</b>
+          </div>
+          <div>
+            <span class="k">Expires</span>
+            <b>In 23 hours</b>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:24px">
+          <button class="btn btn-line" type="button" data-copy="#acct-num">Copy account number</button>
+        </div>
+      </div>
+
+      <div class="waiting mt-l" role="status" aria-live="polite">
+        <span class="spin" aria-hidden="true"></span>
+        <div>
+          <b style="font-size:.95rem;color:var(--ink)">Waiting for your transfer</b>
+          <p class="small" style="color:var(--tx-3);margin-top:3px">
+            You can close this page. We will send you a WhatsApp message and an email the
+            moment the money arrives, and your mailboxes will be ready.
+          </p>
+        </div>
+      </div>
+
+      <h2 style="font-size:1.15rem;margin-top:34px">How to do it</h2>
+      <ol class="steps-list mt">
+        <li>Open your bank app and choose to send money.</li>
+        <li>Enter the account number above and pick <b>Wema Bank</b>.</li>
+        <li>Send exactly <b>&#8358;29,670.00</b>. Sending a different amount delays activation.</li>
+        <li>Come back here, or wait for our message. Nothing else to do.</li>
+      </ol>
+
+      <div class="note note mt-l">
+        <h4>Paid but nothing happened?</h4>
+        <p>Transfers occasionally take a few minutes at busy times. If it has been more than
+          fifteen minutes, message us on WhatsApp with your transfer receipt and we will
+          activate you by hand.</p>
+      </div>
+
+      <div class="btn-row mt-l">
+        <a class="btn btn-line" href="checkout-payment.html">Use a different method</a>
+        <a class="btn btn-pri" href="onboarding/onboard-domain.html">I have paid &mdash; continue</a>
+      </div>
+    </div>
+
+    <aside class="order" aria-label="Order summary">
+      <h2 style="font-size:1.05rem">Your order</h2>
+      <div class="o-row"><span>Business plan &mdash; yearly</span><b>&#8358;27,600</b></div>
+      <div class="o-row"><span>Mailboxes</span><b>&times; 5</b></div>
+      <div class="o-row"><span>Subtotal</span><b>&#8358;150,000</b></div>
+      <div class="o-row"><span>VAT at 7.5%</span><b>&#8358;2,070</b></div>
+      <div class="o-total"><span style="font-weight:650">Total</span><b>&#8358;29,670</b></div>
+
+      <div class="note mt-l">
+        <h4>No chargebacks, ever</h4>
+        <p>A bank transfer cannot be reversed by a dispute weeks later. It is the cleanest
+          way for both of us.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

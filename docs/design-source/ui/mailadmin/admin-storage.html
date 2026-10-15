@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add storage — Ziroemail</title>
+<meta name="description" content="Buy extra storage for a domain's pool.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  /* The form owns both the picker and the summary, because the submit button
+     lives in the summary. So the form itself becomes the grid on a wide
+     screen, letting the summary sit beside the blocks rather than below them. */
+  .st-wrap { display: grid; gap: 22px; }
+  @media (min-width: 1000px) { .st-wrap { grid-template-columns: minmax(0,1fr) 320px; align-items: start; gap: 30px; } }
+
+  /* The summary stays inside the form, because the submit button belongs to
+     it, and it sits in the normal flow directly beneath the blocks it prices.
+     Sticky was tried and rejected: pinned to the viewport it covers the very
+     blocks the reader is choosing between. */
+
+  .st-form { display: grid; gap: 22px; }
+  @media (min-width: 1000px) {
+    .st-form { grid-template-columns: minmax(0,1fr) 320px; align-items: start; gap: 30px; }
+    .st-form > .st-pick { grid-column: 1; }
+    .st-form > .st-sum { grid-column: 2; grid-row: 1 / span 2; margin-top: 0 !important; }
+  }
+
+  /* which pool is being topped up, stated before any price */
+  .st-scope {
+    background: var(--ink-900); color: #fff; border-radius: var(--r);
+    padding: 22px 24px;
+  }
+  .st-scope .k { font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--blue-300); }
+  .st-scope .nm { font-family: var(--mono); font-size: 1.15rem; font-weight: 500; color: #fff; display: block; margin-top: 7px; word-break: break-all; }
+  .st-scope .meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: .86rem; color: var(--tx-inv-2); }
+  .st-scope .meta b { color: #fff; font-weight: 600; }
+
+  /* the ceiling bar: plan storage, bought storage, and what is left to buy */
+  .st-meter { margin-top: 18px; }
+  .st-meter .track {
+    display: flex; height: 10px; border-radius: 999px; overflow: hidden;
+    background: rgba(255,255,255,.14);
+  }
+  .st-meter .track i { display: block; height: 100%; }
+  .st-meter .track .plan { background: var(--blue); }
+  .st-meter .track .bought { background: var(--blue-300); }
+  .st-meter .track .adding { background: var(--ok); }
+  .st-meter .marks { display: flex; justify-content: space-between; gap: 12px; margin-top: 9px; font-size: .78rem; color: var(--tx-inv-3); }
+  .st-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; font-size: .78rem; color: var(--tx-inv-2); }
+  .st-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .st-legend i { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+
+  /* typed amount: the customer says how much they want, and the ceiling
+     travels with the field so the limit is read at the moment of typing
+     rather than discovered at checkout */
+  .gb-entry { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; }
+  .gb-in { display: flex; flex: 0 0 auto; }
+  .gb-in .input {
+    width: 128px; border-radius: var(--r-xs) 0 0 var(--r-xs);
+    font-size: 1.25rem; font-weight: 650; font-variant-numeric: tabular-nums;
+    padding-block: 11px;
+  }
+  .gb-in .unit {
+    display: flex; align-items: center; padding: 0 15px;
+    font-size: .95rem; font-weight: 600; color: var(--tx-3);
+    background: var(--paper-2); border: 1.5px solid var(--line-2); border-left: none;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+  }
+  .gb-in .input[aria-invalid="true"] { border-color: var(--bad); }
+  .gb-in .input[aria-invalid="true"] + .unit { border-color: var(--bad); }
+  .gb-steps { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  .gb-limit { font-size: .88rem; color: var(--tx-2); margin-top: 11px; line-height: 1.55; }
+  .gb-limit b { color: var(--tx-1); font-weight: 650; }
+
+  .gb-note { font-size: .88rem; margin-top: 9px; line-height: 1.55; }
+  .gb-note:empty { display: none; }
+  .gb-note.is-bad { color: var(--bad); font-weight: 550; }
+  .gb-note.is-ok { color: var(--tx-3); }
+
+  /* the summary that follows you down the page */
+  .st-sum { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  @media (min-width: 1000px) { .st-sum { position: sticky; top: 92px; } }
+  .st-sum h2 { font-size: 1rem; }
+  .sum-row { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .9rem; color: var(--tx-2); }
+  .sum-row b { color: var(--tx-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sum-row.tot { border-bottom: 0; padding-top: 15px; font-size: 1rem; }
+  .sum-row.tot b { font-size: 1.3rem; font-weight: 650; letter-spacing: -.03em; }
+</style>
+</head>
+<body class="has-tabbar">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app">
+  <header class="app-hdr">
+    <div class="wrap bar" style="max-width:none">
+      <a class="brand" href="../index.html" aria-label="Ziroemail home">
+        <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="150" height="37">
+      </a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div class="dom-switch" data-dom-switch>
+          <button type="button" aria-expanded="false" aria-haspopup="true" aria-controls="dom-menu">
+            <span class="cur">adaobifoods.com</span>
+            <svg class="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="dom-menu" id="dom-menu" hidden>
+            <p class="ttl">Your domains</p>
+            <a href="#" data-dom-pick aria-current="true"
+              data-name="adaobifoods.com" data-mb="4" data-used="13.5 GB"
+              data-pool="of a 40 GB pool" data-plan="Business" data-renew="renews 4 Mar 2027"
+              data-health="3 of 4" data-healthnote="SPF needs fixing" data-org="Adaobi Foods Ltd">
+              <b>adaobifoods.com</b>
+              <span>Business &middot; 4 mailboxes &middot; 13.5 / 40 GB</span>
+            </a>
+            <a href="#" data-dom-pick
+              data-name="adaobiexport.ng" data-mb="2" data-used="1.2 GB"
+              data-pool="of a 10 GB pool" data-plan="Starter" data-renew="renews 18 Aug 2027"
+              data-health="3 of 4" data-healthnote="DKIM missing" data-org="Adaobi Foods Ltd">
+              <b>adaobiexport.ng</b>
+              <span>Starter &middot; 2 mailboxes &middot; 1.2 / 10 GB</span>
+            </a>
+            <div class="sep"></div>
+            <a class="add" href="admin-domains.html#add">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Add a domain
+            </a>
+            <a class="add" href="admin-domains.html" style="color:var(--tx-2)">
+              Manage all domains
+            </a>
+          </div>
+        </div>
+        <span class="avatar">OV</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="side" aria-label="Dashboard sections">
+      <div class="side-grp">
+        <p class="side-ttl">Overview</p>
+        <a href="admin.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="2.5" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="11.1" y="11.1" width="6.4" height="6.4" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>Dashboard</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Domains</p>
+        <a href="admin-domain.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 10h14.8M10 2.6c1.9 2.3 1.9 12.5 0 14.8M10 2.6c-1.9 2.3-1.9 12.5 0 14.8" stroke="currentColor" stroke-width="1.7"/></svg><span data-dom-side>adaobifoods.com</span></a>
+        <a href="admin-domains.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.5" y="3.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="2.5" y="12.2" width="15" height="4.6" rx="1.5" stroke="currentColor" stroke-width="1.7"/><circle cx="5.8" cy="5.5" r=".9" fill="currentColor"/><circle cx="5.8" cy="14.5" r=".9" fill="currentColor"/></svg>All domains <span class="cnt">2</span></a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">People</p>
+        <a href="admin-mailboxes.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="6.8" r="3.1" stroke="currentColor" stroke-width="1.7"/><path d="M4.2 16.8c0-2.9 2.6-4.8 5.8-4.8s5.8 1.9 5.8 4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mailboxes <span class="cnt" data-dom-mb>4</span></a>
+        <a href="admin-aliases.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><path d="M7.5 12.5 12.5 7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.8 5.6 10 4.4a3.4 3.4 0 1 1 4.8 4.8l-1.2 1.2M11.2 14.4 10 15.6a3.4 3.4 0 1 1-4.8-4.8l1.2-1.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Extra addresses</a>
+        <a href="admin-team.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="7.4" cy="7.2" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="M2.6 16.4c0-2.5 2.2-4.2 4.8-4.2s4.8 1.7 4.8 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 5.1a2.7 2.7 0 0 1 0 5.2M15.2 12.6c1.4.6 2.3 1.9 2.3 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Team &amp; access</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Billing</p>
+        <a href="admin-billing.html" aria-current="page"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.6" width="15.4" height="10.8" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M2.3 8.4h15.4" stroke="currentColor" stroke-width="1.7"/></svg>Plan &amp; storage</a>
+      </div>
+      <div class="side-grp">
+        <p class="side-ttl">Account</p>
+        <a href="admin-audit.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M10 5.8V10l2.8 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Activity log</a>
+        <a href="admin-help.html"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.7"/><path d="M7.8 7.7a2.3 2.3 0 1 1 2.9 2.2c-.5.2-.7.6-.7 1v.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="14.2" r="1" fill="currentColor"/></svg>Help</a>
+        <a href="../mail/mail.html" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="si"><rect x="2.3" y="4.4" width="15.4" height="11.2" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m2.8 5.6 7.2 5.2 7.2-5.2" stroke="currentColor" stroke-width="1.7"/></svg>Open my mailbox<svg class="ext" width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5h6v6M10.5 1.5 5 7M8.5 8.2v2.3h-7v-7h2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </nav>
+
+    <main class="main" id="main">
+      <p class="sm mut mb"><a href="admin-mailboxes.html" style="color:var(--blue);font-weight:600">&larr; All mailboxes</a></p>
+
+      <div class="page-head">
+        <div>
+          <h1>Add storage</h1>
+          <p>Storage is bought per domain and lands in that domain's pool straight away.
+            You hand it out to mailboxes yourself.</p>
+        </div>
+      </div>
+
+      <div class="st-wrap">
+        <div>
+          <!-- which pool, and how much room is left under the ceiling -->
+          <section class="st-scope" aria-labelledby="sc-h">
+            <span class="k" id="sc-h">Adding to</span>
+            <span class="nm" data-dom-name>adaobifoods.com</span>
+            <div class="meta">
+              <span>Plan: <b data-dom-plan>Business</b></span>
+              <span>Pool now: <b data-dom-poolgb>40</b> GB</span>
+              <span>Ceiling: <b data-dom-ceil>100 GB</b></span>
+            </div>
+
+            <div class="st-meter">
+              <div class="track" role="img" aria-label="Pool of 40 GB against a 100 GB ceiling"
+                   data-st-track>
+                <i class="plan" style="width:30%"></i>
+                <i class="bought" style="width:10%"></i>
+                <i class="adding" style="width:10%" data-st-adding></i>
+              </div>
+              <div class="marks">
+                <span data-st-mark>40 GB now &middot; 10 GB being added</span>
+                <span data-st-ceilmark>100 GB ceiling</span>
+              </div>
+              <div class="st-legend">
+                <span><i style="background:var(--blue)"></i> From your plan</span>
+                <span><i style="background:var(--blue-300)"></i> Bought already</span>
+                <span><i style="background:var(--ok)"></i> Adding now</span>
+              </div>
+            </div>
+          </section>
+
+          <form data-demo-form data-next="admin-storage-pay.html" novalidate>
+            <fieldset style="border:0;padding:0;margin:24px 0 0">
+              <legend class="label">How much to add</legend>
+              <p class="sm mut" style="margin-top:4px">&#8358;100 a gigabyte a year, renewing with
+                the plan. Buying now costs the full year whenever in the term you buy it.</p>
+
+              <div class="gb-entry">
+                <span class="gb-in">
+                  <input class="input" id="gbwant" type="number" inputmode="numeric"
+                         min="1" step="1" value="10" data-st-gb
+                         aria-describedby="gb-limit">
+                  <span class="unit">GB</span>
+                </span>
+                <div class="gb-steps" role="group" aria-label="Common amounts">
+                  <button class="btn btn-line btn-sm" type="button" data-st-set="5">5</button>
+                  <button class="btn btn-line btn-sm" type="button" data-st-set="10">10</button>
+                  <button class="btn btn-line btn-sm" type="button" data-st-set="20">20</button>
+                  <button class="btn btn-line btn-sm" type="button" data-st-set="max">Fill the pool</button>
+                </div>
+              </div>
+
+              <!-- the limit travels with the field, so the number being typed
+                   and the ceiling it must respect are never far apart -->
+              <p class="gb-limit" id="gb-limit" data-st-limit>
+                Your <b data-dom-plan>Business</b> plan allows up to
+                <b data-dom-ceil>100 GB</b> in this pool, so you can add
+                <b data-st-room>60 GB</b> more.
+              </p>
+
+              <p class="gb-note" data-st-note></p>
+            </fieldset>
+
+            <div class="note mt-l">
+              <h4>What happens to it</h4>
+              <p>Extra storage is attached to your current plan on this domain. It is added to the
+                pool immediately and renews with the domain on the same date, whenever in the term
+                you buy it &mdash; so storage bought a month before renewal is charged again at that
+                renewal. Changing plan releases it, and we say so plainly before you confirm.
+                It does not move between domains.</p>
+            </div>
+
+            <div class="banner banner-info mt" data-demo-note hidden>
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+              <span class="bd">
+                <b>This is a design prototype</b>
+                <p>In the built product this takes you to payment.</p>
+              </span>
+            </div>
+
+            <!-- summary sits in the flow on a phone, sticky beside on a desktop -->
+            <aside class="st-sum" style="margin-top:22px" aria-labelledby="sum-h" data-st-sum data-sum-float>
+              <h2 id="sum-h">What you will pay</h2>
+              <div style="margin-top:12px">
+                <div class="sum-row">
+                  <span>Extra storage <span data-sum-gb>10 GB</span></span>
+                  <b data-sum-net>&#8358;1,000</b>
+                </div>
+                <div class="sum-row">
+                  <span>VAT at 7.5%</span>
+                  <b data-sum-vat>&#8358;75</b>
+                </div>
+                <div class="sum-row tot">
+                  <span>Charged today</span>
+                  <b data-sum-tot>&#8358;1,075</b>
+                </div>
+              </div>
+              <p class="sm mut" style="margin-top:12px">Renews with
+                <span class="mono" data-dom-name>adaobifoods.com</span> on
+                <b style="color:var(--tx-1)" data-dom-renewdate>4 March 2027</b>.</p>
+              <button class="btn btn-pri full btn-lg mt" type="submit">Continue to payment</button>
+              <a class="btn btn-quiet full btn-sm mt-s" href="admin-mailboxes.html">Cancel</a>
+            </aside>
+          </form>
+        </div>
+
+        <div>
+          <div class="card">
+            <h3 style="font-size:1rem">Before you buy</h3>
+            <p class="sm mut mt-s">Storage already in the pool but not handed out still counts as
+              yours. Check the pool on
+              <a href="admin-mailboxes.html">Mailboxes</a> &mdash; you may have room to reassign
+              rather than buy.</p>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <h3 style="font-size:1rem">Need more than the ceiling?</h3>
+            <p class="sm mut mt-s">Each plan has a ceiling. Past it, move the domain to a larger
+              plan on <a href="admin-billing.html">Plan &amp; storage</a>, or
+              <a href="../contact.html">talk to us</a>.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="admin.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="2.5" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11" y="11" width="6.5" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Dashboard
+  </a>
+  <a href="admin-mailboxes.html">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Mailboxes
+  </a>
+  <a href="admin-billing.html" aria-current="page">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8.5h16" stroke="currentColor" stroke-width="1.6"/></svg>
+    Billing
+  </a>
+  <a href="../mail/mail.html" target="_blank" rel="noopener">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2.5 5.5 7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Mail
+  </a>
+</nav>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

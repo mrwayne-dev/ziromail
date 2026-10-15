@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose how to pay — Ziroemail</title>
+<meta name="description" content="Pay for your Ziroemail mailboxes by bank transfer, USSD or card.">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .checkout-header { background: #fff; border-bottom: 1px solid var(--line); padding-block: 14px; }
+  .checkout-header .bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .secure { display: flex; align-items: center; gap: 7px; font-size: .82rem; color: var(--tx-3); font-weight: 600; }
+
+  .co { display: grid; gap: 26px; padding-block: 30px 70px; }
+  @media (min-width: 940px) { .co { grid-template-columns: 1fr 370px; gap: 40px; align-items: start; } }
+
+  /* payment method cards */
+  .methods { display: grid; gap: 12px; }
+  .method {
+    display: block; border: 1.5px solid var(--line-2); border-radius: var(--r);
+    background: #fff; padding: 18px; cursor: pointer; position: relative;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .method:hover { border-color: var(--tx-3); }
+  .method input { position: absolute; opacity: 0; pointer-events: none; }
+  .method:has(input:checked) { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(16,102,198,.15); background: #FAFEFB; }
+  .method:has(input:focus-visible) { outline: 3px solid rgba(16,102,198,.45); outline-offset: 2px; }
+  .method-top { display: flex; gap: 14px; align-items: flex-start; }
+  .method .ic {
+    width: 44px; height: 44px; border-radius: 10px; flex: none; display: grid; place-items: center;
+    background: var(--paper-2); color: var(--ink-900); font-weight: 800; font-size: .95rem;
+  }
+  .method:has(input:checked) .ic { background: var(--blue-050); color: var(--blue-700); }
+  .method h3 { font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .method p { font-size: .86rem; color: var(--tx-3); margin-top: 4px; line-height: 1.5; }
+  .method .radio {
+    width: 21px; height: 21px; border-radius: 50%; border: 2px solid var(--line-2);
+    flex: none; margin-left: auto; display: grid; place-items: center;
+  }
+  .method:has(input:checked) .radio { border-color: var(--blue); }
+  .method:has(input:checked) .radio::after {
+    content: ""; width: 11px; height: 11px; border-radius: 50%; background: var(--blue);
+  }
+  .method-detail {
+    display: none; margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line-2);
+  }
+  .method:has(input:checked) .method-detail { display: block; }
+
+  /* order summary */
+  .order { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  @media (min-width: 940px) { .order { position: sticky; top: 22px; } }
+  .order h2 { font-size: 1.05rem; }
+  .o-row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; font-size: .91rem; color: var(--tx-3); border-bottom: 1px solid var(--line); }
+  .o-row b { color: var(--ink); font-weight: 650; white-space: nowrap; }
+  .o-total { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding-top: 16px; }
+  .o-total span { font-size: .95rem; font-weight: 650; color: var(--ink-900); }
+  .o-total b { font-size: 1.55rem; color: var(--ink); letter-spacing: -.03em; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="checkout-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home"><img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37"></a>
+    <span class="secure">
+      <svg width="13" height="16" viewBox="0 0 13 16" fill="none" aria-hidden="true">
+        <path d="M2 7V4.5a4.5 4.5 0 0 1 9 0V7" stroke="#6B7A8C" stroke-width="1.6"/>
+        <rect x="1" y="7" width="11" height="8" rx="2" fill="#6B7A8C"/>
+      </svg>
+      Secure checkout
+    </span>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap co">
+
+    <div>
+      <div class="steps" aria-label="Checkout progress">
+        <span class="step done"><span class="n">&#10003;</span> Plan</span>
+        <span class="step-line"></span>
+        <span class="step done"><span class="n">&#10003;</span> Details</span>
+        <span class="step-line"></span>
+        <span class="step active"><span class="n">3</span> Payment</span>
+      </div>
+
+      <h1>How would you like to pay?</h1>
+      <p class="lead mt-s">Bank transfer is what most of our customers use. Pick whichever suits you.</p>
+
+      <form class="methods mt-l" data-demo-form data-next="onboarding/onboard-domain.html" novalidate>
+
+        <label class="method">
+          <input type="radio" name="method" value="transfer" checked>
+          <span class="method-top">
+            <span class="ic" aria-hidden="true">&#8358;</span>
+            <span style="flex:1;min-width:0">
+              <h3>Bank transfer <span class="pill pill-info">Recommended</span></h3>
+              <p>We give your business its own account number. Transfer from any Nigerian
+                bank app and your mailboxes activate automatically.</p>
+            </span>
+            <span class="radio" aria-hidden="true"></span>
+          </span>
+          <span class="method-detail">
+            <p class="small" style="color:var(--tx-3)">On the next screen you will see an account
+              number to transfer into. Most transfers are detected within a minute or two.
+              There is nothing to type in here.</p>
+          </span>
+        </label>
+
+        <label class="method">
+          <input type="radio" name="method" value="ussd">
+          <span class="method-top">
+            <span class="ic" aria-hidden="true">*#</span>
+            <span style="flex:1;min-width:0">
+              <h3>USSD</h3>
+              <p>Pay from any phone with your bank's code. No app and no card needed.</p>
+            </span>
+            <span class="radio" aria-hidden="true"></span>
+          </span>
+          <span class="method-detail">
+            <label class="label" for="bank">Choose your bank</label>
+            <select class="select" id="bank">
+              <option>Access Bank</option>
+              <option>First Bank</option>
+              <option>Guaranty Trust Bank</option>
+              <option>United Bank for Africa</option>
+              <option>Zenith Bank</option>
+              <option>Kuda</option>
+              <option>Opay</option>
+            </select>
+            <p class="hint">We will show you the exact code to dial on the next screen.</p>
+          </span>
+        </label>
+
+        <label class="method">
+          <input type="radio" name="method" value="card">
+          <span class="method-top">
+            <span class="ic" aria-hidden="true">&#9635;</span>
+            <span style="flex:1;min-width:0">
+              <h3>Card</h3>
+              <p>Any Nigerian naira card. Handled by Paystack &mdash; your card details never
+                touch our servers.</p>
+            </span>
+            <span class="radio" aria-hidden="true"></span>
+          </span>
+          <span class="method-detail">
+            <p class="small" style="color:var(--tx-3)">You will be taken to Paystack's secure page
+              to enter your card, then brought straight back here.</p>
+          </span>
+        </label>
+
+        <label class="method">
+          <input type="radio" name="method" value="usd">
+          <span class="method-top">
+            <span class="ic" aria-hidden="true">$</span>
+            <span style="flex:1;min-width:0">
+              <h3>Pay in dollars</h3>
+              <p>For paying from outside Nigeria, including paying for a business back home.</p>
+            </span>
+            <span class="radio" aria-hidden="true"></span>
+          </span>
+          <span class="method-detail">
+            <p class="small" style="color:var(--tx-3)">Your total will be converted and shown in
+              dollars before you confirm. International cards are accepted.</p>
+          </span>
+        </label>
+
+        <button class="btn btn-pri full btn-lg mt-l" type="submit">Continue to payment</button>
+
+        <div class="note mt" data-demo-note hidden>
+          <h4>This is a design prototype</h4>
+          <p>In the built product this hands off to Paystack. Your invoice is only marked
+            paid when Paystack sends us a signed confirmation &mdash; never because the browser
+            said so.</p>
+          <a class="btn btn-pri btn-sm mt-s" href="checkout-transfer.html">See the transfer screen &rarr;</a>
+        </div>
+      </form>
+
+      <div class="note note mt-l">
+        <h4>Why we put bank transfer first</h4>
+        <p>A Nigerian bank transfer cannot be reversed weeks later by someone disputing it,
+          and it does not depend on a dollar card limit that fails at the worst moment.
+          It is the most reliable way for a Nigerian business to pay, so it leads.</p>
+      </div>
+    </div>
+
+    <!-- order summary -->
+    <aside class="order" aria-label="Order summary">
+      <h2>Your order</h2>
+      <div class="o-row">
+        <span>Business plan &mdash; yearly<br><span class="tiny muted">30 GB pool, unlimited mailboxes</span></span>
+        <b>&#8358;27,600</b>
+      </div>
+      <div class="o-row">
+        <span>Mailboxes<br><span class="tiny muted">As many as the pool carries &mdash; not charged per seat</span></span>
+        <b>Unlimited</b>
+      </div>
+      <div class="o-row">
+        <span>Subtotal</span>
+        <b>&#8358;27,600</b>
+      </div>
+      <div class="o-row">
+        <span>VAT at 7.5%</span>
+        <b>&#8358;2,070</b>
+      </div>
+      <div class="o-total">
+        <span>Total due today</span>
+        <b>&#8358;29,670</b>
+      </div>
+
+      <div class="note mt-l">
+        <h4>One payment, not twelve</h4>
+        <p>Paying for the year costs the same as paying monthly. It is simply one transfer to remember instead of a renewal every month.</p>
+      </div>
+
+      <ul style="list-style:none;padding:0;margin:20px 0 0;display:grid;gap:9px">
+        <li style="display:flex;gap:9px;font-size:.84rem;color:var(--tx-3)"><span style="color:var(--blue);font-weight:900">&#10003;</span> Add or remove mailboxes any time</li>
+        <li style="display:flex;gap:9px;font-size:.84rem;color:var(--tx-3)"><span style="color:var(--blue);font-weight:900">&#10003;</span> Export your mail whenever you want</li>
+        <li style="display:flex;gap:9px;font-size:.84rem;color:var(--tx-3)"><span style="color:var(--blue);font-weight:900">&#10003;</span> Refunds by published policy</li>
+      </ul>
+
+      <p class="tiny muted mt" style="text-align:center">
+        Questions? <a href="contact.html">Message us on WhatsApp</a>
+      </p>
+    </aside>
+
+  </div>
+</main>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

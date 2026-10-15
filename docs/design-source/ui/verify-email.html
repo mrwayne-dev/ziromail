@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confirm your email — Ziroemail</title>
+<meta name="description" content="Confirm your email address to finish creating your Ziroemail account.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* set before first paint so the card never flashes in unanimated */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.className += ' hero-anim';
+}
+</script>
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .shell { min-height: 100vh; display: flex; flex-direction: column; }
+  .shell-top { padding: 28px var(--gutter) 0; }
+  .shell-body { flex: 1; display: grid; place-items: center; padding: 40px var(--gutter) 70px; }
+  .card-auth { width: 100%; max-width: 440px; }
+  .card-auth h1 { font-size: clamp(1.6rem, 1.4rem + 1vw, 2rem); }
+
+  .env {
+    width: 68px; height: 68px; border-radius: 20px; background: var(--blue-050);
+    border: 1px solid var(--blue-200); color: var(--blue);
+    display: grid; place-items: center; margin-bottom: 26px;
+  }
+  .addr {
+    display: inline-flex; align-items: center; gap: 9px; margin-top: 4px;
+    background: var(--paper-soft); border: 1px solid var(--line-2);
+    border-radius: 999px; padding: 7px 15px; font-size: .92rem; font-weight: 600; color: var(--tx-1);
+  }
+  .resend { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+  <div class="shell-top">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+  </div>
+
+  <main class="shell-body" id="main">
+    <div class="card-auth" data-hero>
+      <span class="env" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+          <rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/>
+          <path d="m3 6.5 9 6.5 9-6.5" stroke="currentColor" stroke-width="1.7"/>
+        </svg>
+      </span>
+
+      <h1>Check your inbox</h1>
+
+      <p class="lead mt-s" style="font-size:1rem">
+        We sent a confirmation link to
+      </p>
+      <span class="addr">victory@adaobifoods.com</span>
+
+      <p class="lead mt" style="font-size:1rem">
+        Click it and your account is ready. The link works once and expires in 24 hours.
+      </p>
+
+      <div class="note mt-l">
+        <h4>Not there after a minute?</h4>
+        <p>Check the spam folder &mdash; it is the irony of our business that a message from
+          a mail company sometimes lands there. Marking it <b>not spam</b> helps.</p>
+      </div>
+
+      <div class="resend mt-l">
+        <button class="btn btn-line" type="button">Send it again</button>
+        <span class="sm mut">You can resend in <b class="num">42</b>s</span>
+      </div>
+
+      <p class="sm mut mt-l" style="padding-top:22px;border-top:1px solid var(--line)">
+        Wrong address? <a href="signup.html" style="color:var(--blue);font-weight:600">Go back and change it</a>.
+      </p>
+
+      <div class="banner banner-info mt">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+        <span class="bd">
+          <b>This is a design prototype</b>
+          <p>In the built product the link in your inbox lands on the next step.</p>
+          <a class="btn btn-pri btn-sm mt-s" href="onboarding/onboard-domain.html">Continue to domain setup &rarr;</a>
+        </span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

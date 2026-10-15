@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — Ziroemail</title>
+<meta name="description" content="Sign in to your Ziroemail account.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .auth { min-height: 100vh; display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 960px) { .auth { grid-template-columns: 1fr .8fr; } }
+  .auth-main { padding: 28px var(--gutter) 60px; display: flex; flex-direction: column; }
+  @media (min-width: 960px) { .auth-main { padding: 34px 56px 60px; } }
+  .auth-body { width: 100%; max-width: 400px; margin: auto; padding-block: 32px; }
+  .auth-body h1 { font-size: clamp(1.7rem, 1.4rem + 1.2vw, 2.2rem); }
+  .auth-body > p { margin-top: 10px; }
+
+  .auth-side { display: none; background: var(--ink-900); color: #fff; padding: 48px 44px; position: relative; overflow: hidden; }
+  @media (min-width: 960px) { .auth-side { display: flex; flex-direction: column; justify-content: center; } }
+  .auth-side > *:not(.shape) { position: relative; z-index: 1; }
+  .auth-side .shape { color: var(--blue); }
+  .l1 { width: 420px; height: 420px; right: -160px; top: -140px; }
+  .l2 { width: 160px; height: 160px; left: 8%; bottom: 10%; opacity: .18; }
+  .auth-side blockquote { margin: 0; font-size: 1.5rem; line-height: 1.32; letter-spacing: -.026em; color: #fff; font-weight: 500; }
+  .auth-side cite { display: block; margin-top: 22px; font-style: normal; font-size: .9rem; color: var(--tx-inv-3); }
+
+  .lab-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .lab-row a { font-size: .85rem; font-weight: 600; color: var(--blue); }
+  .auth-foot { text-align: center; font-size: .92rem; color: var(--tx-3); margin-top: 26px; }
+  .or { display: flex; align-items: center; gap: 14px; margin-block: 24px; color: var(--tx-3); font-size: .85rem; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="auth">
+  <div class="auth-main">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+
+    <div class="auth-body" id="main">
+      <h1>Sign in</h1>
+      <p class="lead" style="font-size:1rem">Use the address and password for your mailbox.</p>
+
+      <form class="mt-l" data-demo-form data-next="login-2fa.html" novalidate>
+        <div class="field">
+          <label class="label" for="email">Email address</label>
+          <input class="input" id="email" name="email" type="email" placeholder="you@yourbusiness.com"
+                 autocomplete="username" spellcheck="false" required>
+        </div>
+
+        <div class="field">
+          <div class="lab-row">
+            <label class="label" for="password" style="margin-bottom:0">Password</label>
+            <a href="forgot-password.html">Forgot it?</a>
+          </div>
+          <input class="input" id="password" name="password" type="password"
+                 autocomplete="current-password" style="margin-top:7px" required>
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" name="remember" checked>
+            <span>Keep me signed in on this device</span>
+          </label>
+        </div>
+
+        <button class="btn btn-pri full btn-lg mt-l" type="submit">Sign in</button>
+
+        <div class="banner banner-info mt" data-demo-note hidden>
+          <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="4.8" r=".9" fill="currentColor"/></svg>
+          <span class="bd">
+            <b>This is a design prototype</b>
+            <p>In the built product this signs you in. Continue to see the two-factor step.</p>
+            <a class="btn btn-pri btn-sm mt-s" href="login-2fa.html">Continue &rarr;</a>
+          </span>
+        </div>
+      </form>
+
+      <div class="or">or</div>
+
+      <a class="btn btn-line full" href="setup-device.html">I only need to set up my phone</a>
+
+      <p class="auth-foot">
+        New to Ziroemail? <a href="signup.html" style="color:var(--blue);font-weight:600">Create an account</a>
+      </p>
+    </div>
+  </div>
+
+  <aside class="auth-side">
+    <span class="shape shape-ring l1" aria-hidden="true"></span>
+    <svg class="shape shape-flap l2" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <path d="M8 30 L50 62 L92 30" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="eyebrow" style="margin-bottom:22px;display:block">Ziroemail</span>
+    <blockquote>Mail that arrives.</blockquote>
+    <cite>Business email, built in Port Harcourt</cite>
+  </aside>
+</div>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

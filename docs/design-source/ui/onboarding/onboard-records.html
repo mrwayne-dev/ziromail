@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect your domain — Ziroemail</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .ob-hdr { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 60; }
+  .ob-hdr .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .ob-help { font-size: .88rem; font-weight: 600; color: var(--blue); display: inline-flex; align-items: center; gap: 8px; }
+
+  .ob { padding-block: 26px 90px; }
+  .ob-grid { display: grid; gap: 26px; }
+  @media (min-width: 1000px) { .ob-grid { grid-template-columns: 1fr 296px; gap: 42px; align-items: start; } }
+
+  /* overall verification status */
+  .status { border: 1px solid var(--line); border-radius: var(--r); background: #fff; overflow: hidden; }
+  .status-top {
+    display: flex; gap: 14px; align-items: center; padding: 18px 20px;
+    background: var(--warn-bg); border-bottom: 1px solid var(--warn-line); flex-wrap: wrap;
+  }
+  .status-top .bd { flex: 1; min-width: 190px; }
+  .status-top b { color: var(--warn); font-size: .96rem; display: block; }
+  .status-top p { font-size: .87rem; color: var(--warn); opacity: .88; margin-top: 2px; }
+  .status-bar { height: 4px; background: var(--paper-2); }
+  .status-bar > i { display: block; height: 100%; background: var(--blue); transition: width .3s; }
+
+  /* record rows */
+  .rec { border-bottom: 1px solid var(--line); }
+  .rec:last-child { border-bottom: none; }
+  .rec-head {
+    display: flex; gap: 14px; align-items: center; padding: 18px 20px;
+    cursor: pointer; list-style: none; flex-wrap: wrap;
+  }
+  .rec-head::-webkit-details-marker { display: none; }
+  .rec-head:hover { background: var(--paper-soft); }
+  .rec-head .ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .ic-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .ic-wait { background: var(--warn-bg); color: var(--warn); }
+  .ic-bad  { background: var(--bad-bg);  color: var(--bad); }
+  .rec-head .nm { flex: 1; min-width: 150px; }
+  .rec-head .nm b { font-size: .97rem; color: var(--tx-1); display: block; }
+  .rec-head .nm span { font-size: .85rem; color: var(--tx-3); }
+  .rec-head .chev { transition: transform .2s; color: var(--tx-3); flex: none; }
+  .rec[open] .chev { transform: rotate(180deg); }
+
+  .rec-body { padding: 4px 20px 22px; display: grid; gap: 14px; }
+  .rec-field .k {
+    font-size: .73rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--tx-3); margin-bottom: 6px; display: block;
+  }
+
+  .reg-grid { display: grid; gap: 9px; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 620px) { .reg-grid { grid-template-columns: repeat(4, 1fr); } }
+  .reg {
+    border: 1.5px solid var(--line-2); border-radius: var(--r-xs); background: #fff;
+    padding: 13px 10px; text-align: center; font-size: .87rem; font-weight: 600;
+    color: var(--tx-1); cursor: pointer; min-height: 46px;
+  }
+  .reg:hover { border-color: var(--blue); background: var(--blue-050); }
+  .reg[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-050); color: var(--blue-700); }
+
+  .aside-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  .aside-card + .aside-card { margin-top: 16px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ob-hdr">
+  <div class="wrap bar">
+    <a class="brand" href="../index.html" aria-label="Ziroemail home">
+      <img class="logo" src="../assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="ob-help" href="../contact.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6.2 6a1.8 1.8 0 1 1 2.3 1.7c-.4.2-.5.5-.5.8v.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11.4" r=".9" fill="currentColor"/>
+      </svg>
+      Get help on WhatsApp
+    </a>
+  </div>
+</header>
+
+<main id="main" class="ob">
+  <div class="wrap">
+
+    <div class="steps" aria-label="Setup progress">
+      <span class="step done"><span class="n">1</span> Domain</span>
+      <span class="step-line"></span>
+      <span class="step done"><span class="n">2</span> Plan &amp; payment</span>
+      <span class="step-line"></span>
+      <span class="step now" aria-current="step"><span class="n">3</span> Records</span>
+      <span class="step-line"></span>
+      <span class="step"><span class="n">4</span> Mailboxes</span>
+    </div>
+
+    <div class="ob-grid">
+      <div>
+        <h1 style="font-size:clamp(1.6rem,1.35rem + 1.2vw,2.2rem)">Add four records to your domain</h1>
+        <p class="lead mt-s" style="max-width:56ch">
+          Sign in wherever you bought <span class="mono">adaobifoods.com</span> and add the values
+          below. We check every ten seconds and will tell you the moment each one passes.
+        </p>
+
+        <div class="status mt-l">
+          <div class="status-top" role="status" aria-live="polite">
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="bd">
+              <b>1 of 4 records found</b>
+              <p>Last checked just now &middot; changes usually appear within 30 minutes</p>
+            </span>
+            <button class="btn btn-line btn-sm" type="button">Check now</button>
+          </div>
+          <div class="status-bar" role="img" aria-label="1 of 4 records verified"><i style="width:25%"></i></div>
+
+          <details class="rec" open>
+            <summary class="rec-head">
+              <span class="ic ic-ok" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 4.8 6.4 11.4 3 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="nm">
+                <b>MX &mdash; where your mail is delivered</b>
+                <span>Verified 2 minutes ago</span>
+              </span>
+              <span class="pill pill-ok">Passing</span>
+              <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="rec-body">
+              <div class="rec-field">
+                <span class="k">Host</span>
+                <div class="copyrow"><code>@</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <div class="rec-field">
+                <span class="k">Points to</span>
+                <div class="copyrow"><code>mx.ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <div class="rec-field">
+                <span class="k">Priority</span>
+                <div class="copyrow"><code>10</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="rec" open>
+            <summary class="rec-head">
+              <span class="ic ic-bad" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </span>
+              <span class="nm">
+                <b>SPF &mdash; who may send as you</b>
+                <span>Found, but it conflicts with a record already on your domain</span>
+              </span>
+              <span class="pill pill-bad">Needs a fix</span>
+              <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="rec-body">
+              <div class="banner banner-bad">
+                <svg width="17" height="17" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.6v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="11.2" r=".9" fill="currentColor"/></svg>
+                <span class="bd">
+                  <b>Your domain already has an SPF record</b>
+                  <p>A domain may only have one. We found
+                    <span class="mono">v=spf1 include:_spf.google.com ~all</span> &mdash; replace it
+                    with the merged value below, which keeps Google working alongside us.</p>
+                </span>
+              </div>
+              <div class="rec-field">
+                <span class="k">Host</span>
+                <div class="copyrow"><code>@</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <div class="rec-field">
+                <span class="k">Value &mdash; replaces your current SPF record</span>
+                <div class="copyrow"><code>v=spf1 include:_spf.google.com include:_spf.ziroemail.com ~all</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <p class="hint">Not sure? <a href="../contact.html">Send us a screenshot</a> and we will
+                tell you exactly what to paste.</p>
+            </div>
+          </details>
+
+          <details class="rec">
+            <summary class="rec-head">
+              <span class="ic ic-wait" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M8 4.6V8l2.2 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+              <span class="nm">
+                <b>DKIM &mdash; the signature on every message</b>
+                <span>Not found yet</span>
+              </span>
+              <span class="pill pill-warn">Waiting</span>
+              <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="rec-body">
+              <div class="rec-field">
+                <span class="k">Host</span>
+                <div class="copyrow"><code>ziro._domainkey</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <div class="rec-field">
+                <span class="k">Value</span>
+                <div class="copyrow"><code>v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4f2Xn7pQ</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+                <p class="hint">This value is long. Use the copy button rather than typing it &mdash;
+                  one wrong character stops it verifying.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="rec">
+            <summary class="rec-head">
+              <span class="ic ic-wait" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M8 4.6V8l2.2 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+              <span class="nm">
+                <b>DMARC &mdash; what to do with failures</b>
+                <span>Not found yet</span>
+              </span>
+              <span class="pill pill-warn">Waiting</span>
+              <svg class="chev" width="13" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </summary>
+            <div class="rec-body">
+              <div class="rec-field">
+                <span class="k">Host</span>
+                <div class="copyrow"><code>_dmarc</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+              <div class="rec-field">
+                <span class="k">Value</span>
+                <div class="copyrow"><code>v=DMARC1; p=none; rua=mailto:dmarc@ziroemail.com</code><button class="btn btn-line btn-sm" type="button" data-copy>Copy</button></div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <h2 style="font-size:1.12rem;margin-top:36px">Where did you buy this domain?</h2>
+        <p class="sm mut mt-s">Pick yours and we will show you exactly where these settings live.</p>
+        <div class="reg-grid mt" role="group" aria-label="Choose your registrar">
+          <button class="reg" type="button" aria-pressed="false">Whogohost</button>
+          <button class="reg" type="button" aria-pressed="false">Qservers</button>
+          <button class="reg" type="button" aria-pressed="false">GoDaddy</button>
+          <button class="reg" type="button" aria-pressed="false">Namecheap</button>
+          <button class="reg" type="button" aria-pressed="false">DomainKing</button>
+          <button class="reg" type="button" aria-pressed="false">Truehost</button>
+          <button class="reg" type="button" aria-pressed="false">Cloudflare</button>
+          <button class="reg" type="button" aria-pressed="false">Somewhere else</button>
+        </div>
+
+        <div class="btn-row mt-l">
+          <button class="btn btn-pri" type="button" data-check-records>Check records now</button>
+          <a class="btn btn-pri" href="onboard-mailboxes.html" aria-disabled="true" data-continue hidden>Continue to mailboxes</a>
+          <a class="btn btn-line" href="onboard-assisted.html">Set it up automatically</a>
+        </div>
+        <p class="hint" data-check-hint>Records usually appear within 30&nbsp;minutes of being
+          saved at your registrar, though some take a few hours. Check whenever you are ready
+          &mdash; Continue unlocks once all four pass.</p>
+      </div>
+
+      <aside>
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Your existing email is safe</h2>
+          <p class="sm mut mt-s">Nothing changes until the MX record takes effect. Your current
+            mailbox keeps receiving the whole time, so there is no window where your business
+            cannot be reached.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Why we wait for all four</h2>
+          <p class="sm mut mt-s">Other providers switch you on immediately and let you discover the
+            spam problem yourself. We hold your mailboxes until every record passes, because that
+            is the difference between reaching an inbox and not.</p>
+        </div>
+
+        <div class="aside-card">
+          <h2 style="font-size:1rem">Stuck?</h2>
+          <p class="sm mut mt-s">Send us a screenshot of your DNS page on WhatsApp. We will tell
+            you which field to change, and keep checking until it passes.</p>
+          <a class="btn btn-line full mt" href="../contact.html">Message us</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>

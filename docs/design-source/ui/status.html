@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System status — Ziroemail</title>
+<meta name="description" content="Live status of Ziroemail mail delivery, webmail, dashboard and payments.">
+<!-- seo:start -->
+<link rel="canonical" href="https://ziroemail.com/status">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ziroemail">
+<meta property="og:locale" content="en_NG">
+<meta property="og:url" content="https://ziroemail.com/status">
+<meta property="og:title" content="System status — Ziroemail">
+<meta property="og:description" content="Live availability for mail delivery, webmail, dashboard and payments, with incident history.">
+<meta property="og:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="System status — Ziroemail">
+<meta name="twitter:description" content="Live availability for mail delivery, webmail, dashboard and payments, with incident history.">
+<meta name="twitter:image" content="https://ziroemail.com/assets/img/ziroemail-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Ziroemail",
+  "url": "https://ziroemail.com",
+  "logo": "https://ziroemail.com/assets/img/ziroemail-icon.png",
+  "description": "Business email hosting for Nigerian companies, on your own domain.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Port Harcourt",
+    "addressRegion": "Rivers State",
+    "addressCountry": "NG"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "email": "support@ziroemail.com",
+    "areaServed": "NG",
+    "availableLanguage": "English"
+  }
+}
+</script>
+<!-- seo:end -->
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https:/fonts.googleapis.com">
+<link rel="preconnect" href="https:/fonts.gstatic.com" crossorigin>
+<link href="https:/fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ziro.css">
+<style>
+  .s-top { border-bottom: 1px solid var(--line); padding-block: 22px; background: #fff; }
+  .s-top .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+  .banner-big {
+    border-radius: var(--r); padding: 28px 30px; display: flex; gap: 18px; align-items: center;
+    background: var(--ok-bg); border: 1px solid var(--ok-line); flex-wrap: wrap;
+  }
+  .banner-big .ic {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--ok); color: #fff;
+    display: grid; place-items: center; flex: none;
+  }
+  .banner-big h1 { font-size: clamp(1.3rem, 1.15rem + .8vw, 1.7rem); color: var(--ok); }
+  .banner-big p { font-size: .94rem; color: var(--ok); opacity: .9; margin-top: 4px; }
+
+  .svc { border: 1px solid var(--line); border-radius: var(--r); background: #fff; overflow: hidden; }
+  .svc-row {
+    display: flex; align-items: center; gap: 16px; padding: 18px 22px;
+    border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .svc-row:last-child { border-bottom: none; }
+  .svc-row .nm { flex: 1; min-width: 150px; }
+  .svc-row b { font-size: .97rem; color: var(--tx-1); display: block; }
+  .svc-row span.d { font-size: .85rem; color: var(--tx-3); }
+
+  /* 90-day uptime strip — one bar per day */
+  .days { display: flex; gap: 2px; align-items: flex-end; height: 30px; flex: 1 1 200px; min-width: 160px; }
+  .days i { flex: 1; height: 100%; border-radius: 2px; background: var(--ok); opacity: .85; }
+  .days i.warn { background: var(--warn); }
+  .days i.bad { background: var(--bad); }
+  .days-key { display: flex; justify-content: space-between; font-size: .76rem; color: var(--tx-3); margin-top: 7px; }
+
+  .inc { border-left: 2px solid var(--line); padding-left: 22px; }
+  .inc-item { padding-bottom: 28px; position: relative; }
+  .inc-item::before {
+    content: ""; position: absolute; left: -27px; top: 5px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--line-2); border: 2px solid #fff;
+  }
+  .inc-item.ok::before { background: var(--ok); }
+  .inc-when { font-family: var(--mono); font-size: .76rem; color: var(--tx-3); letter-spacing: .06em; }
+  .inc-item h3 { font-size: 1.02rem; margin-top: 6px; }
+  .inc-item p { font-size: .93rem; color: var(--tx-2); margin-top: 6px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="s-top">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Ziroemail home">
+      <img class="logo" src="assets/img/ziroemail-wordmark-black.png" alt="Ziroemail" width="150" height="37">
+    </a>
+    <a class="btn btn-line btn-sm" href="index.html">Back to site</a>
+  </div>
+</header>
+
+<main id="main" class="sec-sm">
+  <div class="wrap wrap-tight">
+
+    <!-- overall — reveals rather than performing an entrance, since this is
+         live state a visitor is checking, not a marketing headline -->
+    <div class="banner-big" role="status" data-reveal="scale">
+      <span class="ic" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5 6.2 11.8 2.5 8.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <div style="flex:1;min-width:200px">
+        <h1>All systems operational</h1>
+        <p>Last checked 30 seconds ago &middot; refreshes automatically</p>
+      </div>
+    </div>
+
+    <p class="sm mut mt" style="text-align:center">
+      This page is hosted separately from Ziroemail, so it stays online even if our own
+      servers do not.
+    </p>
+
+    <!-- services -->
+    <h2 style="font-size:1.2rem;margin-top:44px">Services</h2>
+    <div class="svc mt" data-stagger>
+      <div class="svc-row">
+        <span class="nm">
+          <b>Mail delivery</b>
+          <span class="d">Sending and receiving</span>
+        </span>
+        <span class="days" role="img" aria-label="90 day history: operational every day">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span class="pill pill-ok">Operational</span>
+      </div>
+
+      <div class="svc-row">
+        <span class="nm">
+          <b>Webmail</b>
+          <span class="d">mail.ziroemail.com</span>
+        </span>
+        <span class="days" role="img" aria-label="90 day history: one degraded day">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i class="warn"></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span class="pill pill-ok">Operational</span>
+      </div>
+
+      <div class="svc-row">
+        <span class="nm">
+          <b>Dashboard</b>
+          <span class="d">Mailbox and billing administration</span>
+        </span>
+        <span class="days" role="img" aria-label="90 day history: operational every day">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span class="pill pill-ok">Operational</span>
+      </div>
+
+      <div class="svc-row">
+        <span class="nm">
+          <b>Payments</b>
+          <span class="d">Transfer, USSD and card</span>
+        </span>
+        <span class="days" role="img" aria-label="90 day history: operational every day">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span class="pill pill-ok">Operational</span>
+      </div>
+    </div>
+    <div class="days-key"><span>40 days ago</span><span>Today</span></div>
+
+    <!-- incidents -->
+    <h2 style="font-size:1.2rem;margin-top:48px">Recent incidents</h2>
+    <div class="inc mt">
+      <div class="inc-item ok" data-reveal="left">
+        <span class="inc-when">14 MAR 2026 &middot; RESOLVED IN 41 MINUTES</span>
+        <h3>Webmail slow to load for some customers</h3>
+        <p>A database query behind the message list degraded after a routine update. Mail
+          delivery was unaffected throughout &mdash; messages arrived normally, they were
+          just slow to display. Rolled back and confirmed fixed.</p>
+      </div>
+
+      <div class="inc-item ok" data-reveal="left">
+        <span class="inc-when">2 FEB 2026 &middot; SCHEDULED</span>
+        <h3>Planned maintenance &mdash; storage expansion</h3>
+        <p>Added capacity to the mail store during a Sunday window. Sending and receiving
+          continued throughout; webmail was read-only for eleven minutes.</p>
+      </div>
+    </div>
+
+    <div class="note mt-l">
+      <h4>How we report</h4>
+      <p>We post here within fifteen minutes of confirming an incident, update it at least
+        hourly while it is open, and publish what actually went wrong once it is closed.
+        Customers on a paid plan also get an email.</p>
+    </div>
+
+    <p class="center sm mut mt-l">
+      Something wrong that is not listed? <a href="contact.html" style="color:var(--blue);font-weight:600">Tell us</a>.
+    </p>
+  </div>
+</main>
+
+<footer class="ftr" style="margin-top:40px">
+  <div class="wrap">
+    <div class="ftr-btm" style="margin-top:0;padding-top:0;border:none">
+      <span>&copy; 2026 Zirostack Ltd.</span>
+      <span>Port Harcourt, Rivers State</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/ziro.js"></script>
+</body>
+</html>

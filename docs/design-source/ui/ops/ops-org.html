@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaobi Foods Ltd — Ziroemail Operations</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../assets/img/ziroemail-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/ziro.css">
+<style>
+  .og-grid { display: grid; gap: 18px; }
+  @media (min-width: 1040px) { .og-grid { grid-template-columns: 1.55fr 1fr; align-items: start; } }
+
+  .kv { display: grid; gap: 0; }
+  .kv .r { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: .88rem; }
+  .kv .r:last-child { border-bottom: none; }
+  .kv .r span { color: var(--tx-3); }
+  .kv .r b { color: var(--tx-1); font-weight: 600; text-align: right; }
+
+  /* contact block — this is what you need when the phone is ringing */
+  .contact { background: var(--ink-900); color: #fff; border-radius: var(--r-xs); padding: 20px; }
+  .contact h3 { color: #fff; font-size: 1rem; }
+  .contact .big { font-size: 1.22rem; font-weight: 650; letter-spacing: -.02em; margin-top: 12px; display: block; font-variant-numeric: tabular-nums; }
+  .contact .lil { font-size: .86rem; color: var(--tx-inv-3); margin-top: 3px; display: block; word-break: break-all; }
+  .contact a { color: #fff; }
+
+  /* the "act as" control needs to look consequential */
+  .impersonate { border: 1.5px dashed var(--warn); background: var(--warn-bg); border-radius: var(--r-xs); padding: 16px; }
+</style>
+</head>
+<body class="ops">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="ops-hdr">
+  <div class="wrap bar" style="max-width:none">
+    <img class="logo" src="../assets/img/ziroemail-wordmark-white.png" alt="Ziroemail" width="132" height="33">
+    <span class="tag">Internal</span>
+    <span class="who">
+      <span class="mono hide-sm" style="font-size:.8rem">ops.ziroemail.com</span>
+      <span class="avatar" style="width:28px;height:28px;font-size:.72rem">CO</span>
+    </span>
+  </div>
+</header>
+
+<div class="ops-body">
+  <nav class="ops-side" aria-label="Operations sections">
+    <div class="grp">
+      <p class="ttl">Watch</p>
+      <a href="ops.html">Overview</a>
+      <a href="ops-deliverability.html">Deliverability</a>
+      <a href="ops-queue.html">Delivery log</a>
+      <a href="ops-domains.html">Domain status</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Act</p>
+      <a href="ops-abuse.html">Abuse queue <span class="n hot">3</span></a>
+      <a href="ops-refunds.html">Refunds <span class="n">2</span></a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Accounts</p>
+      <a href="ops-orgs.html" aria-current="page">Organisations</a>
+      <a href="ops-mailboxes.html">Mailboxes</a>
+    </div>
+    <div class="grp">
+      <p class="ttl">Platform</p>
+      <a href="ops-backups.html">Backups</a>
+      <a href="ops-reports.html">Reports</a>
+      <a href="ops-staff.html">Staff</a>
+      <a href="ops-audit.html">Audit trail</a>
+    </div>
+  </nav>
+
+  <main class="ops-main" id="main">
+    <div class="ops-head">
+      <div>
+        <h1>Adaobi Foods Ltd</h1>
+        <p>Business plan &middot; <span class="mono">adaobifoods.com</span> &middot; customer since 4&nbsp;March&nbsp;2026</p>
+      </div>
+      <span class="pill pill-ok">Healthy</span>
+    </div>
+
+    <p class="sm mut mb"><a href="ops-orgs.html" style="color:var(--blue);font-weight:600">&larr; Organisations</a></p>
+
+    <section aria-labelledby="om-h">
+      <h2 id="om-h" class="sr-only">Account figures</h2>
+      <div class="metrics">
+        <div class="metric">
+          <span class="k">Mailboxes</span>
+          <span class="v">4</span>
+          <span class="d">of unlimited</span>
+        </div>
+        <div class="metric">
+          <span class="k">Storage used</span>
+          <span class="v">13.5&nbsp;GB</span>
+          <span class="d">of a 40 GB pool</span>
+        </div>
+        <div class="metric">
+          <span class="k">Mail in 30d</span>
+          <span class="v">5,140</span>
+          <span class="d">4,022 in &middot; 1,118 out</span>
+        </div>
+        <div class="metric">
+          <span class="k">Bounce rate</span>
+          <span class="v">0.9%</span>
+          <span class="d up">normal</span>
+        </div>
+        <div class="metric">
+          <span class="k">Paid to date</span>
+          <span class="v">&#8358;70,950</span>
+          <span class="d">3 invoices, all settled</span>
+        </div>
+        <div class="metric">
+          <span class="k">Support contacts</span>
+          <span class="v">2</span>
+          <span class="d">both closed</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="og-grid" style="margin-top:24px">
+      <div>
+        <section class="card" aria-labelledby="mb-h">
+          <div class="between" style="flex-wrap:wrap;gap:10px">
+            <h3 id="mb-h" style="font-size:1rem">Mailboxes</h3>
+            <a class="tlink" href="ops-mailboxes.html">All platform mailboxes</a>
+          </div>
+          <div class="tbl-wrap mt-s">
+            <table class="ops">
+              <caption class="sr-only">Mailboxes belonging to Adaobi Foods Ltd</caption>
+              <thead class="wide">
+                <tr>
+                  <th scope="col">Address</th>
+                  <th scope="col" class="num">Quota</th>
+                  <th scope="col" class="num">Used</th>
+                  <th scope="col">Last sign-in</th>
+                  <th scope="col">State</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono wide">obi@adaobifoods.com</td>
+                  <td class="num">10 GB</td>
+                  <td class="num">4.1 GB</td>
+                  <td>Today, 07:58</td>
+                  <td><span class="pill pill-ok">Active</span></td>
+                </tr>
+                <tr>
+                  <td class="mono wide">sales@adaobifoods.com</td>
+                  <td class="num">8 GB</td>
+                  <td class="num">6.1 GB</td>
+                  <td>Today, 09:02</td>
+                  <td><span class="pill pill-warn">76% full</span></td>
+                </tr>
+                <tr>
+                  <td class="mono wide">accounts@adaobifoods.com</td>
+                  <td class="num">6 GB</td>
+                  <td class="num">2.4 GB</td>
+                  <td>Yesterday</td>
+                  <td><span class="pill pill-ok">Active</span></td>
+                </tr>
+                <tr>
+                  <td class="mono wide">hr@adaobifoods.com</td>
+                  <td class="num">2 GB</td>
+                  <td class="num">0.9 GB</td>
+                  <td>Never</td>
+                  <td><span class="pill">Not set up</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="hint">26 GB assigned of a 40 GB pool. The customer can move quota between these
+            themselves; you only need to intervene if they want more than the pool holds.</p>
+        </section>
+
+        <section class="card mt" aria-labelledby="dn-h">
+          <h3 id="dn-h" style="font-size:1rem">Domain and records</h3>
+          <div class="kv mt-s">
+            <div class="r"><span>Domain</span><b class="mono" style="font-size:.85rem">adaobifoods.com</b></div>
+            <div class="r"><span>Registrar</span><b>Whogohost</b></div>
+            <div class="r"><span>MX</span><b style="color:var(--ok)">Verified 4 Mar 2026</b></div>
+            <div class="r"><span>SPF</span><b style="color:var(--ok)">Verified 4 Mar 2026</b></div>
+            <div class="r"><span>DKIM</span><b style="color:var(--ok)">Verified 4 Mar 2026</b></div>
+            <div class="r"><span>DMARC</span><b style="color:var(--ok)">Verified 11 Mar 2026 &middot; p=quarantine</b></div>
+            <div class="r"><span>Last checked</span><b>Today, 06:00</b></div>
+          </div>
+          <button class="btn btn-line btn-sm mt" type="button">Re-check records now</button>
+        </section>
+
+        <section class="card mt" aria-labelledby="bl-h">
+          <h3 id="bl-h" style="font-size:1rem">Billing</h3>
+          <div class="kv mt-s">
+            <div class="r"><span>Plan</span><b>Business &middot; &#8358;29,670/year inc. VAT</b></div>
+            <div class="r"><span>Extra storage</span><b>10 GB &middot; &#8358;1,075/year</b></div>
+            <div class="r"><span>Method</span><b>Bank transfer</b></div>
+            <div class="r"><span>Renews</span><b>4 March 2027</b></div>
+            <div class="r"><span>Outstanding</span><b style="color:var(--ok)">Nothing</b></div>
+          </div>
+          <div class="btn-row mt">
+            <button class="btn btn-line btn-sm" type="button">All invoices</button>
+            <a class="btn btn-line btn-sm" href="ops-refunds.html">Issue a refund</a>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <div class="contact">
+          <h3>Who to call</h3>
+          <span class="big">+234 803 411 2287</span>
+          <span class="lil">Obiageli Nwosu &middot; owner and billing contact</span>
+          <span class="lil" style="margin-top:10px"><a href="#">obi@adaobifoods.com</a></span>
+          <p class="sm" style="color:var(--tx-inv-3);margin-top:14px">Prefers a phone call before
+            09:00 or after 17:00. Noted when they last wrote in.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Business details</h3>
+          <div class="kv mt-s">
+            <div class="r"><span>Registered name</span><b>Adaobi Foods Limited</b></div>
+            <div class="r"><span>RC number</span><b class="mono" style="font-size:.85rem">RC 1482096</b></div>
+            <div class="r"><span>Address</span><b style="max-width:20ch">14 Aba Road, Port Harcourt, Rivers</b></div>
+            <div class="r"><span>Industry</span><b>Food distribution</b></div>
+            <div class="r"><span>Came from</span><b>Google search</b></div>
+          </div>
+        </div>
+
+        <div class="impersonate">
+          <h4 style="font-size:.95rem;color:var(--tx-1)">Open their admin dashboard</h4>
+          <p class="sm" style="color:var(--tx-2);margin-top:6px">You will see exactly what the
+            customer sees, in read-only mode. Nothing can be changed and a banner tells them
+            afterwards that support viewed the account.</p>
+          <div class="stack mt-s">
+            <a class="btn btn-line full btn-sm" href="../mailadmin/admin.html">View as Adaobi Foods</a>
+          </div>
+          <p class="hint" style="margin-top:9px">Logged to the audit trail with your name, the
+            time, and the reason you give.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1rem">Recent contact</h3>
+          <div style="font-size:.86rem;color:var(--tx-2);margin-top:10px">
+            <p style="padding:9px 0;border-bottom:1px solid var(--line)"><b>#2104</b> &mdash;
+              Outlook setup on a second laptop. Closed 12 Sep.</p>
+            <p style="padding:9px 0"><b>#1877</b> &mdash; Asked how to add storage. Closed 4 Aug,
+              bought 10 GB the same day.</p>
+          </div>
+          <a class="tlink mt" href="mailto:support@ziroemail.com">Write to this customer</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/ziro.js"></script>
+</body>
+</html>
