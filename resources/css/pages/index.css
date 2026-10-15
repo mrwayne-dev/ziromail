@@ -1,0 +1,101 @@
+/* Scoped from the prototype's inline <style> for index.html. */
+/* Apple rules applied: 17px body, ~80px section rhythm, one accent, one
+     shadow, 2–3 sentences per section. */
+
+  /* ============ HERO — type only ============ */
+  :where(.pg-index) .hero {
+    position: relative; background: var(--ink-900); color: #fff; overflow: hidden;
+    padding-top: calc(var(--hdr-h) + 56px); padding-bottom: 72px;
+    display: flex; align-items: center;
+  }
+  /* Only reserve a tall viewport where there is room for it. */
+  @media (min-width: 700px) { :where(.pg-index) .hero { min-height: min(80vh, 720px); } }
+  @media (min-width: 900px) { :where(.pg-index) .hero { padding-top: calc(var(--hdr-h) + 110px); padding-bottom: 120px; } }
+  :where(.pg-index) .hero .wrap { position: relative; z-index: 2; }
+
+  :where(.pg-index) .hero h1 {
+    color: #fff; font-size: clamp(3.2rem, 1.6rem + 7.4vw, 8rem);
+    line-height: .96; letter-spacing: -.045em; font-weight: 650;
+  }
+  :where(.pg-index) .hero .sub {
+    margin-top: 26px; max-width: 40ch; color: var(--tx-inv-2);
+    font-size: clamp(1.05rem, 1rem + .35vw, 1.2rem); line-height: 1.5;
+  }
+  :where(.pg-index) .hero .btn-row { margin-top: 38px; }
+
+  /* geometric marks, echoing the logo's circle and envelope flap */
+  :where(.pg-index) .hero .shape { color: var(--blue); }
+  :where(.pg-index) .s1 { width: 520px; height: 520px; right: -170px; top: -190px; }
+  :where(.pg-index) .s2 { width: 200px; height: 200px; right: 34%; bottom: -100px; }
+  /* the envelope flap sits in clear space to the right, below the ring */
+  :where(.pg-index) .s3 { right: 8%; bottom: 8%; width: 170px; height: 170px; opacity: .2; }
+  @media (max-width: 899px) { :where(.pg-index) .s1 { width: 320px; height: 320px; right: -120px; top: -120px; } :where(.pg-index) .s2, :where(.pg-index) .s3 { display: none; } }
+
+  /* ============ CHOOSE-US CYCLER ============ */
+  :where(.pg-index) .choose { background: #fff; }
+  :where(.pg-index) .choose-in {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px;
+    font-size: clamp(1.6rem, 1.05rem + 2.6vw, 3.4rem);
+    font-weight: 600; letter-spacing: -.035em; line-height: 1.16; color: var(--tx-1);
+  }
+  :where(.pg-index) .choose-in .lead-in { color: var(--tx-3); font-weight: 500; }
+  :where(.pg-index) .cycler { color: var(--blue); font-weight: 650; }
+
+  /* ============ OFFER GRID ============ */
+  :where(.pg-index) .offer { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+  @media (min-width: 720px) { :where(.pg-index) .offer { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1080px) { :where(.pg-index) .offer { grid-template-columns: repeat(4, 1fr); } }
+  :where(.pg-index) .offer-i { background: #fff; padding: 40px 30px; }
+  :where(.pg-index) .offer-i .n { font-family: var(--mono); font-size: .76rem; color: var(--blue); letter-spacing: .12em; }
+  :where(.pg-index) .offer-i h3 { margin-top: 16px; font-size: 1.16rem; }
+  :where(.pg-index) .offer-i p { margin-top: 10px; font-size: .96rem; color: var(--tx-3); }
+
+  /* ============ STATEMENT ============ */
+  :where(.pg-index) .statement { background: var(--blue); padding-block: 96px; }
+  @media (min-width: 900px) { :where(.pg-index) .statement { padding-block: 140px; } }
+  :where(.pg-index) .statement .big em { color: #BFD8F7; }
+  :where(.pg-index) .statement .sub {
+    margin: 30px auto 0; max-width: 52ch; color: #D9E8FA;
+    font-size: clamp(1.05rem, 1rem + .4vw, 1.25rem); line-height: 1.55;
+  }
+  :where(.pg-index) .statement .shape { color: #fff; }
+  :where(.pg-index) .st1 { width: 420px; height: 420px; left: -150px; top: -150px; }
+  :where(.pg-index) .st2 { width: 300px; height: 300px; right: -90px; bottom: -130px; }
+
+  /* ============ PROOF SPLIT ============ */
+  :where(.pg-index) .proof { display: grid; gap: 0; }
+  @media (min-width: 940px) { :where(.pg-index) .proof { grid-template-columns: 1fr 1fr; } }
+  :where(.pg-index) .proof-photo { position: relative; min-height: 340px; }
+  :where(.pg-index) .proof-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  :where(.pg-index) .proof-copy { padding: 64px var(--gutter); display: flex; flex-direction: column; justify-content: center; }
+  @media (min-width: 940px) { :where(.pg-index) .proof-copy { padding: 96px 64px; } }
+
+  /* ============ STORAGE MODEL ============ */
+  :where(.pg-index) .model { display: grid; gap: 30px; }
+  @media (min-width: 980px) { :where(.pg-index) .model { grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; } }
+
+  /* ============ PLANS ============ */
+  :where(.pg-index) .plans { display: grid; gap: 18px; }
+  @media (min-width: 900px) { :where(.pg-index) .plans { grid-template-columns: repeat(3, 1fr); align-items: start; } }
+  :where(.pg-index) .plan { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 34px 30px; display: flex; flex-direction: column; position: relative; }
+  :where(.pg-index) .plan-hot { border-color: var(--blue); box-shadow: 0 0 0 1.5px var(--blue); }
+  :where(.pg-index) .plan-flag { position: absolute; top: -12px; left: 30px; background: var(--blue); color: #fff; font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+  :where(.pg-index) .plan .amt { display: flex; align-items: baseline; gap: 5px; margin-top: 20px; }
+  :where(.pg-index) .plan .amt b { font-size: 2.6rem; font-weight: 650; letter-spacing: -.04em; color: var(--tx-1); line-height: 1; font-variant-numeric: tabular-nums; }
+  :where(.pg-index) .plan .amt b span { font: inherit; color: inherit; letter-spacing: inherit; }
+  :where(.pg-index) .plan .amt > span { font-size: .88rem; color: var(--tx-3); }
+  :where(.pg-index) .plan .yr { font-size: .87rem; color: var(--tx-3); margin-top: 9px; }
+  :where(.pg-index) .plan .ticks { margin-top: 24px; flex: 1; }
+  :where(.pg-index) .plan .btn { margin-top: 28px; }
+
+  :where(.pg-index) .toggles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+  :where(.pg-index) .tg { display: inline-flex; background: var(--paper-2); border-radius: 999px; padding: 4px; border: 1px solid var(--line); }
+  :where(.pg-index) .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--tx-3); cursor: pointer; min-height: 42px; }
+  :where(.pg-index) .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
+
+  /* ============ CLOSE ============ */
+  :where(.pg-index) .close-band { background: var(--ink-900); text-align: center; position: relative; overflow: hidden; }
+  :where(.pg-index) .close-band h2 { color: #fff; max-width: 17ch; margin-inline: auto; }
+  :where(.pg-index) .close-band .lead { color: var(--tx-inv-2); max-width: 48ch; margin: 20px auto 0; }
+  :where(.pg-index) .close-band .shape { color: var(--blue); }
+  :where(.pg-index) .c1 { width: 480px; height: 480px; left: 50%; transform: translateX(-50%); bottom: -300px; }

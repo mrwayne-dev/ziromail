@@ -1,0 +1,26 @@
+/* Scoped from the prototype's inline <style> for legal-refunds.html. */
+:where(.pg-legal) .legal { display: grid; gap: 34px; padding-block: 44px 90px; }
+  @media (min-width: 940px) { :where(.pg-legal) .legal { grid-template-columns: 210px 1fr; gap: 56px; align-items: start; } }
+
+  :where(.pg-legal) .legal-nav { position: sticky; top: calc(var(--hdr-h) + 20px); }
+  :where(.pg-legal) .legal-nav a {
+    display: block; padding: 10px 12px; border-radius: var(--r-xs);
+    font-size: .93rem; color: var(--tx-2); font-weight: 500;
+  }
+  :where(.pg-legal) .legal-nav a:hover { background: var(--paper-soft); color: var(--tx-1); }
+  :where(.pg-legal) .legal-nav a[aria-current="page"] { background: var(--blue-050); color: var(--blue-700); font-weight: 650; }
+  @media (max-width: 939px) { :where(.pg-legal) .legal-nav { position: static; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; } :where(.pg-legal) .legal-nav a { white-space: nowrap; } }
+
+  :where(.pg-legal) .doc { max-width: 68ch; }
+  :where(.pg-legal) .doc h1 { font-size: clamp(1.8rem, 1.5rem + 1.5vw, 2.5rem); }
+  :where(.pg-legal) .doc .meta { font-size: .88rem; color: var(--tx-3); margin-top: 12px; }
+  :where(.pg-legal) .doc .intro { margin-top: 22px; font-size: 1.08rem; line-height: 1.6; color: var(--tx-2); }
+  :where(.pg-legal) .doc h2 {
+    font-size: 1.22rem; margin-top: 44px; padding-top: 26px;
+    border-top: 1px solid var(--line); letter-spacing: -.02em;
+  }
+  :where(.pg-legal) .doc h3 { font-size: 1.02rem; margin-top: 26px; }
+  :where(.pg-legal) .doc p { margin-top: 14px; line-height: 1.7; }
+  :where(.pg-legal) .doc ul { margin-top: 14px; padding-left: 20px; display: grid; gap: 9px; }
+  :where(.pg-legal) .doc li { line-height: 1.65; }
+  :where(.pg-legal) .doc .mono { color: var(--blue-700); }

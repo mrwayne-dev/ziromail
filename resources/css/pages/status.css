@@ -1,0 +1,42 @@
+/* Scoped from the prototype's inline <style> for status.html. */
+:where(.pg-status) .s-top { border-bottom: 1px solid var(--line); padding-block: 22px; background: #fff; }
+  :where(.pg-status) .s-top .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+  :where(.pg-status) .banner-big {
+    border-radius: var(--r); padding: 28px 30px; display: flex; gap: 18px; align-items: center;
+    background: var(--ok-bg); border: 1px solid var(--ok-line); flex-wrap: wrap;
+  }
+  :where(.pg-status) .banner-big .ic {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--ok); color: #fff;
+    display: grid; place-items: center; flex: none;
+  }
+  :where(.pg-status) .banner-big h1 { font-size: clamp(1.3rem, 1.15rem + .8vw, 1.7rem); color: var(--ok); }
+  :where(.pg-status) .banner-big p { font-size: .94rem; color: var(--ok); opacity: .9; margin-top: 4px; }
+
+  :where(.pg-status) .svc { border: 1px solid var(--line); border-radius: var(--r); background: #fff; overflow: hidden; }
+  :where(.pg-status) .svc-row {
+    display: flex; align-items: center; gap: 16px; padding: 18px 22px;
+    border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  :where(.pg-status) .svc-row:last-child { border-bottom: none; }
+  :where(.pg-status) .svc-row .nm { flex: 1; min-width: 150px; }
+  :where(.pg-status) .svc-row b { font-size: .97rem; color: var(--tx-1); display: block; }
+  :where(.pg-status) .svc-row span.d { font-size: .85rem; color: var(--tx-3); }
+
+  /* 90-day uptime strip — one bar per day */
+  :where(.pg-status) .days { display: flex; gap: 2px; align-items: flex-end; height: 30px; flex: 1 1 200px; min-width: 160px; }
+  :where(.pg-status) .days i { flex: 1; height: 100%; border-radius: 2px; background: var(--ok); opacity: .85; }
+  :where(.pg-status) .days i.warn { background: var(--warn); }
+  :where(.pg-status) .days i.bad { background: var(--bad); }
+  :where(.pg-status) .days-key { display: flex; justify-content: space-between; font-size: .76rem; color: var(--tx-3); margin-top: 7px; }
+
+  :where(.pg-status) .inc { border-left: 2px solid var(--line); padding-left: 22px; }
+  :where(.pg-status) .inc-item { padding-bottom: 28px; position: relative; }
+  :where(.pg-status) .inc-item::before {
+    content: ""; position: absolute; left: -27px; top: 5px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--line-2); border: 2px solid #fff;
+  }
+  :where(.pg-status) .inc-item.ok::before { background: var(--ok); }
+  :where(.pg-status) .inc-when { font-family: var(--mono); font-size: .76rem; color: var(--tx-3); letter-spacing: .06em; }
+  :where(.pg-status) .inc-item h3 { font-size: 1.02rem; margin-top: 6px; }
+  :where(.pg-status) .inc-item p { font-size: .93rem; color: var(--tx-2); margin-top: 6px; }

@@ -1,0 +1,46 @@
+/* Scoped from the prototype's inline <style> for help.html. */
+:where(.pg-help) .h-hero {
+    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
+    padding-block: calc(var(--hdr-h) + 48px) 68px;
+  }
+  :where(.pg-help) .h-hero .wrap { position: relative; z-index: 2; }
+  :where(.pg-help) .h-hero h1 { color: #fff; }
+  :where(.pg-help) .h-hero .shape { color: var(--blue); }
+  :where(.pg-help) .hh1 { width: 400px; height: 400px; right: -140px; top: -150px; }
+
+  :where(.pg-help) .searchbar {
+    display: flex; align-items: center; gap: 12px; max-width: 520px; margin-top: 26px;
+    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.20);
+    border-radius: var(--r-xs); padding: 0 16px; height: 54px;
+  }
+  :where(.pg-help) .searchbar input { flex: 1; background: none; border: none; color: #fff; font-size: 1rem; min-width: 0; }
+  :where(.pg-help) .searchbar input::placeholder { color: #8A97A6; }
+  :where(.pg-help) .searchbar input:focus { outline: none; }
+
+  :where(.pg-help) .cats { display: grid; gap: 18px; }
+  @media (min-width: 720px) { :where(.pg-help) .cats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { :where(.pg-help) .cats { grid-template-columns: repeat(3, 1fr); } }
+  :where(.pg-help) .cat { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 26px; }
+  :where(.pg-help) .cat .ic {
+    width: 40px; height: 40px; border-radius: 12px; background: var(--blue-050); color: var(--blue);
+    display: grid; place-items: center; border: 1px solid var(--blue-200); margin-bottom: 16px;
+  }
+  :where(.pg-help) .cat h3 { font-size: 1.05rem; }
+  :where(.pg-help) .cat ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 2px; }
+  :where(.pg-help) .cat li a {
+    display: block; padding: 8px 0; font-size: .93rem; color: var(--tx-2);
+    border-bottom: 1px solid transparent;
+  }
+  :where(.pg-help) .cat li a:hover { color: var(--blue); }
+  :where(.pg-help) .cat .more { display: inline-block; margin-top: 14px; font-size: .88rem; font-weight: 600; color: var(--blue); }
+
+  :where(.pg-help) .pop { display: grid; gap: 14px; }
+  @media (min-width: 820px) { :where(.pg-help) .pop { grid-template-columns: repeat(2, 1fr); } }
+  :where(.pg-help) .pop a {
+    display: flex; gap: 14px; align-items: flex-start; padding: 20px 22px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r); color: var(--tx-1);
+  }
+  :where(.pg-help) .pop a:hover { border-color: var(--blue); }
+  :where(.pg-help) .pop .n { font-family: var(--mono); font-size: .8rem; color: var(--blue); flex: none; padding-top: 2px; }
+  :where(.pg-help) .pop b { font-size: .98rem; display: block; }
+  :where(.pg-help) .pop span { font-size: .88rem; color: var(--tx-3); display: block; margin-top: 4px; }

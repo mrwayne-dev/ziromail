@@ -1,0 +1,25 @@
+/* Scoped from the prototype's inline <style> for contact.html. */
+:where(.pg-contact) .c-hero {
+    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
+    padding-block: calc(var(--hdr-h) + 52px) 76px;
+  }
+  :where(.pg-contact) .c-hero .wrap { position: relative; z-index: 2; }
+  :where(.pg-contact) .c-hero h1 { color: #fff; max-width: 13ch; }
+  :where(.pg-contact) .c-hero .lead { margin-top: 18px; max-width: 46ch; }
+  :where(.pg-contact) .c-hero .shape { color: var(--blue); }
+  :where(.pg-contact) .ch1 { width: 420px; height: 420px; right: -150px; top: -160px; }
+
+  :where(.pg-contact) .ways { display: grid; gap: 18px; }
+  @media (min-width: 820px) { :where(.pg-contact) .ways { grid-template-columns: repeat(3, 1fr); } }
+  :where(.pg-contact) .way { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 28px 26px; display: flex; flex-direction: column; }
+  :where(.pg-contact) .way .ic {
+    width: 44px; height: 44px; border-radius: 13px; background: var(--blue-050);
+    color: var(--blue); display: grid; place-items: center; border: 1px solid var(--blue-200); margin-bottom: 18px;
+  }
+  :where(.pg-contact) .way h3 { font-size: 1.08rem; }
+  :where(.pg-contact) .way p { font-size: .93rem; color: var(--tx-3); margin-top: 8px; flex: 1; }
+  :where(.pg-contact) .way .btn { margin-top: 20px; }
+  :where(.pg-contact) .way .when { font-size: .82rem; color: var(--tx-3); margin-top: 12px; }
+
+  :where(.pg-contact) .form-grid { display: grid; gap: 30px; }
+  @media (min-width: 940px) { :where(.pg-contact) .form-grid { grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: start; } }

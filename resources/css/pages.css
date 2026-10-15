@@ -1,0 +1,16 @@
+/*
+ * Page-specific styles, carried over from each prototype page's inline <style>.
+ * Every selector is wrapped in :where(.pg-NAME) — zero extra specificity, so the
+ * cascade against ziro.css is exactly what the prototype had, but one page's
+ * rules cannot leak into another during client-side navigation.
+ * Pages that shared an identical block in the prototype share one file here.
+ */
+@import './pages/index.css';
+@import './pages/pricing.css';
+@import './pages/features.css';
+@import './pages/migrate.css';
+@import './pages/help.css';
+@import './pages/contact.css';
+@import './pages/status.css';
+@import './pages/legal.css';
+@import './pages/system.css';
