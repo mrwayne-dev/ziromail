@@ -1,2 +1,16 @@
+# Ziroemail
 User-agent: *
-Disallow:
+Allow: /
+
+# Staff and signed-in surfaces hold no public content. Paths follow the
+# prototype's screen groups; confirm them when those phases pick real routes.
+Disallow: /ops
+Disallow: /mailadmin
+Disallow: /mail
+Disallow: /onboarding
+Disallow: /checkout-payment
+Disallow: /checkout-transfer
+Disallow: /setup
+Disallow: /offline
+
+Sitemap: https://ziroemail.com/sitemap.xml
