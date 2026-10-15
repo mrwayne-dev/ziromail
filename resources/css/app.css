@@ -1,9 +1,14 @@
-@import 'tailwindcss';
+/*
+ * Layer order: Tailwind's theme tokens and utilities only. Its preflight (the
+ * CSS reset) is deliberately not imported — ziro.css carries its own reset, and
+ * a second one would silently change headings, buttons and form controls.
+ *
+ * ziro.css is unlayered, so it wins over utilities where the two overlap.
+ */
+@layer theme, utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-}
+@import './ziro.css';
+@import './pages.css';
