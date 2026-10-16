@@ -25,3 +25,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Internal planning documents and third-party design references: kept locally, never published.
+/docs/design-source/scope/
+/docs/design-source/Ziroemail research work/
+/docs/design-source/Ziroemail verdict/
+/references/
