@@ -1,6 +1,6 @@
 # Ziroemail progress report
 
-**Date:** 2026-10-16 08:49 · **Branch:** `main` (local `master`) · **Last commit:** `7f77f08`
+**Date:** 2026-10-16 08:49 · **Branch:** `main` (local `master`) · **Last code commit:** `7f77f08` (hero); report commit follows it
 **Scope of this report:** the public site and system pages (everything before the dashboards).
 
 ## 1. Where we are
@@ -13,13 +13,13 @@ reads its data from fixtures. There is no backend behind it yet by design.
 phone setup, and the onboarding wizard). They need real routes, and most need a decision on
 how much backend to stand up first. See section 4.
 
-### Delivery status (as of this report)
+### Delivery status
 | Item | State |
 |---|---|
-| Hero redesign (`7f77f08`) | Committed locally. |
-| Push to GitHub `main` | **Pending.** The ssh-agent is refusing to sign, so GitHub rejected the push. Needs the key unlocked. |
-| Redeploy to the preview server | **Pending** for the same reason. The preview still shows the previous hero. |
+| Hero redesign (`7f77f08`) | Committed, pushed to GitHub `main`, and deployed. |
+| Preview server | Serving the new hero. All 11 pages return 200, unknown URLs return the branded 404, and the exposure probes (`.env`, `.git`, `vendor/`, logs) return 403 or 404. |
 | Preview URL | https://ziromail.mgbah.dev (noindex header and `Disallow: /`, so search engines stay out) |
+| Server crontab | Untouched (same entries as before). |
 
 ## 2. What has been done
 
@@ -108,7 +108,6 @@ so header and footer links resolve. Each phase replaces its own placeholder.
 - After each deploy, the two preview files (`public/.htaccess`, `public/robots.txt`) must be re-applied, because the repo versions overwrite them. At launch they come off for good.
 
 ## 7. Suggested next steps
-1. Unlock the ssh key, push `7f77f08`, redeploy, and re-apply the preview files.
-2. Decide the pricing model (item 1 above), since checkout and onboarding both depend on it.
-3. Build the auth screens and onboarding wizard UI-first on fixtures, following the same component approach as the marketing pages.
-4. Write the backend scope for auth, domains and DNS verification before wiring any of it.
+1. Build the auth screens, checkout, phone setup and onboarding wizard UI-first on fixtures, using placeholders for plan and price data, following the same component approach as the marketing pages.
+2. Decide the pricing and data model after those screens exist (item 1 above); only `fixtures/plans.js` should need to change.
+3. Write the backend scope for auth, domains and DNS verification before wiring any of it.
