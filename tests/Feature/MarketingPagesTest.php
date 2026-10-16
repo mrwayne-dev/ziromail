@@ -64,7 +64,9 @@ class MarketingPagesTest extends TestCase
 
         $this->get('/no-such-page')
             ->assertNotFound()
-            ->assertInertia(fn (Assert $page) => $page->component('Errors/NotFound'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Errors/NotFound')
+                ->where('site.url', rtrim(config('app.url'), '/')));
     }
 
     public function test_unhandled_exception_renders_the_branded_server_error_page(): void

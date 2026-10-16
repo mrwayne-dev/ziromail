@@ -25,7 +25,8 @@ export default function Seo({
     schema,
     image = '/images/ziroemail-icon.png',
 }) {
-    const { site } = usePage().props;
+    // `site` is shared by middleware; fall back to the page's own origin if it is absent.
+    const site = usePage().props.site ?? { url: window.location.origin };
     const url = site.url + path;
     const imageUrl = site.url + image;
     const blocks = [

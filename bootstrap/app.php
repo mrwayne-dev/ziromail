@@ -38,6 +38,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 return $response;
             }
 
+            // No route matched, so the web middleware (and its shared props) never ran.
+            Inertia::share('site', [
+                'name' => 'Ziroemail',
+                'url' => rtrim(config('app.url'), '/'),
+            ]);
+
             return Inertia::render($page)
                 ->toResponse($request)
                 ->setStatusCode($response->getStatusCode());
