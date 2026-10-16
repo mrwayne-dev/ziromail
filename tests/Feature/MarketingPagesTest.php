@@ -46,14 +46,14 @@ class MarketingPagesTest extends TestCase
         // throw in the browser, not here.
         foreach (['home', 'pricing', 'features', 'migrate', 'help', 'contact', 'status',
             'legal.terms', 'legal.privacy', 'legal.aup', 'legal.refunds',
-            'login', 'signup', 'setup.device', 'mail'] as $name) {
+            'login', 'signup', 'setup.device', 'mail', 'dashboard'] as $name) {
             $this->assertTrue(Route::has($name), "Route [$name] is not registered.");
         }
     }
 
     public function test_routes_for_later_phases_answer_404_until_built(): void
     {
-        foreach (['/login', '/signup', '/setup', '/mail'] as $uri) {
+        foreach (['/mail', '/dashboard'] as $uri) {
             $this->get($uri)->assertNotFound();
         }
     }

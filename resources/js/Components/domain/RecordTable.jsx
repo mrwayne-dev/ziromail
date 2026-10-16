@@ -1,0 +1,42 @@
+import Button from '../ui/Button';
+import { CheckIcon } from '../ui/Icons';
+import Spinner from '../ui/Spinner';
+import DnsRecordRow from './DnsRecordRow';
+
+/*
+ * The whole verification panel: an overall status line with a Check now button,
+ * a progress bar, then one DnsRecordRow per record. `records` is the `items` of
+ * the GET /domains/{id}/records response and `checkedAt` its human-readable
+ * "last checked" label. The page decides where fresh data comes from: today a
+ * fixture-driven simulation, later polling.
+ */
+export default function RecordTable({ records, checkedAt, checking = false, onCheck }) {
+    const total = records.length;
+    const passing = records.filter((r) => r.status === 'passing').length;
+    const done = passing === total;
+
+    return (
+        <section className="records" aria-label="DNS records">
+            <div className={`records-top${done ? ' is-done' : ''}`} role="status">
+                {done ? <span className="records-ok"><CheckIcon size={14} /></span> : <Spinner label={checking ? 'Checking your records' : undefined} />}
+                <span className="records-msg">
+                    <b>{done ? `All ${total} records found` : `${passing} of ${total} records found`}</b>
+                    <p>{checking ? 'Checking now' : `Last checked ${checkedAt}`}{!done && !checking && '. Changes usually appear within 30 minutes'}</p>
+                </span>
+                {!done && <Button variant="line" size="sm" onClick={onCheck} busy={checking}>Check now</Button>}
+            </div>
+            <div
+                className="records-bar"
+                role="progressbar"
+                aria-label="Records verified"
+                aria-valuemin={0}
+                aria-valuemax={total}
+                aria-valuenow={passing}
+                aria-valuetext={`${passing} of ${total} records verified`}
+            >
+                <i style={{ width: `${(passing / total) * 100}%` }} />
+            </div>
+            {records.map((record) => <DnsRecordRow key={record.id} record={record} />)}
+        </section>
+    );
+}

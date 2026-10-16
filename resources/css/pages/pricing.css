@@ -1,9 +1,6 @@
 /* Pricing page. Most of it is shared components; this is only the page's own layout. */
 .pg-pricing .pricing-note { margin-top: var(--sp-4); color: var(--tx-2); }
 .pg-pricing .page-hero .toggles { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; margin-top: var(--sp-6); }
-.pg-pricing .tg { display: inline-flex; background: var(--paper-2); border-radius: var(--r-pill); padding: var(--sp-1); border: 1px solid var(--line); }
-.pg-pricing .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: var(--r-pill); font-size: .9rem; font-weight: 600; color: var(--tx-2); cursor: pointer; min-height: 42px; }
-.pg-pricing .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
 .pg-pricing .pricing-plans { padding-bottom: var(--sp-9); }
 .pg-pricing .pricing-vat { margin-top: var(--sp-6); color: var(--tx-2); }
 

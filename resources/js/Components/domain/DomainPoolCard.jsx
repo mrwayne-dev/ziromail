@@ -1,4 +1,5 @@
 import { plans } from '../../fixtures/plans';
+import PoolBar from './PoolBar';
 
 const business = plans.find((plan) => plan.code === 'business');
 
@@ -30,13 +31,16 @@ export default function DomainPoolCard() {
                 <span className="pill pill-info">{business.name} · {business.poolGb} GB</span>
             </p>
 
-            <div className="pool mt" role="img" aria-label={description}>
-                {mailboxes.map((m, i) => (
-                    <span key={m.name} className={`pool-seg ${m.tone}`} style={{ flex: m.assigned }}>
-                        {i === mailboxes.length - 1 ? m.assigned : `${m.assigned} GB`}
-                    </span>
-                ))}
-                <span className="pool-seg free" style={{ flex: unassigned }}>{unassigned} free</span>
+            <div className="mt">
+                <PoolBar
+                    description={description}
+                    freeGb={unassigned}
+                    segments={mailboxes.map((m, i) => ({
+                        key: m.name,
+                        gb: m.assigned,
+                        label: i === mailboxes.length - 1 ? m.assigned : undefined,
+                    }))}
+                />
             </div>
 
             <div className="tbl-wrap" style={{ marginTop: 20, borderRadius: 'var(--r-xs)' }}>

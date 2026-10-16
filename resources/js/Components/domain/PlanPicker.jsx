@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import Reveal from '../craft/Reveal';
+import OptionCard, { OptionGroup } from '../ui/OptionCard';
 import { plans } from '../../fixtures/plans';
 import { route } from '../../Lib/route';
 import Price from './Price';
@@ -68,12 +69,42 @@ function PlanPanel({ plan, index, variant }) {
     );
 }
 
+// One plan as a radio card for the onboarding step: name, price, and a one-line summary.
+function PlanOption({ plan, checked, onChange }) {
+    const ceiling = plan.ceilingGb === null ? 'Storage expands without a limit.' : `Expandable to ${plan.ceilingGb} GB.`;
+
+    return (
+        <OptionCard
+            name="plan"
+            value={plan.code}
+            checked={checked}
+            onChange={onChange}
+            title={plan.name}
+            badge={plan.featured ? 'Most chosen' : undefined}
+            aside={<Price price={plan.price} unit={(term) => (term === 'annual' ? ' / year' : ' / month')} wrapper="span" />}
+            description={`${plan.poolGb} GB shared across unlimited mailboxes. ${ceiling}`}
+        />
+    );
+}
+
 /*
- * The three plan cards. `variant` picks the copy set: 'home' (compact, with the
- * pool as the first tick) or 'pricing' (pool shown as its own line). Prices and
- * pool sizes come from fixtures/plans.js only.
+ * The three plans. `variant` picks the presentation:
+ *   'home'     compact joined panels, pool as the first tick
+ *   'pricing'  the same panels with the pool shown as its own line
+ *   'select'   radio cards for choosing one (onboarding); takes `value` and `onChange`
+ * Prices and pool sizes come from fixtures/plans.js only.
  */
-export default function PlanPicker({ variant = 'home' }) {
+export default function PlanPicker({ variant = 'home', value, onChange }) {
+    if (variant === 'select') {
+        return (
+            <OptionGroup legend="Choose a plan" hideLegend>
+                {plans.map((plan) => (
+                    <PlanOption key={plan.code} plan={plan} checked={value === plan.code} onChange={onChange} />
+                ))}
+            </OptionGroup>
+        );
+    }
+
     return (
         <Reveal className="plan-panels" stagger>
             {plans.map((plan, i) => (

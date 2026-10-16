@@ -14,3 +14,7 @@
 @import './pages/status.css';
 @import './pages/legal.css';
 @import './pages/system.css';
+@import './pages/auth.css';
+@import './pages/checkout.css';
+@import './pages/setup.css';
+@import './pages/onboarding.css';

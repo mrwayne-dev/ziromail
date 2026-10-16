@@ -1,0 +1,35 @@
+/* Phone setup: opened on a phone by someone who may not be technical. One decision per screen, large targets. */
+.pg-setup .dev-header { border-bottom: 1px solid var(--line); background: var(--paper); padding-block: var(--sp-3); }
+.pg-setup .dev-bar { display: flex; align-items: center; justify-content: center; }
+.pg-setup .dev-main { max-width: 520px; margin-inline: auto; padding: var(--sp-5) var(--gutter) var(--sp-9); }
+
+.pg-setup .who-card { padding: var(--sp-5); border-radius: var(--r); background: var(--ink-900); color: #fff; text-align: center; }
+.pg-setup .who-card .k { display: block; font-family: var(--mono); font-size: .72rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-inv-3); }
+.pg-setup .who-card b { display: block; margin-top: var(--sp-2); font-size: 1.1rem; word-break: break-all; }
+
+.pg-setup h1 { margin-top: var(--sp-6); font-size: 1.6rem; font-weight: 500; letter-spacing: -.03em; }
+.pg-setup .lead { margin-top: var(--sp-3); font-size: 1rem; }
+
+.pg-setup .devs { display: grid; gap: var(--sp-3); margin-top: var(--sp-5); }
+.pg-setup .dev { display: flex; align-items: center; gap: var(--sp-4); padding: var(--sp-4); border: 1.5px solid var(--line-2); border-radius: var(--r-sm); background: var(--paper); color: var(--tx-1); transition: border-color var(--dur-1), background var(--dur-1); }
+.pg-setup .dev:hover { border-color: var(--blue); }
+.pg-setup .dev.is-primary { border-color: var(--blue); background: var(--blue-050); }
+.pg-setup .dev-ic { flex: none; width: 46px; height: 46px; border-radius: var(--r-xs); display: grid; place-items: center; background: var(--paper-2); color: var(--ink-900); }
+.pg-setup .dev.is-primary .dev-ic { background: var(--paper); color: var(--blue-700); }
+.pg-setup .dev b { display: block; font-size: 1rem; }
+.pg-setup .dev span span { display: block; font-size: .85rem; color: var(--tx-2); }
+.pg-setup .dev .go { margin-left: auto; color: var(--tx-2); flex: none; }
+
+.pg-setup .block { margin-top: var(--sp-8); scroll-margin-top: var(--sp-5); }
+.pg-setup .block h2 { font-size: 1.2rem; font-weight: 500; letter-spacing: -.02em; }
+.pg-setup .block > .sm { margin-top: var(--sp-2); color: var(--tx-2); }
+.pg-setup .block .btn { margin-top: var(--sp-4); }
+.pg-setup .block .steps-list { margin-top: var(--sp-5); }
+.pg-setup .block .note { margin-top: var(--sp-5); }
+.pg-setup .values { display: grid; gap: var(--sp-4); margin-top: var(--sp-5); }
+.pg-setup .values .label { margin-bottom: var(--sp-2); }
+.pg-setup .qr-box { margin-top: var(--sp-8); padding: var(--sp-5); border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); text-align: center; }
+.pg-setup .qr-box h2 { font-size: 1.05rem; font-weight: 600; }
+.pg-setup .qr-box .qr { margin: var(--sp-4) auto 0; }
+.pg-setup .help-note { margin-top: var(--sp-6); }
+.pg-setup .help-note a { color: var(--blue); font-weight: 600; }

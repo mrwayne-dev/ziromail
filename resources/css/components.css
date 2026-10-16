@@ -307,7 +307,7 @@ body.modal-open { overflow: hidden; }
 
 /* ziro.css's --tx-3 sits at 4.48:1 on white, just under AA for small text. Muted text
    and the few other places that used it step up to --tx-2 without touching the token. */
-.mut, .muted, .label .opt, table.data td.n { color: var(--tx-2); }
+.mut, .muted, .hint, .label .opt, table.data td.n { color: var(--tx-2); }
 .pool-seg.free { color: var(--tx-2); }
 
 /* ---------- domain search: one rounded bar, field and action together ---------- */
@@ -332,3 +332,96 @@ body.modal-open { overflow: hidden; }
 
 /* ---------- badge: an outlined pill that names the page's subject ---------- */
 .badge-pill { display: inline-flex; align-items: center; padding: var(--sp-2) var(--sp-4); border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--paper); color: var(--tx-2); font-size: .92rem; font-weight: 500; }
+
+/* ---------- progress steps: numbered circles on a line (onboarding, checkout) ---------- */
+ol.steps { list-style: none; margin-top: 0; padding: 0; flex-wrap: nowrap; }
+.steps-item { display: contents; }
+.steps-item .step-line { flex: 1 1 var(--sp-5); }
+.steps .step { white-space: nowrap; flex: none; }
+@media (max-width: 640px) {
+  /* Only the current step keeps its label; the rest are numbers on the line. */
+  .steps .step:not(.now) { font-size: 0; gap: 0; }
+  .steps .step:not(.now) .n { font-size: .79rem; }
+}
+
+/* ---------- option cards: a radio presented as a card ---------- */
+.opts { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: var(--sp-3); }
+.opts > legend { padding: 0; margin-bottom: var(--sp-3); font-size: 1rem; }
+.opt { position: relative; display: block; padding: var(--sp-4) var(--sp-5); border: 1.5px solid var(--line-2); border-radius: var(--r-sm); background: var(--paper); cursor: pointer; transition: border-color var(--dur-1), background var(--dur-1), box-shadow var(--dur-1); }
+.opt:hover { border-color: var(--tx-3); }
+.opt.is-checked { border-color: var(--blue); background: var(--blue-050); box-shadow: 0 0 0 3px rgba(16,102,198,.12); }
+.opt:has(.opt-input:focus-visible) { outline: 2px solid var(--blue); outline-offset: 2px; }
+.opt-input { position: absolute; opacity: 0; pointer-events: none; }
+.opt-main { display: flex; align-items: flex-start; gap: var(--sp-4); }
+.opt-dot { flex: none; width: 20px; height: 20px; margin-top: 2px; border: 2px solid var(--line-2); border-radius: var(--r-pill); display: grid; place-items: center; background: var(--paper); }
+.opt.is-checked .opt-dot { border-color: var(--blue); }
+.opt.is-checked .opt-dot::after { content: ""; width: 10px; height: 10px; border-radius: var(--r-pill); background: var(--blue); }
+.opt-ic { flex: none; width: 44px; height: 44px; border-radius: var(--r-xs); display: grid; place-items: center; background: var(--paper-2); color: var(--ink-900); font-weight: 800; }
+.opt.is-checked .opt-ic { background: var(--paper); color: var(--blue-700); }
+.opt-text { flex: 1; min-width: 0; display: grid; gap: var(--sp-1); }
+.opt-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--sp-1) var(--sp-3); }
+.opt-title { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); font-size: 1rem; font-weight: 650; color: var(--tx-1); }
+.opt-aside { font-weight: 650; color: var(--tx-1); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.opt-desc { font-size: .9rem; line-height: 1.5; color: var(--tx-2); }
+.opt-detail { display: block; margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px dashed var(--line-2); font-size: .9rem; color: var(--tx-2); }
+
+/* ---------- copy field: a value with its own Copy button ---------- */
+.copyfield .k { display: block; margin-bottom: var(--sp-2); font-family: var(--mono); font-size: .72rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--tx-2); }
+.copyfield .copyrow code { white-space: nowrap; }
+.copyfield .copyrow .btn { flex: none; min-width: 72px; }
+
+/* ---------- code input: one box per digit ---------- */
+.code-row { display: flex; gap: clamp(5px, 2vw, 9px); }
+.code-box {
+  flex: 1 1 0; width: 0; min-width: 0; max-width: 100%; box-sizing: border-box; padding: 0; text-align: center;
+  height: clamp(50px, 14vw, 62px); font-size: clamp(1.1rem, 4.6vw, 1.5rem); font-weight: 650; font-variant-numeric: tabular-nums;
+  border: 1.5px solid var(--line-2); border-radius: var(--r-xs); background: var(--paper); color: var(--tx-1);
+}
+.code-box:focus { outline: none; border-color: var(--blue); box-shadow: var(--sh-focus); }
+.code-box:not(:placeholder-shown) { border-color: var(--blue); }
+.code-box[aria-invalid="true"] { border-color: var(--bad); }
+
+/* ---------- password strength ---------- */
+.strength-bars { display: flex; gap: var(--sp-1); margin-top: var(--sp-2); }
+.strength-bars i { flex: 1; height: 4px; border-radius: 2px; background: var(--paper-2); transition: background var(--dur-1); }
+.strength-bars i.on { background: var(--blue); }
+
+/* ---------- aside cards: short explainers beside a form ---------- */
+.aside-cards { display: grid; gap: var(--sp-4); align-content: start; }
+.aside-card { padding: var(--sp-5); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper); }
+.aside-card h2 { font-size: 1rem; letter-spacing: -.01em; }
+.aside-card p { margin-top: var(--sp-2); font-size: .92rem; line-height: 1.55; color: var(--tx-2); }
+.aside-card .btn { margin-top: var(--sp-4); }
+
+/* ---------- QR code ---------- */
+.qr { display: block; max-width: 100%; height: auto; }
+.qr-bg { fill: var(--paper); }
+.qr-mod { fill: var(--ink-900); }
+
+/* order summary */
+.order { padding: var(--sp-5); border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); }
+@media (min-width: 940px) { .order { position: sticky; top: var(--sp-5); } }
+.order h2 { font-size: 1.05rem; }
+.o-rows { margin: var(--sp-3) 0 0; }
+.o-row { display: flex; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-3) 0; border-bottom: 1px solid var(--line); font-size: .91rem; color: var(--tx-2); }
+.o-row dd { margin: 0; color: var(--tx-1); font-weight: 650; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.o-note { display: block; margin-top: var(--sp-1); font-size: .8rem; line-height: 1.5; color: var(--tx-2); }
+.o-total { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); margin: 0; padding-top: var(--sp-4); }
+.o-total span { font-size: .95rem; font-weight: 650; color: var(--tx-1); }
+.o-total b { font-size: 1.55rem; letter-spacing: -.03em; color: var(--tx-1); font-variant-numeric: tabular-nums; }
+.order .note { margin-top: var(--sp-5); }
+.o-ticks { list-style: none; margin: var(--sp-5) 0 0; padding: 0; display: grid; gap: var(--sp-2); }
+.o-ticks li { display: flex; align-items: center; gap: var(--sp-2); font-size: .85rem; color: var(--tx-2); }
+.o-ticks svg { flex: none; color: var(--blue); }
+.o-help { margin: var(--sp-4) 0 0; text-align: center; font-size: .82rem; color: var(--tx-2); }
+.o-help a { color: var(--blue); font-weight: 600; }
+
+/* ---------- term switch: a pill toggle for yearly or monthly billing ---------- */
+.tg { display: inline-flex; padding: var(--sp-1); border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--paper-2); }
+.tg button { min-height: 42px; padding: 10px 20px; border: none; border-radius: var(--r-pill); background: transparent; color: var(--tx-2); font-size: .9rem; font-weight: 600; cursor: pointer; }
+.tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
+.copyfield, .copyfield .copyrow { min-width: 0; }
+.copyfield .copyrow code { min-width: 0; }
+
+.note .note-title { margin-bottom: 6px; color: var(--tx-1); font-size: 1rem; font-weight: 650; line-height: 1.4; letter-spacing: -.012em; }
+.input-affix .affix { color: var(--tx-2); }

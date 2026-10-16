@@ -1,0 +1,77 @@
+/* Sign-up, sign-in, two-factor, recovery, password reset and e-mail verification. */
+
+/* ---- split: form beside a dark panel ---- */
+.pg-auth .auth { min-height: 100vh; display: grid; grid-template-columns: 1fr; }
+@media (min-width: 960px) { .pg-auth .auth { grid-template-columns: 1fr .82fr; } }
+.pg-auth .auth-main { display: flex; flex-direction: column; padding: var(--sp-5) var(--gutter) var(--sp-8); }
+@media (min-width: 960px) { .pg-auth .auth-main { padding: var(--sp-6) var(--sp-8) var(--sp-8); } }
+.pg-auth .auth-body { width: 100%; max-width: 440px; margin: auto; padding-block: var(--sp-6); }
+.pg-auth .auth-body h1, .pg-auth .auth-card h1 { font-size: clamp(1.7rem, 1.4rem + 1.2vw, 2.2rem); font-weight: 500; letter-spacing: -.035em; }
+.pg-auth .auth-body .lead, .pg-auth .auth-card .lead { margin-top: var(--sp-3); font-size: 1rem; }
+.pg-auth .auth-body form { margin-top: var(--sp-6); }
+.pg-auth .auth-foot { margin-top: var(--sp-5); text-align: center; font-size: .92rem; color: var(--tx-2); }
+.pg-auth .auth-foot a, .pg-auth .auth-back a, .pg-auth .lab-row a { color: var(--blue); font-weight: 600; }
+
+.pg-auth .auth-side { display: none; position: relative; overflow: hidden; background: var(--ink-900); color: #fff; padding: var(--sp-7) var(--sp-7); }
+@media (min-width: 960px) { .pg-auth .auth-side { display: flex; flex-direction: column; justify-content: center; } }
+.pg-auth .auth-side > *:not(.shape) { position: relative; z-index: 1; }
+.pg-auth .auth-side .shape { color: var(--blue); }
+.pg-auth .auth-ring { width: 420px; height: 420px; right: -160px; top: -140px; }
+.pg-auth .auth-flap { width: 150px; height: 150px; right: 12%; bottom: 8%; opacity: .2; }
+.pg-auth .auth-side h2 { color: #fff; font-size: 1.5rem; font-weight: 500; letter-spacing: -.03em; }
+.pg-auth .auth-side blockquote { margin: 0; color: #fff; font-size: 1.5rem; line-height: 1.32; font-weight: 500; letter-spacing: -.026em; }
+.pg-auth .auth-side cite { display: block; margin-top: var(--sp-5); font-style: normal; font-size: .9rem; color: var(--tx-inv-3); }
+.pg-auth .auth-side .eyebrow { display: block; margin-bottom: var(--sp-5); }
+.pg-auth .side-list { list-style: none; margin: var(--sp-5) 0 0; padding: 0; display: grid; gap: var(--sp-4); }
+.pg-auth .side-list li { display: flex; align-items: flex-start; gap: var(--sp-3); }
+.pg-auth .side-n { flex: none; width: 26px; height: 26px; border-radius: var(--r-pill); display: grid; place-items: center; background: rgba(16,102,198,.22); color: var(--blue-200); font-size: .8rem; font-weight: 700; }
+.pg-auth .side-list b { display: block; color: #fff; font-size: .95rem; }
+.pg-auth .side-list span { color: var(--tx-inv-3); font-size: .88rem; line-height: 1.5; }
+.pg-auth .side-quote { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid var(--line-dark); color: var(--tx-inv-2); font-size: .9rem; line-height: 1.6; }
+
+.pg-auth .chosen-plan { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-5); padding: var(--sp-3) var(--sp-4); border: 1px solid var(--blue-200); border-radius: var(--r-sm); background: var(--blue-050); }
+.pg-auth .chosen-plan b { display: block; color: var(--blue-700); font-size: .95rem; }
+.pg-auth .chosen-plan span { color: var(--blue-700); font-size: .86rem; }
+.pg-auth .chosen-plan a { color: var(--blue); font-size: .86rem; font-weight: 650; white-space: nowrap; }
+
+.pg-auth .lab-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+.pg-auth .lab-row .label { margin-bottom: var(--sp-2); }
+.pg-auth .lab-row a { font-size: .85rem; }
+.pg-auth .field .err svg { flex: none; margin-top: 2px; }
+.pg-auth .field .err a { color: inherit; text-decoration: underline; }
+.pg-auth form .btn[type="submit"] { margin-top: var(--sp-6); }
+.pg-auth .legal-line { margin-top: var(--sp-4); font-size: .8rem; line-height: 1.55; color: var(--tx-2); }
+.pg-auth .or { display: flex; align-items: center; gap: var(--sp-4); margin-block: var(--sp-5); font-size: .85rem; color: var(--tx-2); }
+.pg-auth .or::before, .pg-auth .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.pg-auth .banner { margin-top: var(--sp-4); }
+
+/* ---- centered: one card ---- */
+.pg-auth .shell { min-height: 100vh; display: flex; flex-direction: column; }
+.pg-auth .shell-top { padding: var(--sp-5) var(--gutter) 0; }
+.pg-auth .shell-body { flex: 1; display: grid; place-items: center; padding: var(--sp-7) var(--gutter) var(--sp-9); }
+.pg-auth .auth-card { width: 100%; max-width: 430px; }
+.pg-auth .auth-card form { margin-top: var(--sp-6); }
+.pg-auth .auth-card .note { margin-top: var(--sp-6); }
+.pg-auth .auth-back { margin-top: var(--sp-6); text-align: center; font-size: .92rem; }
+.pg-auth .auth-card fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.pg-auth .auth-card fieldset legend { padding: 0; }
+.pg-auth .code-row { margin-top: var(--sp-2); }
+
+.pg-auth .code-in { height: 62px; text-align: center; font-family: var(--mono); font-size: 1.15rem; letter-spacing: .12em; }
+.pg-auth .used { display: flex; align-items: center; gap: var(--sp-3); margin-top: var(--sp-3); font-size: .86rem; color: var(--tx-2); }
+.pg-auth .pips { display: flex; gap: var(--sp-1); }
+.pg-auth .pips i { width: 16px; height: 5px; border-radius: 3px; background: var(--blue); }
+.pg-auth .pips i.spent { background: var(--line-2); }
+
+.pg-auth .env { width: 68px; height: 68px; margin-bottom: var(--sp-5); display: grid; place-items: center; border: 1px solid var(--blue-200); border-radius: 20px; background: var(--blue-050); color: var(--blue); }
+.pg-auth .addr { display: inline-flex; align-items: center; margin-top: var(--sp-1); padding: var(--sp-2) var(--sp-4); border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--paper-soft); color: var(--tx-1); font-size: .92rem; font-weight: 600; word-break: break-all; }
+.pg-auth .resend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); margin-top: var(--sp-4); }
+.pg-auth .resend .sm { color: var(--tx-2); }
+.pg-auth .wrong-address { margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--line); font-size: .92rem; color: var(--tx-2); }
+.pg-auth .wrong-address a { color: var(--blue); font-weight: 600; }
+.pg-auth .auth-card .addr + .lead { margin-top: var(--sp-5); }
+.pg-auth .strong { color: var(--tx-1); font-weight: 650; }
+.pg-auth .forgot { margin-top: var(--sp-2); text-align: right; font-size: .85rem; }
+.pg-auth .forgot a { color: var(--blue); font-weight: 600; }
+.pg-auth .env-ok { border-color: var(--ok-line); background: var(--ok-bg); color: var(--ok); }
+.pg-auth .env-bad { border-color: var(--bad-line); background: var(--bad-bg); color: var(--bad); }

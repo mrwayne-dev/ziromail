@@ -1,0 +1,30 @@
+/* Checkout: choose how to pay, then the bank-transfer screen. Two columns with an order summary. */
+.pg-checkout .co-header { border-bottom: 1px solid var(--line); background: var(--paper); padding-block: var(--sp-3); }
+.pg-checkout .co-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); }
+.pg-checkout .secure { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: .82rem; font-weight: 600; color: var(--tx-2); }
+
+.pg-checkout .co { display: grid; gap: var(--sp-6); padding-block: var(--sp-6) var(--sp-9); }
+@media (min-width: 940px) { .pg-checkout .co { grid-template-columns: minmax(0, 1fr) 370px; gap: var(--sp-7); align-items: start; } }
+.pg-checkout .co-main { display: grid; gap: var(--sp-6); min-width: 0; }
+.pg-checkout .co-main > * { margin: 0; }
+.pg-checkout ol.steps { margin-bottom: 0; }
+.pg-checkout h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 3rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.1; }
+.pg-checkout .lead { margin-top: var(--sp-3); }
+/* the form's action sits clear of the last option */
+.pg-checkout form > .btn[type="submit"] { margin-top: var(--sp-6); }
+.pg-checkout .opt-detail .label { margin-bottom: var(--sp-2); }
+.pg-checkout .opt-detail .select { max-width: 360px; }
+
+/* bank transfer */
+.pg-checkout .acct { position: relative; overflow: hidden; padding: var(--sp-5) var(--sp-6); border-radius: var(--r); background: var(--ink-900); color: #fff; }
+.pg-checkout .acct .k { margin: 0; font-family: var(--mono); font-size: .72rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-inv-3); }
+.pg-checkout .acct-num { margin: var(--sp-2) 0 0; font-family: var(--mono); font-size: clamp(1.7rem, 1.2rem + 2vw, 2.4rem); font-weight: 600; letter-spacing: .06em; color: #fff; word-break: break-all; }
+.pg-checkout .acct-grid { display: grid; gap: var(--sp-4); margin: var(--sp-5) 0 var(--sp-5); }
+@media (min-width: 560px) { .pg-checkout .acct-grid { grid-template-columns: 1fr 1fr; } }
+.pg-checkout .acct-grid dd { margin: var(--sp-1) 0 0; font-size: 1.05rem; font-weight: 600; color: #fff; }
+.pg-checkout .waiting { display: flex; align-items: flex-start; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border: 1px solid var(--warn-line); border-radius: var(--r-sm); background: var(--warn-bg); }
+.pg-checkout .waiting .spinner { margin-top: 2px; border-color: var(--warn-line); border-top-color: var(--warn); }
+.pg-checkout .waiting b { display: block; color: var(--tx-1); font-size: .95rem; }
+.pg-checkout .waiting p { margin: var(--sp-1) 0 0; font-size: .9rem; color: var(--tx-2); }
+.pg-checkout .how { font-size: 1.15rem; margin-bottom: var(--sp-4); }
+.pg-checkout .co-actions .btn { flex: 0 1 auto; }

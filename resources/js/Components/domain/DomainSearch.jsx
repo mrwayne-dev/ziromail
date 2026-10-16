@@ -1,5 +1,7 @@
+import { router } from '@inertiajs/react';
 import { useId, useState } from 'react';
-import { useToast } from '../ui/Toast';
+import { checkDomainInput } from '../../Lib/domain';
+import { route } from '../../Lib/route';
 
 const SearchIcon = () => (
     <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -8,50 +10,30 @@ const SearchIcon = () => (
     </svg>
 );
 
-// Accepts what people actually paste: "https://www.Example.com/page" becomes "example.com".
-export function normaliseDomain(raw) {
-    return raw
-        .trim()
-        .toLowerCase()
-        .replace(/^[a-z]+:\/\//, '')
-        .replace(/^www\./, '')
-        .replace(/[/?#].*$/, '');
-}
-
-const VALID = /^(?!-)(?:[a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,24}$/;
-
 /*
  * Domain field for the home page hero. It validates the shape of the domain and
- * says what is wrong in plain words. There is no lookup behind it yet (that
- * arrives with sign-up), so a valid domain gets an honest toast instead of an
- * invented result.
+ * says what is wrong in plain words. A valid domain goes straight into the
+ * onboarding wizard's domain step, pre-filled, with no result screen in between:
+ * the wizard's own "Check this domain" is where the lookup will live.
  */
 export default function DomainSearch() {
     const id = useId();
     const errId = `${id}-err`;
     const [value, setValue] = useState('');
     const [error, setError] = useState('');
-    const { toast } = useToast();
 
     function onSubmit(e) {
         e.preventDefault();
-        const domain = normaliseDomain(value);
+        const { domain, error: problem } = checkDomainInput(value);
 
-        if (!domain) {
-            setError('Type the domain your business already owns, for example yourbusiness.com.');
-            return;
-        }
-        if (!VALID.test(domain)) {
-            setError(`"${domain}" does not look like a domain. Use a name and an ending, like yourbusiness.com.`);
+        if (problem) {
+            setError(problem);
             return;
         }
 
         setError('');
         setValue(domain);
-        toast({
-            title: 'Domain checks are not live yet',
-            message: `We will carry ${domain} into setup when sign-up opens.`,
-        });
+        router.visit(route('onboarding.domain', { domain }));
     }
 
     return (

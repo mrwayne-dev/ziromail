@@ -91,9 +91,6 @@
   :where(.pg-index) .pricing-foot { max-width: 1100px; margin: var(--sp-6) auto 0; text-align: center; }
 
   :where(.pg-index) .toggles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
-  :where(.pg-index) .tg { display: inline-flex; background: var(--paper-2); border-radius: 999px; padding: 4px; border: 1px solid var(--line); }
-  :where(.pg-index) .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--tx-2); cursor: pointer; min-height: 42px; }
-  :where(.pg-index) .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
 
   /* ============ FAQ — centred badge and title over a narrow list of soft rows ============ */
   :where(.pg-index) .faq-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
