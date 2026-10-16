@@ -11,4 +11,6 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @import './ziro.css';
+@import './tokens.css';
+@import './components.css';
 @import './pages.css';

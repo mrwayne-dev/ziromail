@@ -2,100 +2,98 @@
 /* Apple rules applied: 17px body, ~80px section rhythm, one accent, one
      shadow, 2–3 sentences per section. */
 
-  /* ============ HERO — type only ============ */
-  :where(.pg-index) .hero {
-    position: relative; background: var(--ink-900); color: #fff; overflow: hidden;
-    padding-top: calc(var(--hdr-h) + 56px); padding-bottom: 72px;
-    display: flex; align-items: center;
+  /* ============ HERO — one full viewport, white, copy anchored bottom-left ============ */
+  /* The centre is left clear for the image that lands later. Plain .pg-index (not :where)
+     so these win over ziro.css's .hero and header rules. */
+  .pg-index .hero {
+    position: relative; overflow: hidden; background: var(--paper); color: var(--tx-1);
+    min-height: 100vh; min-height: 100svh;      /* svh: mobile toolbars do not push the CTA off screen */
+    display: flex; align-items: flex-end;
   }
-  /* Only reserve a tall viewport where there is room for it. */
-  @media (min-width: 700px) { :where(.pg-index) .hero { min-height: min(80vh, 720px); } }
-  @media (min-width: 900px) { :where(.pg-index) .hero { padding-top: calc(var(--hdr-h) + 110px); padding-bottom: 120px; } }
-  :where(.pg-index) .hero .wrap { position: relative; z-index: 2; }
+  /* Copy anchored bottom-left on the viewport edge. */
+  .pg-index .hero .hero-in { display: flex; align-items: flex-end; padding-bottom: var(--sp-7); }
+  @media (min-width: 900px) { .pg-index .hero .hero-in { padding-bottom: var(--sp-8); } }
+  .pg-index .hero .hero-in > div { min-width: 0; }
 
-  :where(.pg-index) .hero h1 {
-    color: #fff; font-size: clamp(3.2rem, 1.6rem + 7.4vw, 8rem);
-    line-height: .96; letter-spacing: -.045em; font-weight: 650;
+
+  .pg-index .hero h1 {
+    color: var(--tx-1); font-size: clamp(2.8rem, 1.5rem + 5.4vw, 6.4rem);
+    line-height: 1; letter-spacing: -.045em; font-weight: 500;
   }
-  :where(.pg-index) .hero .sub {
-    margin-top: 26px; max-width: 40ch; color: var(--tx-inv-2);
-    font-size: clamp(1.05rem, 1rem + .35vw, 1.2rem); line-height: 1.5;
+  .pg-index .hero .sub {
+    margin-top: var(--sp-5); max-width: 46ch; color: var(--tx-2);
+    font-size: clamp(1.05rem, 1rem + .35vw, 1.2rem); line-height: 1.55;
   }
-  :where(.pg-index) .hero .btn-row { margin-top: 38px; }
+  .pg-index .hero .btn-row { margin-top: var(--sp-6); }
+  /* ziro.css restyles .btn-line for dark heroes; this one is light. */
+  .pg-index .hero .btn-line { background: var(--paper); border-color: var(--line-2); color: var(--tx-1); }
+  .pg-index .hero .btn-line:hover { background: var(--paper-soft); border-color: var(--tx-1); }
 
-  /* geometric marks, echoing the logo's circle and envelope flap */
-  :where(.pg-index) .hero .shape { color: var(--blue); }
-  :where(.pg-index) .s1 { width: 520px; height: 520px; right: -170px; top: -190px; }
-  :where(.pg-index) .s2 { width: 200px; height: 200px; right: 34%; bottom: -100px; }
-  /* the envelope flap sits in clear space to the right, below the ring */
-  :where(.pg-index) .s3 { right: 8%; bottom: 8%; width: 170px; height: 170px; opacity: .2; }
-  @media (max-width: 899px) { :where(.pg-index) .s1 { width: 320px; height: 320px; right: -120px; top: -120px; } :where(.pg-index) .s2, :where(.pg-index) .s3 { display: none; } }
-
-  /* ============ CHOOSE-US CYCLER ============ */
-  :where(.pg-index) .choose { background: #fff; }
-  :where(.pg-index) .choose-in {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px;
-    font-size: clamp(1.6rem, 1.05rem + 2.6vw, 3.4rem);
-    font-weight: 600; letter-spacing: -.035em; line-height: 1.16; color: var(--tx-1);
+  /* ============ WHY US — mark, headline, one paragraph, then the product ============ */
+  :where(.pg-index) .why { background: var(--paper); }
+  :where(.pg-index) .why-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  :where(.pg-index) .why-mark { width: 40px; height: 40px; }
+  :where(.pg-index) .why-head h2 {
+    margin-top: var(--sp-5); max-width: 20ch;
+    font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.08;
   }
-  :where(.pg-index) .choose-in .lead-in { color: var(--tx-3); font-weight: 500; }
-  :where(.pg-index) .cycler { color: var(--blue); font-weight: 650; }
+  :where(.pg-index) .why-sub { margin-top: var(--sp-5); max-width: 56ch; color: var(--tx-2); font-size: 1.05rem; line-height: 1.6; }
 
-  /* ============ OFFER GRID ============ */
-  :where(.pg-index) .offer { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
-  @media (min-width: 720px) { :where(.pg-index) .offer { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1080px) { :where(.pg-index) .offer { grid-template-columns: repeat(4, 1fr); } }
-  :where(.pg-index) .offer-i { background: #fff; padding: 40px 30px; }
-  :where(.pg-index) .offer-i .n { font-family: var(--mono); font-size: .76rem; color: var(--blue); letter-spacing: .12em; }
-  :where(.pg-index) .offer-i h3 { margin-top: 16px; font-size: 1.16rem; }
-  :where(.pg-index) .offer-i p { margin-top: 10px; font-size: .96rem; color: var(--tx-3); }
-
-  /* ============ STATEMENT ============ */
-  :where(.pg-index) .statement { background: var(--blue); padding-block: 96px; }
-  @media (min-width: 900px) { :where(.pg-index) .statement { padding-block: 140px; } }
-  :where(.pg-index) .statement .big em { color: #BFD8F7; }
-  :where(.pg-index) .statement .sub {
-    margin: 30px auto 0; max-width: 52ch; color: #D9E8FA;
-    font-size: clamp(1.05rem, 1rem + .4vw, 1.25rem); line-height: 1.55;
+  /* The dashboard sits in a frame and dissolves into the page at the bottom, so it reads as
+     part of the product rather than a pasted screenshot. */
+  :where(.pg-index) .why-shot {
+    max-width: 1100px; margin: var(--sp-8) auto 0; aspect-ratio: 16 / 9; overflow: hidden;
+    border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-3);
+    -webkit-mask-image: linear-gradient(#000 62%, transparent 100%); mask-image: linear-gradient(#000 62%, transparent 100%);
   }
-  :where(.pg-index) .statement .shape { color: #fff; }
-  :where(.pg-index) .st1 { width: 420px; height: 420px; left: -150px; top: -150px; }
-  :where(.pg-index) .st2 { width: 300px; height: 300px; right: -90px; bottom: -130px; }
+  :where(.pg-index) .why-shot img { width: 100%; height: auto; }
 
-  /* ============ PROOF SPLIT ============ */
-  :where(.pg-index) .proof { display: grid; gap: 0; }
-  @media (min-width: 940px) { :where(.pg-index) .proof { grid-template-columns: 1fr 1fr; } }
-  :where(.pg-index) .proof-photo { position: relative; min-height: 340px; }
-  :where(.pg-index) .proof-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  :where(.pg-index) .proof-copy { padding: 64px var(--gutter); display: flex; flex-direction: column; justify-content: center; }
-  @media (min-width: 940px) { :where(.pg-index) .proof-copy { padding: 96px 64px; } }
+  /* ============ HOW WE SET UP — centred header over one narrow column of steps ============ */
+  :where(.pg-index) .setup-head { max-width: 720px; margin-inline: auto; text-align: center; }
+  :where(.pg-index) .setup-head .eyebrow { margin-bottom: var(--sp-4); }
+  :where(.pg-index) .setup-head h2 { font-weight: 500; letter-spacing: -.035em; }
+  :where(.pg-index) .setup-head .lead { margin-top: var(--sp-4); }
+  :where(.pg-index) .setup-steps { max-width: 760px; margin: var(--sp-8) auto 0; }
+  :where(.pg-index) .setup-more { margin-top: var(--sp-8); text-align: center; }
 
-  /* ============ STORAGE MODEL ============ */
-  :where(.pg-index) .model { display: grid; gap: 30px; }
-  @media (min-width: 980px) { :where(.pg-index) .model { grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; } }
+  /* ============ STORAGE MODEL — the domain card at the centre, annotated either side ============ */
+  :where(.pg-index) .sold { overflow: hidden; }
+  :where(.pg-index) .diagram { position: relative; display: grid; gap: var(--sp-7); max-width: 1276px; margin: var(--sp-8) auto 0; }
+  :where(.pg-index) .diagram-side { display: flex; flex-direction: column; gap: var(--sp-6); min-width: 0; }
+  :where(.pg-index) .diagram-core { order: -1; min-width: 0; }   /* card first when stacked */
+  :where(.pg-index) .sold-ceilings { max-width: 640px; margin: var(--sp-8) auto 0; }
+  :where(.pg-index) .sold-ceilings .tbl-wrap { margin-top: 0 !important; }
+  /* inside the card: tighter cells so three columns fit a phone */
+  :where(.pg-index) .domain-card table.data th, :where(.pg-index) .domain-card table.data td { padding: 12px var(--sp-3); }
+  :where(.pg-index) .domain-card td.num { white-space: nowrap; }
+  :where(.pg-index) .sold-more { margin-top: var(--sp-6); }
+  @media (min-width: 1000px) {
+    :where(.pg-index) .diagram { grid-template-columns: minmax(0, 1fr) minmax(420px, 540px) minmax(0, 1fr); align-items: center; gap: var(--sp-6); }
+    :where(.pg-index) .diagram-core { order: 0; }
+    :where(.pg-index) .diagram-side { align-self: stretch; justify-content: space-around; }
+  }
 
-  /* ============ PLANS ============ */
-  :where(.pg-index) .plans { display: grid; gap: 18px; }
-  @media (min-width: 900px) { :where(.pg-index) .plans { grid-template-columns: repeat(3, 1fr); align-items: start; } }
-  :where(.pg-index) .plan { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 34px 30px; display: flex; flex-direction: column; position: relative; }
-  :where(.pg-index) .plan-hot { border-color: var(--blue); box-shadow: 0 0 0 1.5px var(--blue); }
-  :where(.pg-index) .plan-flag { position: absolute; top: -12px; left: 30px; background: var(--blue); color: #fff; font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
-  :where(.pg-index) .plan .amt { display: flex; align-items: baseline; gap: 5px; margin-top: 20px; }
-  :where(.pg-index) .plan .amt b { font-size: 2.6rem; font-weight: 650; letter-spacing: -.04em; color: var(--tx-1); line-height: 1; font-variant-numeric: tabular-nums; }
-  :where(.pg-index) .plan .amt b span { font: inherit; color: inherit; letter-spacing: inherit; }
-  :where(.pg-index) .plan .amt > span { font-size: .88rem; color: var(--tx-3); }
-  :where(.pg-index) .plan .yr { font-size: .87rem; color: var(--tx-3); margin-top: 9px; }
-  :where(.pg-index) .plan .ticks { margin-top: 24px; flex: 1; }
-  :where(.pg-index) .plan .btn { margin-top: 28px; }
+  /* ============ PRICING — header left, toggles right, then the joined panels ============ */
+  :where(.pg-index) .pricing-head { display: grid; gap: var(--sp-5); max-width: 1100px; margin-inline: auto; align-items: end; }
+  @media (min-width: 900px) { :where(.pg-index) .pricing-head { grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-7); } }
+  :where(.pg-index) .pricing-copy .eyebrow { margin-bottom: var(--sp-4); }
+  :where(.pg-index) .pricing-copy h2 { font-weight: 500; letter-spacing: -.035em; }
+  :where(.pg-index) .pricing-copy .lead { margin-top: var(--sp-4); max-width: 46ch; }
+  :where(.pg-index) .pricing-head .toggles { margin: 0; justify-content: flex-start; }
+  :where(.pg-index) .plan-panels { margin-top: var(--sp-7); }
+  :where(.pg-index) .pricing-foot { color: var(--tx-2); }
+  :where(.pg-index) .domain-card .pool-seg.free { color: var(--tx-2); }
+  .pg-index .cta-band .btn-glass { background: var(--blue-600); border-color: var(--glass-line); }
+  :where(.pg-index) .pricing-foot { max-width: 1100px; margin: var(--sp-6) auto 0; text-align: center; }
 
   :where(.pg-index) .toggles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
   :where(.pg-index) .tg { display: inline-flex; background: var(--paper-2); border-radius: 999px; padding: 4px; border: 1px solid var(--line); }
-  :where(.pg-index) .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--tx-3); cursor: pointer; min-height: 42px; }
+  :where(.pg-index) .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .9rem; font-weight: 600; color: var(--tx-2); cursor: pointer; min-height: 42px; }
   :where(.pg-index) .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
 
-  /* ============ CLOSE ============ */
-  :where(.pg-index) .close-band { background: var(--ink-900); text-align: center; position: relative; overflow: hidden; }
-  :where(.pg-index) .close-band h2 { color: #fff; max-width: 17ch; margin-inline: auto; }
-  :where(.pg-index) .close-band .lead { color: var(--tx-inv-2); max-width: 48ch; margin: 20px auto 0; }
-  :where(.pg-index) .close-band .shape { color: var(--blue); }
-  :where(.pg-index) .c1 { width: 480px; height: 480px; left: 50%; transform: translateX(-50%); bottom: -300px; }
+  /* ============ FAQ — centred badge and title over a narrow list of soft rows ============ */
+  :where(.pg-index) .faq-head { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  :where(.pg-index) .faq-head .pill { color: var(--tx-2); }
+  :where(.pg-index) .faq-head h2 { margin-top: var(--sp-5); font-weight: 500; letter-spacing: -.035em; }
+  :where(.pg-index) .faq-head .lead { margin-top: var(--sp-4); max-width: 40ch; }
+  :where(.pg-index) .faq-list { max-width: 720px; margin: var(--sp-8) auto 0; }

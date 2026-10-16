@@ -1,0 +1,311 @@
+/* ==========================================================================
+   Component styles for the homepage redesign: button shapes, card variants,
+   Modal and Toast. Built only from ziro.css and tokens.css values.
+   ========================================================================== */
+
+/* ---------- buttons: shape + the glass variant ---------- */
+.btn-pill { border-radius: var(--r-pill); }
+.btn-glass {
+  background: var(--glass); color: #fff; border-color: var(--glass-line);
+  backdrop-filter: blur(8px);
+}
+.btn-glass:hover { background: var(--glass-line); border-color: var(--tx-inv-2); }
+.btn .btn-icon { flex: none; transition: transform var(--dur-1); }
+.btn:hover .btn-icon { transform: translateX(3px); }
+
+/* split: a label plus a separate square chip inset inside the button — a button within
+   the button, not an end cap. The chip is the button's own height minus its inset on
+   every side, so it stays square and evenly framed. */
+.btn-split {
+  --cell: calc(var(--ctl) - 2 * var(--sp-1) - 3px);   /* 3px = the button's 1.5px border, twice */
+  justify-content: space-between; gap: var(--sp-5); white-space: nowrap;
+  padding: var(--sp-1) var(--sp-1) var(--sp-1) var(--sp-5);
+}
+.btn-split.btn-sm { --cell: calc(var(--ctl-sm) - 2 * var(--sp-1) - 3px); padding-left: var(--sp-4); }
+.btn-split.btn-lg { --cell: calc(var(--ctl-lg) - 2 * var(--sp-1) - 3px); }
+.btn-split .btn-icon {
+  width: var(--cell); height: var(--cell); display: grid; place-items: center;
+  border-radius: calc(var(--r-xs) - var(--sp-1) / 2);
+  background: var(--paper); color: var(--blue);
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.btn-split:hover .btn-icon { transform: none; background: var(--blue-050); }
+.btn-split.btn-ink .btn-icon { color: var(--ink-900); }
+
+/* edge-to-edge container: full width with a small, viewport-relative gutter */
+.wrap-edge { max-width: none; padding-inline: var(--gutter-edge); }
+
+/* ---------- header: floating capsules on a light page ----------
+   Transparent over the hero; once the page scrolls the base .hdr surface returns.
+   The nav and the account actions each sit in their own capsule. */
+.hdr-float { border-bottom: 0; } /* no border box, so the bar is exactly --hdr-h and a hero below starts at y=0 */
+.hdr-float .mnav, .hdr-float .mnav.open { border-top: 0; } /* the collapsed sheet's 1px border would push the hero down */
+.hdr-float.is-stuck, .hdr-float.nav-open { box-shadow: 0 1px 0 var(--line); }
+.hdr-float:not(.is-stuck):not(.nav-open) {
+  background: transparent; border-bottom-color: transparent; backdrop-filter: none;
+}
+.hdr-float .brand .logo-light { opacity: 0; }
+.hdr-float .brand .logo-dark  { opacity: 1; }
+.hdr-float .nav,
+.hdr-float .hdr-act {
+  gap: var(--sp-1); padding: var(--sp-1);
+  background: var(--paper-soft); border: 1px solid var(--line); border-radius: var(--r-sm);
+}
+.hdr-float .nav a { padding: var(--sp-2) var(--sp-4); border-radius: var(--r-xs); color: var(--tx-2); }
+.hdr-float .nav a:hover { background: var(--paper-2); color: var(--tx-1); }
+.hdr-float .nav a[aria-current="page"] { background: var(--ink-900); color: #fff; }
+.hdr-float .hdr-act .btn { border-radius: var(--r-xs); }
+@media (min-width: 1000px) {
+  /* equal side tracks keep the nav capsule centred on the page, not between its neighbours */
+  .hdr-float .bar { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .hdr-float .bar .brand { justify-self: start; }
+  .hdr-float .hdr-act { justify-self: end; }
+}
+
+/* ---------- card variants (base .card lives in ziro.css) ---------- */
+
+/* panel: square-cornered panels butted edge to edge; `.is-featured` fills with brand blue. */
+.card-panel {
+  display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--sp-6);
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-0);
+}
+.card-panel + .card-panel { border-top: 0; }
+@media (min-width: 900px) { .card-panel + .card-panel { border-top: 1px solid var(--line); border-left: 0; } }
+.card-panel.is-featured { background: var(--blue); border-color: var(--blue); color: #fff; }
+@media (min-width: 900px) { .card-panel.is-featured + .card-panel, .card-panel + .card-panel.is-featured { border-color: var(--line); } .card-panel.is-featured { border-color: var(--blue); } }
+.card-panel.is-featured h3, .card-panel.is-featured h4 { color: #fff; }
+
+/* ---------- callout: numbered diagram annotation ---------- */
+.callout { display: flex; align-items: flex-start; gap: var(--sp-3); min-width: 0; }
+.callout-n {
+  flex: none; width: 28px; height: 28px; border-radius: var(--r-pill); display: grid; place-items: center;
+  background: var(--ink-900); color: #fff; font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.callout-line { display: none; flex: 0 0 var(--sp-6); height: 1px; margin-top: 14px; background: var(--line-2); }
+.callout-body { min-width: 0; }
+.callout-body b { display: block; color: var(--tx-1); font-weight: 650; letter-spacing: -.01em; }
+.callout-body p { margin-top: var(--sp-1); color: var(--tx-2); font-size: .93rem; line-height: 1.55; }
+@media (min-width: 1000px) {
+  .callout-line { display: block; }
+  .callout-left { flex-direction: row-reverse; text-align: right; }
+}
+
+/* ---------- stepper: numbered steps joined by a line ---------- */
+.stepper { list-style: none; margin: 0; padding: 0; counter-reset: st; display: grid; gap: var(--sp-7); }
+.stepper-item { position: relative; padding-left: calc(var(--sp-6) + var(--sp-4)); counter-increment: st; min-width: 0; }
+.stepper-item::before {
+  content: counter(st); position: absolute; left: 0; top: 0; z-index: 1;
+  width: 28px; height: 28px; border-radius: var(--r-pill); display: grid; place-items: center;
+  background: var(--paper-2); color: var(--tx-2); font-size: .78rem; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.stepper-item:not(:last-child)::after {
+  content: ""; position: absolute; left: 13.5px; top: calc(28px + var(--sp-2));
+  bottom: calc(var(--sp-7) * -1 + var(--sp-2)); width: 1px; background: var(--line-2);
+}
+.stepper-item h3 { font-size: 1.05rem; font-weight: 550; letter-spacing: -.015em; line-height: 28px; }
+.stepper-when { display: block; margin-top: var(--sp-1); font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--tx-3); }
+.stepper-body { display: grid; gap: var(--sp-4); margin-top: var(--sp-3); justify-items: start; }
+.stepper-body > p { color: var(--tx-3); font-size: .95rem; }
+.stepper-note { padding-left: var(--sp-4); border-left: 2px solid var(--blue-400); }
+.bg-ink .stepper-item::before { background: var(--ink-700); color: var(--tx-inv-2); }
+.bg-ink .stepper-item::after { background: var(--line-dark); }
+.bg-ink .stepper-item h3 { color: #fff; }
+.bg-ink .stepper-when, .bg-ink .stepper-body > p { color: var(--tx-inv-3); }
+
+/* ---------- chips: single-choice ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.chip {
+  min-height: var(--ctl-sm); padding: 0 var(--sp-4); border: 1px solid var(--line-2); border-radius: var(--r-xs);
+  background: transparent; color: var(--tx-2); font-size: .9rem; font-weight: 500; cursor: pointer;
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
+}
+.chip:hover { border-color: var(--tx-3); }
+.chip[aria-checked="true"] { border-color: var(--tx-1); color: var(--tx-1); background: var(--paper-soft); }
+.bg-ink .chip { border-color: var(--line-dark); color: var(--tx-inv-3); }
+.bg-ink .chip:hover { border-color: var(--tx-inv-3); color: var(--tx-inv-2); }
+.bg-ink .chip[aria-checked="true"] { border-color: #fff; color: #fff; background: var(--ink-800); }
+
+/* ---------- rows: a bordered list of label / description / status ---------- */
+.rows { list-style: none; margin: 0; padding: 0; width: 100%; border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
+.rows li {
+  display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4); font-size: .9rem; color: var(--tx-2);
+}
+.rows li + li { border-top: 1px solid var(--line); }
+.rows .mono { font-weight: 600; color: var(--tx-1); }
+@media (max-width: 520px) { .rows li { grid-template-columns: 3.5rem minmax(0, 1fr); } .rows li .pill { grid-column: 2; justify-self: start; } }
+.bg-ink .rows { border-color: var(--line-dark); }
+.bg-ink .rows li { color: var(--tx-inv-3); }
+.bg-ink .rows li + li { border-top-color: var(--line-dark); }
+.bg-ink .rows .mono { color: #fff; }
+
+/* ---------- modal ---------- */
+.modal {
+  width: min(92vw, 520px); height: fit-content; max-height: min(86vh, 720px);
+  margin: auto; padding: 0; border: 0; border-radius: var(--r-lg);
+  background: var(--paper); color: var(--tx-2); box-shadow: var(--sh-3);
+  overflow: hidden; z-index: var(--z-modal);
+}
+.modal[open] { display: flex; flex-direction: column; animation: modal-in var(--dur-2) var(--ease-out); }
+.modal::backdrop { background: var(--scrim); backdrop-filter: blur(2px); }
+.modal-sm { width: min(92vw, 400px); }
+.modal-lg { width: min(92vw, 720px); }
+.modal-hd { display: flex; align-items: flex-start; gap: var(--sp-4); padding: var(--sp-5) var(--sp-5) 0; }
+.modal-hd h2 { flex: 1; font-size: 1.3rem; line-height: 1.25; letter-spacing: -.02em; }
+.modal-x {
+  flex: none; width: 40px; height: 40px; margin: -6px -6px 0 0; display: grid; place-items: center;
+  border: 0; border-radius: var(--r-xs); background: transparent; color: var(--tx-3); cursor: pointer;
+}
+.modal-x:hover { background: var(--paper-2); color: var(--tx-1); }
+.modal-bd { padding: var(--sp-4) var(--sp-5) var(--sp-5); overflow-y: auto; }
+.modal-ft {
+  display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5); border-top: 1px solid var(--line); background: var(--paper-soft);
+}
+body.modal-open { overflow: hidden; }
+@keyframes modal-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+
+/* ---------- toast ---------- */
+.toast-region {
+  position: fixed; z-index: var(--z-toast); inset: auto var(--gutter) var(--sp-5) var(--gutter);
+  display: flex; flex-direction: column-reverse; align-items: stretch; gap: var(--sp-3);
+  pointer-events: none;
+}
+@media (min-width: 640px) { .toast-region { inset: auto var(--sp-5) var(--sp-5) auto; width: 380px; } }
+.toast {
+  pointer-events: auto; display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: var(--sp-4); background: var(--ink-900); color: var(--tx-inv-2);
+  border: 1px solid var(--line-dark); border-left: 3px solid var(--blue-400);
+  border-radius: var(--r-sm); box-shadow: var(--sh-3);
+  animation: toast-in var(--dur-2) var(--ease-out);
+}
+.toast-ok   { border-left-color: var(--ok); }
+.toast-warn { border-left-color: var(--warn); }
+.toast-bad  { border-left-color: var(--bad); }
+.toast .bd { flex: 1; min-width: 0; font-size: .93rem; }
+.toast .bd b { display: block; color: #fff; font-weight: 650; }
+.toast .bd p { margin-top: 2px; }
+.toast-act { margin-top: var(--sp-2); }
+.toast-x {
+  flex: none; width: 32px; height: 32px; margin: -6px -6px 0 0; display: grid; place-items: center;
+  border: 0; border-radius: var(--r-xs); background: transparent; color: var(--tx-inv-3); cursor: pointer;
+}
+.toast-x:hover { background: var(--glass); color: #fff; }
+.toast.is-leaving { animation: toast-out var(--dur-1) ease-in forwards; }
+@keyframes toast-in  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal[open], .toast, .toast.is-leaving { animation: none; }
+  .btn .btn-icon, .btn:hover .btn-icon { transition: none; transform: none; }
+}
+
+/* ---------- plan panels: joined squares, the featured one filled with the brand blue ---------- */
+.plan-panels { display: grid; max-width: 1100px; margin-inline: auto; }
+@media (min-width: 900px) { .plan-panels { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.plan-panel { gap: 0; padding: var(--sp-6); }
+.panel-top {
+  display: flex; justify-content: space-between; gap: var(--sp-4); min-height: var(--sp-5);
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--tx-2);
+}
+.plan-panel h3 { margin-top: var(--sp-8); font-size: 2rem; font-weight: 600; letter-spacing: -.035em; }
+.panel-tag { margin-top: var(--sp-3); color: var(--tx-2); font-size: .95rem; }
+.panel-price { margin-top: var(--sp-6); display: flex; align-items: baseline; gap: var(--sp-2); flex-wrap: wrap; }
+.panel-price b { font-size: 3.1rem; font-weight: 650; letter-spacing: -.045em; line-height: 1; color: var(--tx-1); font-variant-numeric: tabular-nums; }
+.panel-price b span { font: inherit; color: inherit; letter-spacing: inherit; }
+.panel-price > span { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-2); }
+.plan-panel .yr { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--line); font-size: .87rem; color: var(--tx-2); }
+.plan-panel .yr b { color: var(--tx-1); }
+.plan-panel .cap { margin-top: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--line); font-size: .87rem; color: var(--tx-2); }
+.panel-list { flex: 1; list-style: none; margin: var(--sp-5) 0 var(--sp-6); padding: 0; display: grid; align-content: start; gap: var(--sp-3); font-size: .92rem; color: var(--tx-2); }
+.panel-list li { display: flex; gap: var(--sp-3); }
+.panel-list li::before { content: "+"; flex: none; font-family: var(--mono); color: var(--blue); }
+.panel-list b { color: var(--tx-1); }
+.panel-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4);
+  min-height: var(--ctl-lg); padding: 0 var(--sp-4); border-radius: var(--r-xs);
+  background: var(--blue); color: #fff; font-family: var(--mono); font-size: .76rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; transition: background var(--dur-1);
+}
+.panel-cta:hover { background: var(--blue-600); }
+.plan-panel.is-featured .panel-top, .plan-panel.is-featured .panel-price > span,
+.plan-panel.is-featured .yr, .plan-panel.is-featured .cap { color: var(--blue-100); }
+.plan-panel.is-featured .panel-tag, .plan-panel.is-featured .panel-list { color: var(--blue-100); }
+.plan-panel.is-featured .panel-price b, .plan-panel.is-featured .yr b, .plan-panel.is-featured .panel-list b { color: #fff; }
+.plan-panel.is-featured .yr, .plan-panel.is-featured .cap { border-top-color: var(--glass-line); }
+.plan-panel.is-featured .panel-list li::before { color: var(--blue-200); }
+.plan-panel.is-featured .panel-cta { background: var(--ink-900); }
+.plan-panel.is-featured .panel-cta:hover { background: var(--ink-700); }
+
+/* ---------- faq cards: soft rounded rows, leading icon, chevron ---------- */
+.faq-cards { display: grid; gap: var(--sp-3); }
+.faq-card { background: var(--paper-soft); border: 1px solid transparent; border-radius: var(--r-sm); }
+.faq-card[open] { border-color: var(--line); background: var(--paper-2); }
+.faq-card summary {
+  display: flex; align-items: center; gap: var(--sp-4); min-height: 56px; padding: var(--sp-3) var(--sp-5);
+  list-style: none; cursor: pointer; font-weight: 550; color: var(--tx-1);
+}
+.faq-card summary::-webkit-details-marker { display: none; }
+.faq-ic { flex: none; width: 28px; height: 28px; border-radius: var(--r-pill); display: grid; place-items: center; background: var(--paper); color: var(--blue); }
+.faq-q { flex: 1; min-width: 0; }
+.faq-chev { flex: none; color: var(--tx-3); transition: transform var(--dur-2) var(--ease-out); }
+.faq-card[open] .faq-chev { transform: rotate(180deg); }
+.faq-card .body { padding: 0 var(--sp-5) var(--sp-5); color: var(--tx-2); line-height: 1.65; font-size: .97rem; }
+@media (min-width: 640px) { .faq-card .body { padding-left: calc(var(--sp-5) + 28px + var(--sp-4)); } }
+@media (prefers-reduced-motion: reduce) { .faq-chev { transition: none; } }
+
+/* ---------- footer, light: brand statement then link columns ---------- */
+.ftr-light { background: var(--paper-soft); border-top: 1px solid var(--line); padding-block: var(--sp-8) var(--sp-6); }
+.ftr-l-grid { display: grid; gap: var(--sp-7); }
+@media (min-width: 760px) { .ftr-l-grid { grid-template-columns: 1.7fr repeat(3, minmax(0, 1fr)); gap: var(--sp-6); } }
+.ftr-l-tag { margin-top: var(--sp-6); max-width: 26ch; font-size: 1.3rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.25; color: var(--tx-1); }
+.ftr-l-tag span { display: block; }
+.ftr-l-tag span + span { margin-top: var(--sp-1); color: var(--tx-2); }
+.ftr-light h4 { margin-bottom: var(--sp-4); font-size: .92rem; font-weight: 500; letter-spacing: 0; color: var(--tx-2); }
+.ftr-light .ftr-l-links a { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-3) 0; color: var(--tx-1); }
+.ftr-light .ftr-l-links a:hover { color: var(--blue); }
+.ftr-l-btm {
+  margin-top: var(--sp-8); padding-top: var(--sp-5); border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--sp-3); font-size: .9rem; color: var(--tx-2);
+}
+
+/* ---------- page hero: the opening block of every inner page ---------- */
+/* ziro.css pulls the first section under the header and sets its top padding, so
+   the room lives on the inner wrapper. */
+.page-hero .wrap { padding-top: var(--sp-8); padding-bottom: var(--sp-8); }
+@media (min-width: 900px) { .page-hero .wrap { padding-top: var(--sp-9); } }
+.page-hero-in { max-width: 760px; }
+.page-hero-center .page-hero-in { margin-inline: auto; text-align: center; }
+.page-hero-center .btn-row { justify-content: center; }
+.page-hero .eyebrow { margin-bottom: var(--sp-4); }
+.page-hero h1 { font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.2rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.04; }
+.page-hero .lead { margin-top: var(--sp-5); max-width: 56ch; }
+.page-hero-center .lead { margin-inline: auto; }
+.page-hero .btn-row { margin-top: var(--sp-6); }
+
+/* ---------- cta block: contained, brand blue ---------- */
+.cta-card { background: var(--blue); color: #fff; border-radius: var(--r-lg); padding: var(--sp-8) var(--sp-6); }
+@media (min-width: 900px) { .cta-card { padding: var(--sp-9); } }
+.cta-card h2 { color: #fff; max-width: 14ch; font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.08; }
+.cta-card .lead { margin-top: var(--sp-4); max-width: 44ch; color: var(--blue-100); }
+.cta-card .btn-row { margin-top: var(--sp-6); }
+.cta-card .btn-glass { background: var(--blue-600); border-color: var(--glass-line); }
+
+/* ---------- section rhythm used by inner pages ---------- */
+.band-soft { background: var(--paper-soft); }
+.block-head { max-width: 680px; margin-bottom: var(--sp-7); }
+.block-head.center { margin-inline: auto; text-align: center; }
+.block-head .eyebrow { margin-bottom: var(--sp-4); }
+.block-head h2 { font-weight: 500; letter-spacing: -.035em; }
+.block-head .lead { margin-top: var(--sp-4); }
+
+/* faq cards on a soft band: lift the rows to white so they stay distinct */
+.band-soft .faq-card { background: var(--paper); border-color: var(--line); }
+.band-soft .faq-card[open] { background: var(--paper-soft); }
+
+.page-hero-meta { margin-top: var(--sp-3); font-family: var(--mono); font-size: .78rem; letter-spacing: .06em; color: var(--tx-2); }
+
+/* ziro.css's --tx-3 sits at 4.48:1 on white, just under AA for small text. Muted text
+   and the few other places that used it step up to --tx-2 without touching the token. */
+.mut, .muted, .label .opt, table.data td.n { color: var(--tx-2); }
+.pool-seg.free { color: var(--tx-2); }

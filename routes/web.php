@@ -45,5 +45,6 @@ if (app()->environment('local')) {
         Route::inertia('/404', 'Errors/NotFound');
         Route::inertia('/500', 'Errors/ServerError');
         Route::inertia('/maintenance', 'Errors/Maintenance');
+        Route::inertia('/components', 'Dev/Components');
     });
 }

@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Button from '../Components/ui/Button';
+import Button, { ArrowUpRightIcon } from '../Components/ui/Button';
 import Logo from '../Components/ui/Logo';
 import useHeroAnimation from '../Hooks/useHeroAnimation';
 import { route, routeIs } from '../Lib/route';
@@ -44,6 +44,7 @@ const FOOTER = [
 function Header({ variant }) {
     const { url } = usePage();
     const ink = variant === 'ink';
+    const float = variant === 'float';
     const [stuck, setStuck] = useState(false);
     const [open, setOpen] = useState(false);
     const panel = useRef(null);
@@ -132,13 +133,13 @@ function Header({ variant }) {
         };
     }, [open, close]);
 
-    const classes = ['hdr', ink && 'hdr-ink hdr-over', ink && stuck && 'is-stuck', open && 'nav-open']
+    const classes = ['hdr', ink && 'hdr-ink hdr-over', float && 'hdr-float hdr-over', (ink || float) && stuck && 'is-stuck', open && 'nav-open']
         .filter(Boolean)
         .join(' ');
 
     return (
         <header className={classes}>
-            <div className="wrap wrap-wide bar">
+            <div className={`wrap ${float ? 'wrap-edge' : 'wrap-wide'} bar`}>
                 <Link className="brand" href={route('home')} aria-label="Ziroemail home">
                     <Logo variant="white" className="logo-light" />
                     <Logo variant="black" className="logo-dark" decorative />
@@ -151,8 +152,17 @@ function Header({ variant }) {
                     ))}
                 </nav>
                 <div className="hdr-act">
-                    <Button variant="line" size="sm" href={route('login')}>Sign in</Button>
-                    <Button size="sm" href={route('signup')}>Get started</Button>
+                    {float ? (
+                        <>
+                            <Button variant="quiet" size="sm" href={route('login')}>Sign in</Button>
+                            <Button size="sm" split icon={<ArrowUpRightIcon />} href={route('signup')}>Get started</Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button variant="line" size="sm" href={route('login')}>Sign in</Button>
+                            <Button size="sm" href={route('signup')}>Get started</Button>
+                        </>
+                    )}
                 </div>
                 <button
                     ref={toggle}
@@ -200,7 +210,50 @@ function StatusHeader() {
     );
 }
 
-export function Footer({ compact = false }) {
+function ArrowUpRight() {
+    return (
+        <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3.5 10.5 10.5 3.5M4.5 3.5h6v6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+export function Footer({ compact = false, light = false }) {
+    if (light) {
+        return (
+            <footer className="ftr-light">
+                <div className="wrap wrap-edge">
+                    <div className="ftr-l-grid">
+                        <div>
+                            <Logo variant="black" />
+                            <p className="ftr-l-tag">
+                                <span>Business email for Nigerian companies.</span>
+                                <span>Built and run by Zirostack in Port Harcourt, Rivers State.</span>
+                            </p>
+                        </div>
+                        {FOOTER.map((col) => (
+                            <div key={col.title}>
+                                <h4>{col.title}</h4>
+                                <div className="ftr-l-links">
+                                    {col.links.map(([name, label]) => (
+                                        <Link key={name} href={route(name)}>
+                                            {label}
+                                            {name === 'status' && <ArrowUpRight />}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="ftr-l-btm">
+                        <span>&copy; 2026 Zirostack Ltd.</span>
+                        <span>Port Harcourt, Rivers State &middot; VAT charged at 7.5%</span>
+                    </div>
+                </div>
+            </footer>
+        );
+    }
+
     if (compact) {
         return (
             <footer className="ftr" style={{ marginTop: 40 }}>
@@ -249,6 +302,7 @@ export function Footer({ compact = false }) {
  * The public site shell.
  *   variant   'ink'    — transparent header over a dark hero (marketing pages)
  *             'light'  — white header (legal pages)
+ *             'float'  — transparent header with floating nav capsules, over a light hero (home page)
  *             'status' — bare header and a one-line footer (status page)
  *   page      scopes the page's own stylesheet (resources/css/pages.css) as .pg-{page}
  *   mainClass extra classes for <main>
@@ -264,7 +318,7 @@ export default function PublicLayout({ variant = 'ink', page, mainClass, childre
             <a className="skip-link" href="#main">Skip to content</a>
             {variant === 'status' ? <StatusHeader /> : <Header variant={variant} />}
             <main id="main" className={mainClass}>{children}</main>
-            <Footer compact={variant === 'status'} />
+            <Footer compact={variant === 'status'} light={variant === 'float'} />
         </div>
     );
 }

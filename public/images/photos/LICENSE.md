@@ -10,7 +10,6 @@ available offline, so they are listed as TODO below.
 
 | File | Unsplash photo | Used on | Retrieved | Photographer |
 |---|---|---|---|---|
-| `1739303987861-1b0c1104b747.jpg` | https://unsplash.com/photos/1739303987861-1b0c1104b747 | Home (proof section) | 2026-10-15 | TODO |
 | `1739301674182-452a0f2b14dd.jpg` | https://unsplash.com/photos/1739301674182-452a0f2b14dd | Switching (automatic setup section) | 2026-10-15 | TODO |
 
 Downloaded at `w=1000&q=80&fm=jpg&fit=crop`, the same parameters the prototype used.
