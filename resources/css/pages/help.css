@@ -1,46 +1,37 @@
-/* Scoped from the prototype's inline <style> for help.html. */
-:where(.pg-help) .h-hero {
-    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
-    padding-block: calc(var(--hdr-h) + 48px) 68px;
-  }
-  :where(.pg-help) .h-hero .wrap { position: relative; z-index: 2; }
-  :where(.pg-help) .h-hero h1 { color: #fff; }
-  :where(.pg-help) .h-hero .shape { color: var(--blue); }
-  :where(.pg-help) .hh1 { width: 400px; height: 400px; right: -140px; top: -150px; }
+/* Help centre: search, topic chips, then either results or the browse view. */
+.pg-help .help-search {
+  display: flex; align-items: center; gap: var(--sp-3); max-width: 620px; margin: var(--sp-6) auto 0;
+  padding: 0 var(--sp-5); min-height: 60px; background: var(--paper); color: var(--tx-2);
+  border: 1.5px solid var(--line-2); border-radius: var(--r-pill); box-shadow: var(--sh-1);
+}
+.pg-help .help-search:focus-within { border-color: var(--blue); box-shadow: var(--sh-focus); }
+.pg-help .help-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 1.02rem; color: var(--tx-1); }
+.pg-help .help-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-2); margin-top: var(--sp-5); }
+.pg-help .chip[aria-pressed="true"] { border-color: var(--tx-1); color: var(--tx-1); background: var(--paper-soft); }
 
-  :where(.pg-help) .searchbar {
-    display: flex; align-items: center; gap: 12px; max-width: 520px; margin-top: 26px;
-    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.20);
-    border-radius: var(--r-xs); padding: 0 16px; height: 54px;
-  }
-  :where(.pg-help) .searchbar input { flex: 1; background: none; border: none; color: #fff; font-size: 1rem; min-width: 0; }
-  :where(.pg-help) .searchbar input::placeholder { color: #8A97A6; }
-  :where(.pg-help) .searchbar input:focus { outline: none; }
+.pg-help .help-h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -.02em; }
+.pg-help .block-head { margin-bottom: var(--sp-5); }
+.pg-help .popular-grid { display: grid; gap: var(--sp-4); }
+@media (min-width: 640px) { .pg-help .popular-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .pg-help .popular-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pg-help .popular-card { display: grid; gap: var(--sp-2); align-content: start; padding: var(--sp-5); background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--sh-1); transition: border-color var(--dur-1), box-shadow var(--dur-1); }
+.pg-help .popular-card:hover { border-color: var(--blue); box-shadow: var(--sh-2); }
+.pg-help .popular-card .n { font-family: var(--mono); font-size: .76rem; letter-spacing: .12em; color: var(--blue); }
+.pg-help .popular-card b { color: var(--tx-1); font-weight: 600; letter-spacing: -.01em; }
+.pg-help .popular-card span:last-child { color: var(--tx-2); font-size: .92rem; }
 
-  :where(.pg-help) .cats { display: grid; gap: 18px; }
-  @media (min-width: 720px) { :where(.pg-help) .cats { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1040px) { :where(.pg-help) .cats { grid-template-columns: repeat(3, 1fr); } }
-  :where(.pg-help) .cat { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 26px; }
-  :where(.pg-help) .cat .ic {
-    width: 40px; height: 40px; border-radius: 12px; background: var(--blue-050); color: var(--blue);
-    display: grid; place-items: center; border: 1px solid var(--blue-200); margin-bottom: 16px;
-  }
-  :where(.pg-help) .cat h3 { font-size: 1.05rem; }
-  :where(.pg-help) .cat ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 2px; }
-  :where(.pg-help) .cat li a {
-    display: block; padding: 8px 0; font-size: .93rem; color: var(--tx-2);
-    border-bottom: 1px solid transparent;
-  }
-  :where(.pg-help) .cat li a:hover { color: var(--blue); }
-  :where(.pg-help) .cat .more { display: inline-block; margin-top: 14px; font-size: .88rem; font-weight: 600; color: var(--blue); }
+.pg-help .topic-grid { display: grid; gap: var(--sp-5); }
+@media (min-width: 700px) { .pg-help .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1040px) { .pg-help .topic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pg-help .topic-card { display: flex; flex-direction: column; gap: var(--sp-4); box-shadow: var(--sh-1); }
+.pg-help .topic-card h3 { font-size: 1.15rem; letter-spacing: -.02em; }
+.pg-help .topic-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); flex: 1; }
+.pg-help .topic-card li a { display: block; padding: var(--sp-2) 0; color: var(--tx-2); border-bottom: 1px solid var(--line); }
+.pg-help .topic-card li a:hover { color: var(--blue); }
 
-  :where(.pg-help) .pop { display: grid; gap: 14px; }
-  @media (min-width: 820px) { :where(.pg-help) .pop { grid-template-columns: repeat(2, 1fr); } }
-  :where(.pg-help) .pop a {
-    display: flex; gap: 14px; align-items: flex-start; padding: 20px 22px;
-    background: #fff; border: 1px solid var(--line); border-radius: var(--r); color: var(--tx-1);
-  }
-  :where(.pg-help) .pop a:hover { border-color: var(--blue); }
-  :where(.pg-help) .pop .n { font-family: var(--mono); font-size: .8rem; color: var(--blue); flex: none; padding-top: 2px; }
-  :where(.pg-help) .pop b { font-size: .98rem; display: block; }
-  :where(.pg-help) .pop span { font-size: .88rem; color: var(--tx-3); display: block; margin-top: 4px; }
+.pg-help .help-results .wrap { max-width: 760px; }
+.pg-help .help-count { margin-bottom: var(--sp-4); font-size: .92rem; color: var(--tx-2); }
+.pg-help .guide-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.pg-help .guide-list a { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-4); padding: var(--sp-4) 0; border-bottom: 1px solid var(--line); color: var(--tx-1); font-weight: 550; }
+.pg-help .guide-list a:hover { color: var(--blue); }
+.pg-help .guide-list small { font-weight: 400; color: var(--tx-2); font-size: .84rem; white-space: nowrap; }

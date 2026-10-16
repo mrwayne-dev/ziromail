@@ -1,44 +1,28 @@
-import Seo from '../../Components/seo/Seo';
 import { Link } from '@inertiajs/react';
+import LegalDoc from '../../Components/domain/LegalDoc';
+import Seo from '../../Components/seo/Seo';
 import PublicLayout from '../../Layouts/PublicLayout';
 import { route } from '../../Lib/route';
 
 export default function Refunds() {
     return (
         <>
-            <Seo title="Refund policy — Ziroemail"
+            <Seo title="Refund policy | Ziroemail"
                 description="When Ziroemail refunds, how much, and how long it takes. Full refund within 14 days, unused whole months after that, and credit for outages without asking."
                 path="/legal/refunds"
                 ogDescription="When we refund, how much, and how long it takes." />
 
-            <nav className="legal-nav" aria-label="Legal documents">
-              <Link href={route('legal.terms')}>
-                Terms of service
-              </Link>
-              {' '}
-              <Link href={route('legal.privacy')}>
-                Privacy policy
-              </Link>
-              {' '}
-              <Link href={route('legal.aup')}>
-                Acceptable use
-              </Link>
-              {' '}
-              <Link href={route('legal.refunds')} aria-current="page">
-                Refund policy
-              </Link>
-            </nav>
-            <article className="doc">
-              <h1>Refund policy</h1>
-              <p className="meta">Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State</p>
-              <p className="intro">
-                Refunds are calculated by this policy, not by argument. It is written to be specific enough that you can work out your own position before contacting us.
-              </p>
+            <LegalDoc
+              current="legal.refunds"
+              title="Refund policy"
+              meta="Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State"
+              intro="Refunds are calculated by this policy, not by argument. It is written to be specific enough that you can work out your own position before contacting us."
+            >
               <h2>The first 14 days</h2>
               <p>
                 If you are not satisfied within 14 days of your first payment for a domain, tell us and we will refund it in full. You do not need to give a reason.
               </p>
-              <p>This applies once per domain, to a first purchase — not to renewals.</p>
+              <p>This applies once per domain, to a first purchase, not to renewals.</p>
               <h2>Cancelling mid-term</h2>
               <p>
                 You can cancel at any time. Cancelling stops the next renewal and your service runs to the end of the period you have paid for.
@@ -55,7 +39,7 @@ export default function Refunds() {
               </p>
               <h2>If we get it wrong</h2>
               <p>
-                If we suffer a sustained outage that materially affects your service, we will credit or refund the affected period without you having to ask — we can see the same status data you can. If you think we have missed one, tell us and we will look.
+                If we suffer a sustained outage that materially affects your service, we will credit or refund the affected period without you having to ask. We can see the same status data you can. If you think we have missed one, tell us and we will look.
               </p>
               <h2>When we do not refund</h2>
               <ul>
@@ -89,11 +73,11 @@ export default function Refunds() {
                   . We would rather explain a clause than have you agree to something you do not understand.
                 </p>
               </div>
-            </article>
+            </LegalDoc>
         </>
     );
 }
 
 Refunds.layout = (page) => (
-    <PublicLayout variant="light" page="legal" mainClass="wrap legal">{page}</PublicLayout>
+    <PublicLayout variant="float" page="legal">{page}</PublicLayout>
 );

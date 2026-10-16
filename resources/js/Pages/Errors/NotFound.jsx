@@ -6,7 +6,7 @@ import { route } from '../../Lib/route';
 export default function NotFound() {
     return (
         <>
-            <Seo title="Page not found — Ziroemail"
+            <Seo title="Page not found | Ziroemail"
                 description="That page does not exist."
                 noindex
                 robots="noindex, follow" />
@@ -59,8 +59,7 @@ export default function NotFound() {
                 <Link href={route('contact')} style={{ color: "var(--blue)", fontWeight: "600" }}>
                   Tell us
                 </Link>
-                {' '}
-                — it is our mistake to fix, not yours.
+                . It is our mistake to fix, not yours.
               </p>
             </div>
         </>

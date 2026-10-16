@@ -1,29 +1,19 @@
-/* Scoped from the prototype's inline <style> for features.html. */
-:where(.pg-features) .f-hero {
-    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
-    padding-block: calc(var(--hdr-h) + 56px) 84px;
-  }
-  :where(.pg-features) .f-hero .wrap { position: relative; z-index: 2; }
-  :where(.pg-features) .f-hero h1 { color: #fff; max-width: 15ch; }
-  :where(.pg-features) .f-hero .lead { margin-top: 20px; max-width: 50ch; }
-  :where(.pg-features) .f-hero .shape { color: var(--blue); }
-  :where(.pg-features) .fh1 { width: 460px; height: 460px; right: -150px; top: -180px; }
+/* Features page: numbered rows, then a grid of small cards. */
+.pg-features .feature-rows { padding-bottom: var(--sp-9); }
+.pg-features .feature-row { display: grid; gap: var(--sp-4); padding-block: var(--sp-7); border-top: 1px solid var(--line-2); }
+@media (min-width: 900px) { .pg-features .feature-row { grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: var(--sp-8); padding-block: var(--sp-8); } }
+.pg-features .feature-k { display: flex; gap: var(--sp-4); align-items: baseline; font-family: var(--mono); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
+.pg-features .feature-k .n { color: var(--blue); }
+.pg-features .feature-k .kicker { color: var(--tx-2); }
+.pg-features .feature-main { max-width: 680px; display: grid; gap: var(--sp-4); justify-items: start; }
+.pg-features .feature-main h2 { font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.5rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.1; }
+.pg-features .feature-main p { color: var(--tx-2); font-size: 1.04rem; line-height: 1.65; }
+.pg-features .feature-main .ticks { margin-top: var(--sp-2); }
 
-  /* alternating feature rows */
-  :where(.pg-features) .frow { display: grid; gap: 26px; padding-block: 56px; border-top: 1px solid var(--line); }
-  @media (min-width: 940px) { :where(.pg-features) .frow { grid-template-columns: .9fr 1.1fr; gap: 64px; padding-block: 72px; align-items: start; } }
-  /* the first row sits directly under the hero, so it does not need the
-     section's full top padding as well */
-  :where(.pg-features) .frow:first-of-type { border-top: none; padding-top: 0; }
-  :where(.pg-features) .sec:has(> .wrap > .frow:first-child) { padding-top: 64px; }
-  :where(.pg-features) .frow-k { font-family: var(--mono); font-size: .77rem; color: var(--blue); letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 12px; }
-  :where(.pg-features) .frow h2 { font-size: clamp(1.4rem, 1.15rem + 1.1vw, 1.95rem); }
-  :where(.pg-features) .frow .body p + p { margin-top: 13px; }
-  :where(.pg-features) .frow .body > ul { margin-top: 18px; }
-
-  :where(.pg-features) .spec { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-  @media (min-width: 640px) { :where(.pg-features) .spec { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1040px) { :where(.pg-features) .spec { grid-template-columns: repeat(4, 1fr); } }
-  :where(.pg-features) .spec-i { background: #fff; padding: 26px 22px; }
-  :where(.pg-features) .spec-i h4 { font-size: .96rem; }
-  :where(.pg-features) .spec-i p { font-size: .88rem; color: var(--tx-3); margin-top: 7px; }
+.pg-features .spec-grid { display: grid; gap: var(--sp-4); max-width: 1100px; margin-inline: auto; }
+@media (min-width: 640px) { .pg-features .spec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .pg-features .spec-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pg-features .spec-card { box-shadow: var(--sh-1); }
+.pg-features .spec-card h3 { font-size: 1.05rem; letter-spacing: -.015em; }
+.pg-features .spec-card p { margin-top: var(--sp-2); color: var(--tx-2); font-size: .93rem; }
+.pg-features .spec-note { max-width: 760px; margin: var(--sp-7) auto 0; }

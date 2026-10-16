@@ -1,75 +1,27 @@
-/* Scoped from the prototype's inline <style> for pricing.html. */
-:where(.pg-pricing) .p-hero {
-    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
-    padding-block: calc(var(--hdr-h) + 52px) 120px;
-  }
-  :where(.pg-pricing) .p-hero .wrap { position: relative; z-index: 2; }
-  :where(.pg-pricing) .p-hero h1 { color: #fff; max-width: 14ch; }
-  :where(.pg-pricing) .p-hero .lead { margin-top: 20px; max-width: 48ch; }
-  :where(.pg-pricing) .p-hero .shape { color: var(--blue); }
-  :where(.pg-pricing) .ph1 { width: 440px; height: 440px; right: -140px; top: -170px; }
-  :where(.pg-pricing) .ph2 { width: 170px; height: 170px; right: 20%; bottom: -70px; opacity: .18; }
-  @media (max-width: 899px) { :where(.pg-pricing) .ph2 { display: none; } }
+/* Pricing page. Most of it is shared components; this is only the page's own layout. */
+.pg-pricing .pricing-note { margin-top: var(--sp-4); color: var(--tx-2); }
+.pg-pricing .page-hero .toggles { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; margin-top: var(--sp-6); }
+.pg-pricing .tg { display: inline-flex; background: var(--paper-2); border-radius: var(--r-pill); padding: var(--sp-1); border: 1px solid var(--line); }
+.pg-pricing .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: var(--r-pill); font-size: .9rem; font-weight: 600; color: var(--tx-2); cursor: pointer; min-height: 42px; }
+.pg-pricing .tg button[aria-pressed="true"] { background: var(--ink-900); color: #fff; }
+.pg-pricing .pricing-plans { padding-bottom: var(--sp-9); }
+.pg-pricing .pricing-vat { margin-top: var(--sp-6); color: var(--tx-2); }
 
-  :where(.pg-pricing) .toggles { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
-  :where(.pg-pricing) .tg { display: inline-flex; background: rgba(255,255,255,.10); border-radius: 999px; padding: 4px; border: 1px solid rgba(255,255,255,.18); }
-  :where(.pg-pricing) .tg button { border: none; background: transparent; padding: 10px 20px; border-radius: 999px; font-size: .89rem; font-weight: 600; color: #A9BACD; cursor: pointer; min-height: 42px; }
-  :where(.pg-pricing) .tg button[aria-pressed="true"] { background: #fff; color: var(--ink-900); }
+.pg-pricing .how-split { display: grid; gap: var(--sp-8); align-items: center; }
+@media (min-width: 980px) { .pg-pricing .how-split { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: var(--sp-9); } }
+.pg-pricing .how-copy h2 { margin-top: var(--sp-4); font-weight: 500; letter-spacing: -.035em; }
+.pg-pricing .how-copy .lead { margin-top: var(--sp-4); }
+.pg-pricing .how-copy .ticks { margin-top: var(--sp-6); }
+.pg-pricing .how-copy .note { margin-top: var(--sp-6); }
+.pg-pricing .how-cap { margin-top: var(--sp-4); color: var(--tx-2); }
 
-  :where(.pg-pricing) .plans-wrap { margin-top: -78px; position: relative; z-index: 3; }
-  :where(.pg-pricing) .plans { display: grid; gap: 18px; }
-  @media (min-width: 940px) { :where(.pg-pricing) .plans { grid-template-columns: repeat(3, 1fr); align-items: start; } }
-  :where(.pg-pricing) .plan {
-    background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg);
-    padding: 34px 30px; display: flex; flex-direction: column; position: relative; box-shadow: var(--sh-2);
-  }
-  :where(.pg-pricing) .plan-hot { border-color: var(--blue); box-shadow: 0 0 0 1.5px var(--blue), var(--sh-3); }
-  :where(.pg-pricing) .plan-flag {
-    position: absolute; top: -12px; left: 30px; background: var(--blue); color: #fff;
-    font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
-    padding: 5px 12px; border-radius: 999px;
-  }
-  :where(.pg-pricing) .plan .store {
-    display: flex; align-items: baseline; gap: 7px; margin-top: 16px;
-    padding-bottom: 18px; border-bottom: 1px solid var(--line);
-  }
-  :where(.pg-pricing) .plan .store b { font-size: 2.5rem; font-weight: 650; letter-spacing: -.04em; color: var(--tx-1); line-height: 1; }
-  :where(.pg-pricing) .plan .store span { font-size: .9rem; color: var(--tx-3); }
-  :where(.pg-pricing) .plan .amt { display: flex; align-items: baseline; gap: 5px; margin-top: 18px; flex-wrap: wrap; }
-  :where(.pg-pricing) .plan .amt b { font-size: 1.85rem; font-weight: 650; letter-spacing: -.035em; color: var(--tx-1); font-variant-numeric: tabular-nums; }
-  :where(.pg-pricing) .plan .amt b span { font: inherit; color: inherit; letter-spacing: inherit; }
-  :where(.pg-pricing) .plan .amt > span { font-size: .87rem; color: var(--tx-3); }
-  :where(.pg-pricing) .plan .cap { font-size: .86rem; color: var(--tx-3); margin-top: 10px; }
-  :where(.pg-pricing) .plan .cap b { color: var(--tx-1); font-weight: 600; }
-  :where(.pg-pricing) .plan .ticks { margin-top: 22px; flex: 1; }
-  :where(.pg-pricing) .plan .btn { margin-top: 28px; }
+.pg-pricing .addon-card { display: grid; gap: var(--sp-7); padding: var(--sp-7) var(--sp-6); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-1); align-items: center; }
+@media (min-width: 900px) { .pg-pricing .addon-card { grid-template-columns: 1.2fr 1fr; padding: var(--sp-8); gap: var(--sp-8); } }
+.pg-pricing .addon-card h2 { margin-top: var(--sp-4); font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2.1rem); font-weight: 500; letter-spacing: -.03em; }
+.pg-pricing .addon-card .lead { margin-top: var(--sp-4); }
+.pg-pricing .addon-price { display: flex; align-items: baseline; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-5); }
+.pg-pricing .addon-price b { font-size: 2.8rem; font-weight: 650; letter-spacing: -.045em; line-height: 1; color: var(--tx-1); font-variant-numeric: tabular-nums; }
+.pg-pricing .addon-price b span { font: inherit; color: inherit; letter-spacing: inherit; }
+.pg-pricing .addon-price > span { font-family: var(--mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--tx-2); }
 
-  :where(.pg-pricing) .alloc { display: grid; gap: 30px; }
-  @media (min-width: 980px) { :where(.pg-pricing) .alloc { grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; } }
-
-  :where(.pg-pricing) .addon {
-    border: 1px solid var(--blue-200); background: var(--blue-050); border-radius: var(--r-lg);
-    padding: 34px 30px; display: grid; gap: 26px;
-  }
-  @media (min-width: 820px) { :where(.pg-pricing) .addon { grid-template-columns: 1.1fr .9fr; align-items: center; padding: 42px 40px; } }
-  :where(.pg-pricing) .addon .price { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
-  :where(.pg-pricing) .addon .price b { font-size: 2.6rem; font-weight: 650; letter-spacing: -.04em; color: var(--blue-700); line-height: 1; font-variant-numeric: tabular-nums; }
-  :where(.pg-pricing) .addon .price span { font-size: .95rem; color: var(--blue-700); }
-
-  :where(.pg-pricing) table.data td.c, :where(.pg-pricing) table.data th.c { text-align: center; }
-  :where(.pg-pricing) table.data td.y { color: var(--blue); font-weight: 700; text-align: center; }
-  :where(.pg-pricing) table.data td.n { color: var(--tx-3); text-align: center; }
-
-  :where(.pg-pricing) details.faq { border-bottom: 1px solid var(--line); }
-  :where(.pg-pricing) details.faq summary {
-    cursor: pointer; padding: 24px 0; font-weight: 600; font-size: 1.08rem; color: var(--tx-1);
-    list-style: none; display: flex; justify-content: space-between; gap: 20px; align-items: center;
-    letter-spacing: -.015em;
-  }
-  :where(.pg-pricing) details.faq summary::-webkit-details-marker { display: none; }
-  :where(.pg-pricing) details.faq summary::after {
-    content: ""; flex: none; width: 12px; height: 12px; border-right: 2px solid var(--tx-3);
-    border-bottom: 2px solid var(--tx-3); transform: rotate(45deg) translateY(-3px); transition: transform .2s;
-  }
-  :where(.pg-pricing) details.faq[open] summary::after { transform: rotate(225deg) translateY(-3px); }
-  :where(.pg-pricing) details.faq .body { padding: 0 0 24px; font-size: 1rem; color: var(--tx-2); line-height: 1.66; max-width: 72ch; }
+.pg-pricing .faq-list { max-width: 720px; margin: 0 auto; }

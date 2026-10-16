@@ -1,39 +1,23 @@
-import Seo from '../../Components/seo/Seo';
 import { Link } from '@inertiajs/react';
+import LegalDoc from '../../Components/domain/LegalDoc';
+import Seo from '../../Components/seo/Seo';
 import PublicLayout from '../../Layouts/PublicLayout';
 import { route } from '../../Lib/route';
 
 export default function Aup() {
     return (
         <>
-            <Seo title="Acceptable use policy — Ziroemail"
+            <Seo title="Acceptable use policy | Ziroemail"
                 description="What you may and may not do with a Ziroemail account, and what happens if a line is crossed."
                 path="/legal/aup"
                 ogDescription="What you may and may not do with a Ziroemail account, stated plainly and in advance." />
 
-            <nav className="legal-nav" aria-label="Legal documents">
-              <Link href={route('legal.terms')}>
-                Terms of service
-              </Link>
-              {' '}
-              <Link href={route('legal.privacy')}>
-                Privacy policy
-              </Link>
-              {' '}
-              <Link href={route('legal.aup')} aria-current="page">
-                Acceptable use
-              </Link>
-              {' '}
-              <Link href={route('legal.refunds')}>
-                Refund policy
-              </Link>
-            </nav>
-            <article className="doc">
-              <h1>Acceptable use policy</h1>
-              <p className="meta">Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State</p>
-              <p className="intro">
-                One compromised mailbox sending junk can get an entire mail server blocked, which means every other customer's invoices stop arriving. That is why this policy exists and why we enforce it quickly. It is stated plainly and in advance so nothing here is a surprise.
-              </p>
+            <LegalDoc
+              current="legal.aup"
+              title="Acceptable use policy"
+              meta="Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State"
+              intro="One compromised mailbox sending junk can get an entire mail server blocked, which means every other customer's invoices stop arriving. That is why this policy exists and why we enforce it quickly. It is stated plainly and in advance so nothing here is a surprise."
+            >
               <h2>What you must not send</h2>
               <ul>
                 <li>Unsolicited bulk email of any kind, including to lists you bought or scraped.</li>
@@ -44,7 +28,7 @@ export default function Aup() {
               </ul>
               <h2>Bulk and marketing email</h2>
               <p>
-                Ziroemail is for business correspondence. It is not a mailing-list platform, and sending campaigns from it is the fastest way to get our sending addresses blocked. If you need to send newsletters, use a service built for it — we are happy to point you at one.
+                Ziroemail is for business correspondence. It is not a mailing-list platform, and sending campaigns from it is the fastest way to get our sending addresses blocked. If you need to send newsletters, use a service built for it. We are happy to point you at one.
               </p>
               <h2>Sending limits</h2>
               <p>
@@ -62,18 +46,15 @@ export default function Aup() {
               <ul>
                 <li>
                   <b>Suspected compromise</b>
-                  {' '}
-                  — we lock sending, contact you, and help you secure the mailbox. Receiving continues.
+                  : we lock sending, contact you, and help you secure the mailbox. Receiving continues.
                 </li>
                 <li>
                   <b>A mistake</b>
-                  {' '}
-                  — we tell you what we saw and what needs to change.
+                  : we tell you what we saw and what needs to change.
                 </li>
                 <li>
                   <b>Deliberate abuse</b>
-                  {' '}
-                  — we suspend the account and may terminate it.
+                  : we suspend the account and may terminate it.
                 </li>
               </ul>
               <p>
@@ -85,7 +66,7 @@ export default function Aup() {
                 {' '}
                 <span className="mono">abuse@ziroemail.com</span>
                 {' '}
-                with full headers. We investigate these promptly — it protects everyone's delivery, including yours.
+                with full headers. We investigate these promptly. It protects everyone's delivery, including yours.
               </p>
               <div className="note" style={{ marginTop: "44px" }}>
                 <h4>Questions about this document</h4>
@@ -102,11 +83,11 @@ export default function Aup() {
                   . We would rather explain a clause than have you agree to something you do not understand.
                 </p>
               </div>
-            </article>
+            </LegalDoc>
         </>
     );
 }
 
 Aup.layout = (page) => (
-    <PublicLayout variant="light" page="legal" mainClass="wrap legal">{page}</PublicLayout>
+    <PublicLayout variant="float" page="legal">{page}</PublicLayout>
 );

@@ -1,26 +1,25 @@
-/* Scoped from the prototype's inline <style> for offline.html. */
-:where(.pg-system) .sys { min-height: 100vh; display: flex; flex-direction: column; }
-  :where(.pg-system) .sys-top { padding: 28px var(--gutter) 0; }
-  :where(.pg-system) .sys-body { flex: 1; display: grid; place-items: center; padding: 48px var(--gutter) 80px; }
-  :where(.pg-system) .sys-card { width: 100%; max-width: 520px; }
+/* Error and system states: one centred card, no navigation, light surface. */
+.pg-system .sys { min-height: 100vh; display: flex; flex-direction: column; }
+.pg-system .sys-top { padding: var(--sp-5) var(--gutter-edge) 0; }
+.pg-system .sys-body { flex: 1; display: grid; place-items: center; padding: var(--sp-7) var(--gutter) var(--sp-9); }
+.pg-system .sys-card { width: 100%; max-width: 560px; text-align: center; }
+.pg-system .sys-card .note { text-align: left; }
 
-  :where(.pg-system) .sys-ic {
-    width: 72px; height: 72px; border-radius: 22px; display: grid; place-items: center;
-    margin-bottom: 26px;
-  }
-  :where(.pg-system) .ic-mut  { background: var(--paper-2);  color: var(--tx-3); }
-  :where(.pg-system) .ic-bad  { background: var(--bad-bg);   color: var(--bad);  border: 1px solid var(--bad-line); }
-  :where(.pg-system) .ic-warn { background: var(--warn-bg);  color: var(--warn); border: 1px solid var(--warn-line); }
-  :where(.pg-system) .ic-info { background: var(--blue-050); color: var(--blue); border: 1px solid var(--blue-200); }
+.pg-system .sys-ic { width: 72px; height: 72px; border-radius: var(--r-pill); display: grid; place-items: center; margin: 0 auto var(--sp-5); }
+.pg-system .ic-mut  { background: var(--paper-2);  color: var(--tx-2); }
+.pg-system .ic-bad  { background: var(--bad-bg);   color: var(--bad);  border: 1px solid var(--bad-line); }
+.pg-system .ic-warn { background: var(--warn-bg);  color: var(--warn); border: 1px solid var(--warn-line); }
+.pg-system .ic-info { background: var(--blue-050); color: var(--blue); border: 1px solid var(--blue-200); }
 
-  :where(.pg-system) .sys-card h1 { font-size: clamp(1.7rem, 1.4rem + 1.4vw, 2.3rem); }
-  :where(.pg-system) .sys-card .lead { margin-top: 14px; }
-  :where(.pg-system) .sys-links { display: grid; gap: 10px; margin-top: 30px; }
-  :where(.pg-system) .sys-links a {
-    display: flex; align-items: center; gap: 12px; padding: 15px 18px;
-    border: 1px solid var(--line); border-radius: var(--r-xs); background: #fff; color: var(--tx-1);
-  }
-  :where(.pg-system) .sys-links a:hover { border-color: var(--blue); background: var(--blue-050); }
-  :where(.pg-system) .sys-links b { font-size: .95rem; display: block; }
-  :where(.pg-system) .sys-links span { font-size: .85rem; color: var(--tx-3); display: block; margin-top: 2px; }
-  :where(.pg-system) .sys-links .arr { margin-left: auto; color: var(--tx-3); flex: none; }
+.pg-system .sys-card h1 { font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.7rem); font-weight: 500; letter-spacing: -.035em; }
+.pg-system .sys-card .lead { margin-top: var(--sp-4); }
+.pg-system .sys-links { display: grid; gap: var(--sp-3); margin-top: var(--sp-6); text-align: left; }
+.pg-system .sys-links a {
+  display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper); color: var(--tx-1); box-shadow: var(--sh-1);
+  transition: border-color var(--dur-1), box-shadow var(--dur-1);
+}
+.pg-system .sys-links a:hover { border-color: var(--blue); box-shadow: var(--sh-2); }
+.pg-system .sys-links b { font-size: .97rem; display: block; }
+.pg-system .sys-links span { font-size: .86rem; color: var(--tx-2); display: block; margin-top: 2px; }
+.pg-system .sys-links .arr { margin-left: auto; color: var(--tx-2); flex: none; }

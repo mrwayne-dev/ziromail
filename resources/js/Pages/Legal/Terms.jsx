@@ -1,38 +1,22 @@
-import Seo from '../../Components/seo/Seo';
 import { Link } from '@inertiajs/react';
+import LegalDoc from '../../Components/domain/LegalDoc';
+import Seo from '../../Components/seo/Seo';
 import PublicLayout from '../../Layouts/PublicLayout';
 import { route } from '../../Lib/route';
 
 export default function Terms() {
     return (
         <>
-            <Seo title="Terms of service — Ziroemail"
+            <Seo title="Terms of service | Ziroemail"
                 description="The agreement between your business and Zirostack Ltd for the Ziroemail service."
                 path="/legal/terms" />
 
-            <nav className="legal-nav" aria-label="Legal documents">
-              <Link href={route('legal.terms')} aria-current="page">
-                Terms of service
-              </Link>
-              {' '}
-              <Link href={route('legal.privacy')}>
-                Privacy policy
-              </Link>
-              {' '}
-              <Link href={route('legal.aup')}>
-                Acceptable use
-              </Link>
-              {' '}
-              <Link href={route('legal.refunds')}>
-                Refund policy
-              </Link>
-            </nav>
-            <article className="doc">
-              <h1>Terms of service</h1>
-              <p className="meta">Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State</p>
-              <p className="intro">
-                This is the agreement between your business and Zirostack Ltd for the use of Ziroemail. It is written to be read, not to be skimmed past — if a clause does not make sense, ask us before you accept it.
-              </p>
+            <LegalDoc
+              current="legal.terms"
+              title="Terms of service"
+              meta="Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State"
+              intro="This is the agreement between your business and Zirostack Ltd for the use of Ziroemail. It is written to be read, not to be skimmed past: if a clause does not make sense, ask us before you accept it."
+            >
               <h2>1. What we provide</h2>
               <p>
                 Ziroemail is business email hosting on a domain you own. A plan covers one domain and provides a storage pool you divide between mailboxes as you choose. We provide the mail servers, the webmail interface, the administration dashboard, filtering, backups and support.
@@ -76,7 +60,7 @@ export default function Terms() {
                 We may suspend an account or a single mailbox where there is evidence of compromise, abuse, or non-payment after the grace period. Where the cause is abuse we will tell you what we found, and we will restore access once it is resolved.
               </p>
               <p>
-                You may cancel at any time. We do not lock you into a term you no longer want — see the refund policy for what happens to the remainder.
+                You may cancel at any time. We do not lock you into a term you no longer want. See the refund policy for what happens to the remainder.
               </p>
               <h2>7. Liability</h2>
               <p>
@@ -106,11 +90,11 @@ export default function Terms() {
                   . We would rather explain a clause than have you agree to something you do not understand.
                 </p>
               </div>
-            </article>
+            </LegalDoc>
         </>
     );
 }
 
 Terms.layout = (page) => (
-    <PublicLayout variant="light" page="legal" mainClass="wrap legal">{page}</PublicLayout>
+    <PublicLayout variant="float" page="legal">{page}</PublicLayout>
 );

@@ -1,26 +1,25 @@
-/* Scoped from the prototype's inline <style> for legal-refunds.html. */
-:where(.pg-legal) .legal { display: grid; gap: 34px; padding-block: 44px 90px; }
-  @media (min-width: 940px) { :where(.pg-legal) .legal { grid-template-columns: 210px 1fr; gap: 56px; align-items: start; } }
+/* Legal documents: a readable column and a sticky "on this page" aside. */
+.pg-legal .legal-body { padding-bottom: var(--sp-9); }
+.pg-legal .legal-grid { display: grid; gap: var(--sp-7); }
+@media (min-width: 1000px) { .pg-legal .legal-grid { grid-template-columns: minmax(0, 1fr) 260px; gap: var(--sp-9); align-items: start; } }
+.pg-legal .legal-aside { display: grid; gap: var(--sp-7); }
+@media (min-width: 1000px) { .pg-legal .legal-aside { position: sticky; top: calc(var(--hdr-h) + var(--sp-5)); } }
+@media (max-width: 999px) { .pg-legal .legal-aside { order: -1; } }
+.pg-legal .legal-kicker { margin-bottom: var(--sp-3); font-family: var(--mono); font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--tx-2); }
+.pg-legal .toc { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line-2); }
+.pg-legal .toc a { display: block; margin-left: -1px; padding: var(--sp-2) var(--sp-4); border-left: 2px solid transparent; font-size: .93rem; color: var(--tx-2); }
+.pg-legal .toc a:hover { color: var(--tx-1); }
+.pg-legal .toc a[aria-current] { border-left-color: var(--ink-900); color: var(--tx-1); font-weight: 600; }
+@media (max-width: 999px) { .pg-legal .legal-aside nav:first-child { display: none; } }
 
-  :where(.pg-legal) .legal-nav { position: sticky; top: calc(var(--hdr-h) + 20px); }
-  :where(.pg-legal) .legal-nav a {
-    display: block; padding: 10px 12px; border-radius: var(--r-xs);
-    font-size: .93rem; color: var(--tx-2); font-weight: 500;
-  }
-  :where(.pg-legal) .legal-nav a:hover { background: var(--paper-soft); color: var(--tx-1); }
-  :where(.pg-legal) .legal-nav a[aria-current="page"] { background: var(--blue-050); color: var(--blue-700); font-weight: 650; }
-  @media (max-width: 939px) { :where(.pg-legal) .legal-nav { position: static; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; } :where(.pg-legal) .legal-nav a { white-space: nowrap; } }
-
-  :where(.pg-legal) .doc { max-width: 68ch; }
-  :where(.pg-legal) .doc h1 { font-size: clamp(1.8rem, 1.5rem + 1.5vw, 2.5rem); }
-  :where(.pg-legal) .doc .meta { font-size: .88rem; color: var(--tx-3); margin-top: 12px; }
-  :where(.pg-legal) .doc .intro { margin-top: 22px; font-size: 1.08rem; line-height: 1.6; color: var(--tx-2); }
-  :where(.pg-legal) .doc h2 {
-    font-size: 1.22rem; margin-top: 44px; padding-top: 26px;
-    border-top: 1px solid var(--line); letter-spacing: -.02em;
-  }
-  :where(.pg-legal) .doc h3 { font-size: 1.02rem; margin-top: 26px; }
-  :where(.pg-legal) .doc p { margin-top: 14px; line-height: 1.7; }
-  :where(.pg-legal) .doc ul { margin-top: 14px; padding-left: 20px; display: grid; gap: 9px; }
-  :where(.pg-legal) .doc li { line-height: 1.65; }
-  :where(.pg-legal) .doc .mono { color: var(--blue-700); }
+.pg-legal .doc { max-width: 720px; }
+.pg-legal .doc h2 { margin-top: var(--sp-8); padding-top: var(--sp-5); border-top: 1px solid var(--line); font-size: 1.4rem; font-weight: 600; letter-spacing: -.025em; scroll-margin-top: calc(var(--hdr-h) + var(--sp-5)); }
+.pg-legal .doc h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.pg-legal .doc h3 { margin-top: var(--sp-5); font-size: 1.05rem; }
+.pg-legal .doc p { margin-top: var(--sp-4); line-height: 1.72; color: var(--tx-2); }
+.pg-legal .doc ul { margin-top: var(--sp-4); padding-left: var(--sp-5); display: grid; gap: var(--sp-2); color: var(--tx-2); }
+.pg-legal .doc li { line-height: 1.68; }
+.pg-legal .doc b { color: var(--tx-1); }
+.pg-legal .doc .mono { color: var(--blue-700); }
+.pg-legal .doc .note { margin-top: var(--sp-6); }
+.pg-legal .doc a:not(.btn) { color: var(--blue); border-bottom: 1px solid currentColor; }

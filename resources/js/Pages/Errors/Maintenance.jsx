@@ -6,7 +6,7 @@ import { route } from '../../Lib/route';
 export default function Maintenance() {
     return (
         <>
-            <Seo title="Planned maintenance — Ziroemail"
+            <Seo title="Planned maintenance | Ziroemail"
                 description="Ziroemail is briefly down for scheduled work."
                 noindex />
 
@@ -24,7 +24,7 @@ export default function Maintenance() {
               <div className="note mt-l">
                 <h4>Mail is still being delivered</h4>
                 <p>
-                  Sending and receiving continue normally throughout. Only this interface is briefly unavailable — nothing is queued or lost.
+                  Sending and receiving continue normally throughout. Only this interface is briefly unavailable. Nothing is queued or lost.
                 </p>
               </div>
               <div className="sys-links">

@@ -11,7 +11,7 @@ function reload(e) {
 export default function Offline() {
     return (
         <>
-            <Seo title="No connection — Ziroemail"
+            <Seo title="No connection | Ziroemail"
                 description="You are offline."
                 noindex />
 
@@ -53,7 +53,7 @@ export default function Offline() {
                 </Link>
               </div>
               <p className="sm mut mt-l" style={{ paddingTop: "22px", borderTop: "1px solid var(--line)" }}>
-                On mobile data? Poor signal affects loading more than it affects sending — your drafts are safe either way.
+                On mobile data? Poor signal affects loading more than it affects sending. Your drafts are safe either way.
               </p>
             </div>
         </>

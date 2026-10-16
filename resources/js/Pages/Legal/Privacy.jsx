@@ -1,39 +1,23 @@
-import Seo from '../../Components/seo/Seo';
 import { Link } from '@inertiajs/react';
+import LegalDoc from '../../Components/domain/LegalDoc';
+import Seo from '../../Components/seo/Seo';
 import PublicLayout from '../../Layouts/PublicLayout';
 import { route } from '../../Lib/route';
 
 export default function Privacy() {
     return (
         <>
-            <Seo title="Privacy policy — Ziroemail"
+            <Seo title="Privacy policy | Ziroemail"
                 description="What personal data Ziroemail holds, why we hold it, and what rights you have over it."
                 path="/legal/privacy"
                 ogDescription="What personal data we hold, why, who else processes it, and your rights over it." />
 
-            <nav className="legal-nav" aria-label="Legal documents">
-              <Link href={route('legal.terms')}>
-                Terms of service
-              </Link>
-              {' '}
-              <Link href={route('legal.privacy')} aria-current="page">
-                Privacy policy
-              </Link>
-              {' '}
-              <Link href={route('legal.aup')}>
-                Acceptable use
-              </Link>
-              {' '}
-              <Link href={route('legal.refunds')}>
-                Refund policy
-              </Link>
-            </nav>
-            <article className="doc">
-              <h1>Privacy policy</h1>
-              <p className="meta">Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State</p>
-              <p className="intro">
-                We are holding your business correspondence, which is about as private as data gets. This explains exactly what we hold, why, who else can see it, and what you can ask us to do about it.
-              </p>
+            <LegalDoc
+              current="legal.privacy"
+              title="Privacy policy"
+              meta="Last updated 29 September 2026 · Zirostack Ltd, Port Harcourt, Rivers State"
+              intro="We are holding your business correspondence, which is about as private as data gets. This explains exactly what we hold, why, who else can see it, and what you can ask us to do about it."
+            >
               <h2>Who we are</h2>
               <p>
                 Zirostack Ltd, of Port Harcourt, Rivers State, Nigeria, is the data controller for the Ziroemail service. We process personal data under the Nigeria Data Protection Act.
@@ -57,18 +41,15 @@ export default function Privacy() {
               <ul>
                 <li>
                   <b>To provide the service</b>
-                  {' '}
-                  — performing our contract with you.
+                  : performing our contract with you.
                 </li>
                 <li>
                   <b>To protect the service</b>
-                  {' '}
-                  — our legitimate interest in preventing abuse, which protects every other customer's delivery.
+                  : our legitimate interest in preventing abuse, which protects every other customer's delivery.
                 </li>
                 <li>
                   <b>To meet legal obligations</b>
-                  {' '}
-                  — tax records and lawful requests.
+                  : tax records and lawful requests.
                 </li>
               </ul>
               <h2>Who else processes it</h2>
@@ -78,18 +59,15 @@ export default function Privacy() {
               <ul>
                 <li>
                   <b>Amazon Web Services</b>
-                  {' '}
-                  — outbound mail relay. Stockholm region.
+                  : outbound mail relay. Stockholm region.
                 </li>
                 <li>
                   <b>Paystack</b>
-                  {' '}
-                  — payment processing. Nigeria. Card details never reach our servers.
+                  : payment processing. Nigeria. Card details never reach our servers.
                 </li>
                 <li>
                   <b>Our hosting provider</b>
-                  {' '}
-                  — the servers your mail lives on.
+                  : the servers your mail lives on.
                 </li>
               </ul>
               <p>We do not sell your data, and we do not share it for advertising.</p>
@@ -111,7 +89,7 @@ export default function Privacy() {
               </p>
               <h2>If something goes wrong</h2>
               <p>
-                We have a written breach procedure. If a breach affects your data we will tell you what happened, what it affected, and what we are doing about it — and we will notify the Nigeria Data Protection Commission within the required window.
+                We have a written breach procedure. If a breach affects your data we will tell you what happened, what it affected, and what we are doing about it, and we will notify the Nigeria Data Protection Commission within the required window.
               </p>
               <div className="note" style={{ marginTop: "44px" }}>
                 <h4>Questions about this document</h4>
@@ -128,11 +106,11 @@ export default function Privacy() {
                   . We would rather explain a clause than have you agree to something you do not understand.
                 </p>
               </div>
-            </article>
+            </LegalDoc>
         </>
     );
 }
 
 Privacy.layout = (page) => (
-    <PublicLayout variant="light" page="legal" mainClass="wrap legal">{page}</PublicLayout>
+    <PublicLayout variant="float" page="legal">{page}</PublicLayout>
 );

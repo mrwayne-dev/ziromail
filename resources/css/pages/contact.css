@@ -1,25 +1,22 @@
-/* Scoped from the prototype's inline <style> for contact.html. */
-:where(.pg-contact) .c-hero {
-    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
-    padding-block: calc(var(--hdr-h) + 52px) 76px;
-  }
-  :where(.pg-contact) .c-hero .wrap { position: relative; z-index: 2; }
-  :where(.pg-contact) .c-hero h1 { color: #fff; max-width: 13ch; }
-  :where(.pg-contact) .c-hero .lead { margin-top: 18px; max-width: 46ch; }
-  :where(.pg-contact) .c-hero .shape { color: var(--blue); }
-  :where(.pg-contact) .ch1 { width: 420px; height: 420px; right: -150px; top: -160px; }
-
-  :where(.pg-contact) .ways { display: grid; gap: 18px; }
-  @media (min-width: 820px) { :where(.pg-contact) .ways { grid-template-columns: repeat(3, 1fr); } }
-  :where(.pg-contact) .way { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 28px 26px; display: flex; flex-direction: column; }
-  :where(.pg-contact) .way .ic {
-    width: 44px; height: 44px; border-radius: 13px; background: var(--blue-050);
-    color: var(--blue); display: grid; place-items: center; border: 1px solid var(--blue-200); margin-bottom: 18px;
-  }
-  :where(.pg-contact) .way h3 { font-size: 1.08rem; }
-  :where(.pg-contact) .way p { font-size: .93rem; color: var(--tx-3); margin-top: 8px; flex: 1; }
-  :where(.pg-contact) .way .btn { margin-top: 20px; }
-  :where(.pg-contact) .way .when { font-size: .82rem; color: var(--tx-3); margin-top: 12px; }
-
-  :where(.pg-contact) .form-grid { display: grid; gap: 30px; }
-  @media (min-width: 940px) { :where(.pg-contact) .form-grid { grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: start; } }
+/* Contact: three ways to reach us beside a form card, then the small print. */
+.pg-contact .contact-grid { display: grid; gap: var(--sp-6); align-items: start; }
+@media (min-width: 980px) { .pg-contact .contact-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--sp-7); } }
+.pg-contact .contact-ways { display: grid; gap: var(--sp-4); }
+.pg-contact .way { display: grid; gap: var(--sp-3); justify-items: start; box-shadow: var(--sh-1); }
+.pg-contact .way h3 { font-size: 1.15rem; letter-spacing: -.02em; }
+.pg-contact .way p { color: var(--tx-2); font-size: .96rem; }
+.pg-contact .way-ic { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--r-xs); background: var(--blue-050); color: var(--blue); }
+.pg-contact .way .way-when { font-size: .85rem; color: var(--tx-2); }
+.pg-contact .contact-form { box-shadow: var(--sh-2); }
+.pg-contact .contact-form h2 { margin-top: var(--sp-3); font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem); font-weight: 500; letter-spacing: -.03em; }
+.pg-contact .contact-form .lead { margin-top: var(--sp-3); font-size: 1rem; }
+.pg-contact .contact-form form { margin-top: var(--sp-5); }
+.pg-contact .contact-form .btn { margin-top: var(--sp-5); }
+.pg-contact .contact-form .banner { margin-top: var(--sp-4); }
+.pg-contact .contact-more { padding-bottom: var(--sp-9); }
+.pg-contact .more-grid { display: grid; gap: var(--sp-6); padding-top: var(--sp-7); border-top: 1px solid var(--line-2); }
+@media (min-width: 900px) { .pg-contact .more-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-7); } }
+.pg-contact .more-item { display: grid; gap: var(--sp-3); align-content: start; justify-items: start; }
+.pg-contact .more-item h3 { font-size: 1.05rem; }
+.pg-contact .more-item p { color: var(--tx-2); font-size: .95rem; }
+.pg-contact .more-item .mono { color: var(--blue-700); }

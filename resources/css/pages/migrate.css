@@ -1,48 +1,22 @@
-/* Scoped from the prototype's inline <style> for migrate.html. */
-:where(.pg-migrate) .m-hero {
-    background: var(--ink-900); color: #fff; position: relative; overflow: hidden;
-    padding-block: calc(var(--hdr-h) + 56px) 84px;
-  }
-  :where(.pg-migrate) .m-hero .wrap { position: relative; z-index: 2; }
-  :where(.pg-migrate) .m-hero h1 { color: #fff; max-width: 15ch; }
-  :where(.pg-migrate) .m-hero .lead { margin-top: 20px; max-width: 50ch; }
-  :where(.pg-migrate) .m-hero .shape { color: var(--blue); }
-  :where(.pg-migrate) .mh1 { width: 440px; height: 440px; right: -150px; top: -170px; }
+/* Switching page: the page's own layout. */
+.pg-migrate .source-grid { display: grid; gap: var(--sp-5); max-width: 980px; margin: 0 auto; }
+@media (min-width: 640px) { .pg-migrate .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pg-migrate .source-card { box-shadow: var(--sh-1); }
+.pg-migrate .source-card h3 { font-size: 1.2rem; letter-spacing: -.02em; }
+.pg-migrate .source-card p { margin-top: var(--sp-3); color: var(--tx-2); font-size: .97rem; }
 
-  /* timeline of the move */
-  :where(.pg-migrate) .tl { position: relative; padding-left: 34px; }
-  :where(.pg-migrate) .tl::before { content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
-  :where(.pg-migrate) .tl-step { position: relative; padding-bottom: 34px; }
-  :where(.pg-migrate) .tl-step:last-child { padding-bottom: 0; }
-  :where(.pg-migrate) .tl-step::before {
-    content: ""; position: absolute; left: -32px; top: 4px; width: 20px; height: 20px;
-    border-radius: 50%; background: #fff; border: 2px solid var(--blue);
-  }
-  :where(.pg-migrate) .tl-step.done::before { background: var(--blue); }
-  :where(.pg-migrate) .tl-step h3 { font-size: 1.1rem; }
-  :where(.pg-migrate) .tl-step p { font-size: .95rem; color: var(--tx-2); margin-top: 7px; }
-  :where(.pg-migrate) .tl-when { font-family: var(--mono); font-size: .76rem; color: var(--blue); letter-spacing: .08em; text-transform: uppercase; }
+.pg-migrate .timeline-split { display: grid; gap: var(--sp-8); align-items: start; }
+@media (min-width: 980px) { .pg-migrate .timeline-split { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: var(--sp-9); } }
+.pg-migrate .stepper-body > p { color: var(--tx-2); }
+.pg-migrate .stepper-when { color: var(--tx-2); }
+.pg-migrate .timeline-notes { display: grid; gap: var(--sp-5); }
 
-  :where(.pg-migrate) .from-grid { display: grid; gap: 16px; }
-  @media (min-width: 720px) { :where(.pg-migrate) .from-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1040px) { :where(.pg-migrate) .from-grid { grid-template-columns: repeat(4, 1fr); } }
+.pg-migrate .auto-split { display: grid; gap: var(--sp-7); align-items: center; }
+@media (min-width: 940px) { .pg-migrate .auto-split { grid-template-columns: 1fr 1fr; gap: var(--sp-9); } }
+.pg-migrate .auto-photo { margin: 0; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-2); }
+.pg-migrate .auto-photo img { width: 100%; height: auto; }
+.pg-migrate .auto-copy h2 { margin-top: var(--sp-4); font-weight: 500; letter-spacing: -.035em; }
+.pg-migrate .auto-copy .lead { margin-top: var(--sp-4); }
+.pg-migrate .auto-copy .ticks { margin-top: var(--sp-6); }
 
-  :where(.pg-migrate) .split-photo { display: grid; gap: 0; }
-  @media (min-width: 940px) { :where(.pg-migrate) .split-photo { grid-template-columns: 1fr 1fr; } }
-  :where(.pg-migrate) .sp-photo { position: relative; min-height: 300px; }
-  :where(.pg-migrate) .sp-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  :where(.pg-migrate) .sp-copy { padding: 52px var(--gutter); display: flex; flex-direction: column; justify-content: center; }
-  @media (min-width: 940px) { :where(.pg-migrate) .sp-copy { padding: 84px 60px; } }
-
-  :where(.pg-migrate) details.faq { border-bottom: 1px solid var(--line); }
-  :where(.pg-migrate) details.faq summary {
-    cursor: pointer; padding: 24px 0; font-weight: 600; font-size: 1.06rem; color: var(--tx-1);
-    list-style: none; display: flex; justify-content: space-between; gap: 20px; align-items: center;
-  }
-  :where(.pg-migrate) details.faq summary::-webkit-details-marker { display: none; }
-  :where(.pg-migrate) details.faq summary::after {
-    content: ""; flex: none; width: 12px; height: 12px; border-right: 2px solid var(--tx-3);
-    border-bottom: 2px solid var(--tx-3); transform: rotate(45deg) translateY(-3px); transition: transform .2s;
-  }
-  :where(.pg-migrate) details.faq[open] summary::after { transform: rotate(225deg) translateY(-3px); }
-  :where(.pg-migrate) details.faq .body { padding: 0 0 24px; font-size: 1rem; color: var(--tx-2); line-height: 1.66; max-width: 72ch; }
+.pg-migrate .faq-list { max-width: 720px; margin: 0 auto; }

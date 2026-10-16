@@ -11,7 +11,7 @@ function reload(e) {
 export default function ServerError() {
     return (
         <>
-            <Seo title="Something went wrong — Ziroemail"
+            <Seo title="Something went wrong | Ziroemail"
                 description="An error on our side."
                 noindex />
 
@@ -66,8 +66,7 @@ export default function ServerError() {
                 Reference
                 {' '}
                 <span className="mono">ERR-7F3A21</span>
-                {' '}
-                — quote this if you contact us.
+                . Quote this if you contact us.
               </p>
             </div>
         </>
