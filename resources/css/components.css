@@ -309,3 +309,26 @@ body.modal-open { overflow: hidden; }
    and the few other places that used it step up to --tx-2 without touching the token. */
 .mut, .muted, .label .opt, table.data td.n { color: var(--tx-2); }
 .pool-seg.free { color: var(--tx-2); }
+
+/* ---------- domain search: one rounded bar, field and action together ---------- */
+.domain-search { width: 100%; max-width: 620px; margin-inline: auto; text-align: left; }
+.domain-search-bar {
+  display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-5);
+  background: var(--paper); border: 1.5px solid var(--line-2); border-radius: var(--r-lg); box-shadow: var(--sh-2);
+  transition: border-color var(--dur-1), box-shadow var(--dur-1);
+}
+.domain-search-bar:focus-within { border-color: var(--blue); box-shadow: var(--sh-focus); }
+.domain-search-bar.has-error { border-color: var(--bad); }
+.domain-search-ic { flex: none; display: grid; place-items: center; color: var(--tx-2); }
+.domain-search-bar input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 1.05rem; color: var(--tx-1); min-height: var(--ctl); }
+.domain-search-bar input::placeholder { color: var(--tx-2); opacity: .75; }
+.domain-search-bar .btn { flex: none; border-radius: var(--r); }
+@media (max-width: 520px) {
+  .domain-search-bar { flex-wrap: wrap; padding: var(--sp-3); }
+  .domain-search-bar input { flex: 1 1 calc(100% - 40px); }
+  .domain-search-bar .btn { flex: 1 1 100%; }
+}
+.domain-search-err { margin-top: var(--sp-3); padding-inline: var(--sp-2); }
+
+/* ---------- badge: an outlined pill that names the page's subject ---------- */
+.badge-pill { display: inline-flex; align-items: center; padding: var(--sp-2) var(--sp-4); border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--paper); color: var(--tx-2); font-size: .92rem; font-weight: 500; }

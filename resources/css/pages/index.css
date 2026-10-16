@@ -2,32 +2,36 @@
 /* Apple rules applied: 17px body, ~80px section rhythm, one accent, one
      shadow, 2–3 sentences per section. */
 
-  /* ============ HERO — one full viewport, white, copy anchored bottom-left ============ */
-  /* The centre is left clear for the image that lands later. Plain .pg-index (not :where)
-     so these win over ziro.css's .hero and header rules. */
+  /* ============ HERO — centred: badge, two-tone headline on one line, one paragraph, a domain field ============ */
+  /* Plain .pg-index (not :where) so these win over ziro.css's .hero and header rules.
+     No gradients and no glow: the page stays white. */
   .pg-index .hero {
     position: relative; overflow: hidden; background: var(--paper); color: var(--tx-1);
-    min-height: 100vh; min-height: 100svh;      /* svh: mobile toolbars do not push the CTA off screen */
-    display: flex; align-items: flex-end;
+    min-height: 100vh; min-height: 100svh;      /* svh: mobile toolbars do not push the content off screen */
+    display: flex; align-items: center;
   }
-  /* Copy anchored bottom-left on the viewport edge. */
-  .pg-index .hero .hero-in { display: flex; align-items: flex-end; padding-bottom: var(--sp-7); }
-  @media (min-width: 900px) { .pg-index .hero .hero-in { padding-bottom: var(--sp-8); } }
-  .pg-index .hero .hero-in > div { min-width: 0; }
-
+  .pg-index .hero .hero-in { padding-block: var(--sp-7) var(--sp-8); text-align: center; }
+  .pg-index .hero .hero-in > div { max-width: 1100px; margin-inline: auto; min-width: 0; }
 
   .pg-index .hero h1 {
-    color: var(--tx-1); font-size: clamp(2.8rem, 1.5rem + 5.4vw, 6.4rem);
-    line-height: 1; letter-spacing: -.045em; font-weight: 500;
+    margin-top: var(--sp-6); color: var(--tx-1); font-size: clamp(2.3rem, .9rem + 8.4vw, 7.2rem);
+    line-height: 1; letter-spacing: -.05em; font-weight: 500;
+    white-space: nowrap;                         /* the headline is one line at every width */
   }
+  /* first line reads one step back; the second carries the weight */
+  .pg-index .hero .hero-soft { color: var(--tx-2); }
   .pg-index .hero .sub {
-    margin-top: var(--sp-5); max-width: 46ch; color: var(--tx-2);
-    font-size: clamp(1.05rem, 1rem + .35vw, 1.2rem); line-height: 1.55;
+    margin: var(--sp-6) auto 0; max-width: 52ch; color: var(--tx-1);
+    font-size: clamp(1.1rem, 1rem + .5vw, 1.35rem); line-height: 1.5;
   }
-  .pg-index .hero .btn-row { margin-top: var(--sp-6); }
-  /* ziro.css restyles .btn-line for dark heroes; this one is light. */
-  .pg-index .hero .btn-line { background: var(--paper); border-color: var(--line-2); color: var(--tx-1); }
-  .pg-index .hero .btn-line:hover { background: var(--paper-soft); border-color: var(--tx-1); }
+  .pg-index .hero .domain-search { margin-top: var(--sp-7); }
+  /* Short laptop screens: tighten so the whole hero still fits one viewport. */
+  @media (min-width: 900px) and (max-height: 820px) {
+    .pg-index .hero .hero-in { padding-block: var(--sp-5); }
+    .pg-index .hero h1 { margin-top: var(--sp-5); }
+    .pg-index .hero .sub { margin-top: var(--sp-4); }
+    .pg-index .hero .domain-search { margin-top: var(--sp-5); }
+  }
 
   /* ============ WHY US — mark, headline, one paragraph, then the product ============ */
   :where(.pg-index) .why { background: var(--paper); }

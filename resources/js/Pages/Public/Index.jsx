@@ -1,3 +1,4 @@
+import DomainSearch from '../../Components/domain/DomainSearch';
 import Faq from '../../Components/domain/Faq';
 import CtaBlock from '../../Components/ui/CtaBlock';
 import Pill from '../../Components/ui/Pill';
@@ -12,7 +13,6 @@ import { plansFixture } from '../../fixtures/plans';
 import { faqSchema, productSchema } from '../../Lib/schema';
 import Seo from '../../Components/seo/Seo';
 import { Link, usePage } from '@inertiajs/react';
-import Button, { ArrowIcon, ArrowUpRightIcon } from '../../Components/ui/Button';
 import Reveal from '../../Components/craft/Reveal';
 import Rise from '../../Components/craft/Rise';
 import PublicLayout from '../../Layouts/PublicLayout';
@@ -48,22 +48,22 @@ export default function Index() {
 
             {/* ============ HERO ============ */}
             <section className="hero">
-              <div className="wrap wrap-edge hero-in">
+              <div className="wrap hero-in">
                 <div data-hero="">
+                  <span className="badge-pill">Business email</span>
                   <h1>
-                    <Rise index={0}>Mail</Rise>
-                    {' '}
-                    <Rise index={1}>that</Rise>
+                    <span className="hero-soft">
+                      <Rise index={0}>Mail</Rise>
+                      {' '}
+                      <Rise index={1}>that</Rise>
+                    </span>
                     {' '}
                     <Rise index={2} marked>arrives.</Rise>
                   </h1>
                   <p className="sub">
                     Business email on your own domain, set up so it reaches the inbox. Built in Port Harcourt, paid for in naira or dollars.
                   </p>
-                  <div className="btn-row">
-                    <Button size="lg" split icon={<ArrowUpRightIcon size={16} />} href={route('signup')}>Get started</Button>
-                    <Button variant="line" size="lg" href={route('pricing')}>See pricing</Button>
-                  </div>
+                  <DomainSearch />
                 </div>
               </div>
             </section>
