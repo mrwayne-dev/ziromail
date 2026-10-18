@@ -21,7 +21,9 @@ createInertiaApp({
             </ToastProvider>,
         );
     },
+    // The bar's styles live in components.css: a style element injected by script would be blocked by the CSP.
     progress: {
         color: '#1066C6',
+        includeCSS: false,
     },
 });

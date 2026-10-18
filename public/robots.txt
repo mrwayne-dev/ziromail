@@ -2,14 +2,19 @@
 User-agent: *
 Allow: /
 
-# Staff and signed-in surfaces hold no public content. Paths follow the
-# prototype's screen groups; confirm them when those phases pick real routes.
+# Signed-in and account screens hold no public content.
 Disallow: /ops
-Disallow: /mailadmin
 Disallow: /mail
+Disallow: /dashboard
 Disallow: /onboarding
-Disallow: /checkout-payment
-Disallow: /checkout-transfer
+Disallow: /checkout
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /two-factor
+Disallow: /confirm-password
 Disallow: /setup
 Disallow: /offline
 

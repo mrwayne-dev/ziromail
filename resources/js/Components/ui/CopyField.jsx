@@ -22,7 +22,7 @@ export default function CopyField({ label, value, hint, plain = false, kind = 'f
         <div className={`copyfield ${className}`.trim()}>
             {label && (kind === 'field' ? <span className="k" id={`${id}-k`}>{label}</span> : <p className="label" id={`${id}-k`}>{label}</p>)}
             <div className="copyrow">
-                <code aria-labelledby={label ? `${id}-k` : undefined} className={plain ? 'copy-plain' : undefined}>{value}</code>
+                <code tabIndex={0} aria-labelledby={label ? `${id}-k` : undefined} className={plain ? 'copy-plain' : undefined}>{value}</code>
                 <button type="button" className="btn btn-line btn-sm" onClick={onCopy} aria-label={label ? `Copy ${label.toLowerCase()}` : 'Copy'}>
                     {copied ? 'Copied' : 'Copy'}
                 </button>

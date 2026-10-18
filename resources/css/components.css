@@ -425,3 +425,187 @@ ol.steps { list-style: none; margin-top: 0; padding: 0; flex-wrap: nowrap; }
 
 .note .note-title { margin-bottom: 6px; color: var(--tx-1); font-size: 1rem; font-weight: 650; line-height: 1.4; letter-spacing: -.012em; }
 .input-affix .affix { color: var(--tx-2); }
+
+/* ---------- no-JavaScript message (a class, not an inline style, so the CSP needs no style attribute) ---------- */
+.noscript-msg { max-width: 36rem; margin: 15vh auto; padding: 0 20px; line-height: 1.6; font-family: system-ui, sans-serif; }
+
+/* ---------- Inertia progress bar (includeCSS is off: injected styles would be blocked by the CSP) ---------- */
+#nprogress { pointer-events: none; }
+#nprogress .bar { position: fixed; z-index: 1031; top: 0; left: 0; width: 100%; height: 2px; background: var(--blue); }
+#nprogress .peg { display: block; position: absolute; right: 0; width: 100px; height: 100%; box-shadow: 0 0 10px var(--blue), 0 0 5px var(--blue); opacity: 1; transform: rotate(3deg) translate(0, -4px); }
+
+/* ---------- two-factor setup and recovery codes ---------- */
+.rc-grid { list-style: none; margin: var(--sp-4) 0 0; padding: var(--sp-4); display: grid; gap: var(--sp-2) var(--sp-5); grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line-2); border-radius: var(--r-xs); background: var(--paper-soft); }
+.rc-grid code { font-family: var(--mono); font-size: .95rem; color: var(--tx-1); }
+.rc-actions { margin-top: var(--sp-3); }
+.rc-actions .btn { flex: 0 1 auto; }
+.recovery-codes .hint { margin-top: var(--sp-3); }
+.tf-scan { display: grid; gap: var(--sp-5); justify-items: center; margin: var(--sp-5) 0; }
+.tf-scan .copyfield { width: 100%; }
+.tf-code { border: 0; margin: 0 0 var(--sp-5); padding: 0; min-width: 0; }
+.tf-code legend { padding: 0; }
+.tf-saved { margin: var(--sp-5) 0; }
+
+/* ---------- security panel and device list ---------- */
+.security-panel { display: grid; gap: var(--sp-6); }
+.security-panel > h2 { font-size: 1.3rem; font-weight: 500; letter-spacing: -.02em; }
+.sec-block { display: grid; gap: var(--sp-3); padding: var(--sp-5); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper); align-content: start; }
+.sec-block h3 { font-size: 1.05rem; font-weight: 600; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.sec-actions .btn { flex: 0 1 auto; }
+.sec-block .field + .field { margin-top: var(--sp-3); }
+.devices { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.device { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border: 1px solid var(--line); border-radius: var(--r-xs); }
+.device-main { display: grid; gap: 2px; min-width: 0; }
+.device-main b { font-size: .95rem; }
+.device-main span { font-size: .85rem; color: var(--tx-2); }
+
+/* ---------- signed-in shells (dashboard, webmail, ops) ---------- */
+.bar-wide { max-width: none; }
+.app-hdr-end { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.app-hdr .avatar { width: 32px; height: 32px; font-size: .76rem; }
+.dom-menu .domain-all { color: var(--tx-2); }
+.acct-menu button.out {
+    display: block; width: 100%; padding: 9px 11px; border: 0; background: none; border-radius: 5px;
+    font: inherit; font-size: .89rem; text-align: left; cursor: pointer; color: var(--bad); font-weight: 650;
+}
+.acct-menu button.out:hover { background: var(--bad-bg); }
+.proto-notice, .tf-prompt { margin-bottom: 18px; }
+.tf-prompt-acts { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+
+/* ---------- Switch: a labelled on/off row ---------- */
+.sw-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.sw-row:last-child { border-bottom: 0; }
+.sw-row .tx { flex: 1; min-width: 0; }
+.sw-row .tx b { display: block; font-size: .93rem; color: var(--tx-1); }
+.sw-row .tx span { display: block; font-size: .84rem; color: var(--tx-3); margin-top: 3px; line-height: 1.5; }
+.sw { position: relative; flex: none; width: 44px; height: 26px; }
+.sw input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.sw .tr { position: absolute; inset: 0; border-radius: 999px; background: var(--line-2); transition: background .15s; pointer-events: none; }
+.sw .tr::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+    border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 3px rgba(0,0,0,.22);
+}
+.sw input:checked + .tr { background: var(--blue); }
+.sw input:checked + .tr::after { transform: translateX(18px); }
+.sw input:focus-visible + .tr { outline: 2.5px solid var(--blue); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .sw .tr, .sw .tr::after { transition: none; } }
+.who-text { min-width: 0; }
+.mini-row .who-text b a { color: inherit; }
+.mini-row .who-text b a:hover { text-decoration: underline; }
+.heading-sm { font-size: 1.05rem; }
+.heading-sm.spaced { margin: 28px 0 12px; }
+.link-strong { font-weight: 650; }
+.inline-block { display: inline-block; }
+.alert-cta { margin-top: 10px; }
+.btn-row.no-grow { flex: 0 0 auto; }
+.btn-row.no-grow > .btn { flex: 0 0 auto; }
+.pw-fieldset { border: 0; padding: 0; margin: 20px 0 0; }
+.is-warn { color: var(--warn); }
+.pool-top { align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.big-unit { font-size: 1rem; color: var(--tx-3); font-weight: 500; }
+.hint.is-bad { color: var(--bad); font-weight: 550; }
+.heading-xs { font-size: .95rem; margin-top: 20px; }
+.mb-title { font-size: clamp(1.15rem, 1rem + .9vw, 1.55rem); }
+.back-link { color: var(--blue); font-weight: 600; }
+.input.is-fixed { background: var(--paper-2); color: var(--tx-3); }
+.mb-sections > * + * { margin-top: 20px; }
+.row .num { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.rec-since { font-size: .86rem; color: var(--bad); font-weight: 550; margin-bottom: 10px; }
+.rec-observed { margin: 0 0 14px; display: grid; gap: 8px; }
+.rec-observed dt { font-size: .78rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; color: var(--tx-3); }
+.rec-observed dd { margin: 3px 0 0; font-size: .86rem; color: var(--tx-1); word-break: break-all; }
+.note-narrow { max-width: 64ch; }
+.domain-title { font-size: clamp(1.3rem, 1.1rem + 1vw, 1.8rem); }
+.dom-records { border: 1px solid var(--line); border-radius: var(--r); background: #fff; overflow: hidden; }
+.dom-records-head { flex-wrap: wrap; padding: 17px 20px; border-bottom: 1px solid var(--line); background: var(--paper-soft); }
+.rep-row { font-size: .92rem; margin-top: 9px; }
+.cell-end { text-align: right; }
+.err[role="alert"] { margin-top: 6px; }
+.cell-mid { text-align: center; }
+table.data td.n { text-align: center; color: var(--tx-3); }
+.blocks-copy { flex: 1; min-width: 190px; }
+.blocks-copy b { display: block; font-size: .95rem; color: var(--tx-1); }
+.plan-sub { color: var(--tx-inv-3); margin-top: 6px; }
+.plan-rows { margin-top: 20px; }
+.small-mono { font-size: .88rem; }
+.measure { max-width: 54ch; }
+.heading-md { font-size: 1.1rem; }
+.when-inv { color: var(--tx-inv-3); }
+.people-names { margin-left: 4px; }
+.two > *, .st-wrap > *, .mb-layout > * { min-width: 0; }
+/* the table's visually hidden caption is absolutely positioned; without a containing block it widens the whole page */
+.tbl-wrap { position: relative; }
+/* the prototype's `.mb-row span` colour beat the avatar's own white; the initials were grey on blue */
+.mb-row .mb-av { color: #fff; font-size: .78rem; }
+
+/* ---------- webmail shell ---------- */
+.search-form { flex: 1; display: flex; max-width: 520px; }
+.search-form .search { max-width: none; }
+.mail-notice { flex: none; }
+.mail-notice .proto-notice { margin: 0; border-radius: 0; border-width: 0 0 1px; }
+.folders-gap { margin-top: 20px; }
+.tiny.strong { font-weight: 700; color: var(--ink-900); }
+.folder-pick { display: block; margin-left: auto; }
+@media (min-width: 1024px) { .folder-pick { display: none; } }
+.mail-notice + .mail-body { min-height: 0; }
+.reader-acts { margin-left: auto; display: flex; gap: 8px; }
+.reader-av { width: 42px; height: 42px; }
+.att-name { min-width: 0; flex: 1; }
+.att-name b { font-size: .86rem; display: block; }
+.prose .pre { white-space: pre-line; }
+@media (max-width: 559px) { .hide-sm { display: none; } }
+.compose-pane { min-width: 0; overflow-y: auto; background: #fff; grid-column: 2 / -1; }
+.cp-err { padding: 0 16px; }
+.push-end { margin-left: auto; }
+.res-note { padding: 26px 20px; }
+.count { font-weight: 400; }
+.ct-filter { margin: 0 16px 10px; width: calc(100% - 32px); }
+.ct-none { padding: 16px; }
+.ct-more { padding: 0 28px 28px; }
+.ct-msg { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.ct-msg b { display: block; color: var(--tx-1); }
+.compose-pane { display: flex; flex-direction: column; }
+.compose-pane > .compose { flex: 1; }
+.lead-sm { font-size: 1rem; }
+.lead-addr { color: var(--tx-1); font-size: .94rem; }
+.st-end { padding: 10px 0 40px; }
+.sig-box { width: 100%; font: inherit; }
+.storage-box .tiny.strong { color: #fff; }
+
+/* ---------- operations console shell and charts ---------- */
+.ops-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px var(--gutter); background: var(--ink-900); }
+@media (min-width: 1100px) { .ops-tabs { display: none; } }
+.ops-tabs a { white-space: nowrap; padding: 7px 12px; border-radius: 999px; color: #B9C6D6; font-size: .84rem; border: 1px solid rgba(255,255,255,.14); }
+.ops-tabs a[aria-current="page"] { background: var(--blue); color: #fff; border-color: var(--blue); }
+.ops-notice .proto-notice { margin: 0 0 18px; }
+.ops-hdr .acct-menu { color: var(--tx-1); }
+.series-line { width: 100%; height: 76px; display: block; margin-top: 14px; }
+.series-line .ln { fill: none; stroke: var(--blue); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.series-line .lim { stroke: var(--bad); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.series-line .area { fill: var(--blue-050); }
+.series-bars { display: flex; align-items: flex-end; gap: 3px; height: 108px; margin-top: 16px; }
+.series-bars .bar { flex: 1; min-width: 0; background: var(--blue-200); border-radius: 2px 2px 0 0; }
+.series-bars .bar.hot { background: var(--bad); }
+.series-bars .bar.base { background: var(--line-2); }
+.series-bars .bar.now { background: var(--blue); }
+.ops-head-end { display: flex; gap: 9px; flex-wrap: wrap; }
+.metric-link { color: inherit; }
+.kv .r b.mono { font-size: .86rem; }
+.row-pick { background: none; border: 0; padding: 0; font: inherit; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.empty-cell { text-align: center; color: var(--tx-3); padding: 28px 14px !important; }
+table.ops tr[aria-selected="true"] td { background: var(--blue-050); }
+.tk { padding: 8px 0; }
+.bars-wrap .series-bars { gap: 24px; justify-content: center; }
+.bars-wrap .series-bars .bar { max-width: 72px; border-radius: 3px 3px 0 0; }
+.ops-grid > *, .dl-grid > *, .og-grid > *, .ab-grid > *, .rp-grid > *, .grid-roles > * { min-width: 0; }
+/* ziro.css styles the console shell as `.ops` (flex column, full height); the data table shares that class name. */
+table.ops { display: table; min-height: 0; flex-direction: initial; background: none; }
+.ops-main h2 { font-size: 1.1rem; letter-spacing: -.02em; }
+.ops-main h3 { font-size: 1rem; }
+.ops-grid, .dl-grid { margin-top: 26px; }
+
+/* Contrast: the muted grey and the warning brown sat just under 4.5:1 on their lightest grounds (4.0 to 4.5). Nudged darker so body-size text passes WCAG AA everywhere. */
+:root { --tx-3: #5E6874; --warn: #855308; }
+.ops-side .ttl { color: #8F9CAD; }
+.tbl-wrap:focus-visible { outline: 2.5px solid var(--blue); outline-offset: 2px; }

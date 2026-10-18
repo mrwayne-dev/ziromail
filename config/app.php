@@ -55,6 +55,12 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
+     * While true, the signed-in screens say their organisation data is
+     * demonstration data and honour the ?scenario= preview switch.
+     */
+    'prototype' => (bool) env('APP_PROTOTYPE', true),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------

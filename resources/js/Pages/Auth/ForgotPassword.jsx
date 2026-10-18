@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { useRef } from 'react';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
 import Field, { Input } from '../../Components/ui/Field';
@@ -9,30 +9,17 @@ import Seo from '../../Components/seo/Seo';
 import useFocusFirstError from '../../Hooks/useFocusFirstError';
 import AuthLayout from '../../Layouts/AuthLayout';
 import { route } from '../../Lib/route';
-import { simulateLatency } from '../../Lib/simulate';
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export default function ForgotPassword() {
     const formRef = useRef(null);
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
-    const [sent, setSent] = useState(false);
-    const [busy, setBusy] = useState(false);
-    useFocusFirstError(formRef, error ? { email: error } : {});
+    const { flash } = usePage().props;
+    const form = useForm({ email: '' });
+    const sent = flash?.status === 'reset-link-sent';
+    useFocusFirstError(formRef, form.errors);
 
-    async function onSubmit(e) {
+    function onSubmit(e) {
         e.preventDefault();
-        if (!EMAIL.test(email.trim())) {
-            setError('Enter the address you sign in with, for example you@yourbusiness.com.');
-            setSent(false);
-            return;
-        }
-        setError('');
-        setBusy(true);
-        await simulateLatency();
-        setBusy(false);
-        setSent(true);
+        form.post(route('password.email'), { preserveScroll: true });
     }
 
     return (
@@ -45,13 +32,13 @@ export default function ForgotPassword() {
             </div>
 
             <form ref={formRef} onSubmit={onSubmit} noValidate>
-                <Field label="Email address" error={error} hint="Use the address you sign in with, not a personal one.">
+                <Field label="Email address" error={form.errors.email} hint="Use the address you sign in with, not a personal one.">
                     {(p) => (
-                        <Input {...p} name="email" type="email" placeholder="you@yourbusiness.com" autoComplete="username" spellCheck="false" value={email} onChange={(e) => { setEmail(e.target.value); setError(''); }} />
+                        <Input {...p} name="email" type="email" placeholder="you@yourbusiness.com" autoComplete="username" spellCheck="false" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} />
                     )}
                 </Field>
 
-                <Button type="submit" size="lg" full busy={busy}>Send the reset link</Button>
+                <Button type="submit" size="lg" full busy={form.processing}>Send the reset link</Button>
 
                 {sent && (
                     <Banner tone="ok" live icon={<CheckIcon size={17} />} title="If that address has a mailbox, the link is on its way">

@@ -9,8 +9,13 @@ import DnsRecordRow from './DnsRecordRow';
  * the GET /domains/{id}/records response and `checkedAt` its human-readable
  * "last checked" label. The page decides where fresh data comes from: today a
  * fixture-driven simulation, later polling.
+ *
+ * `mode` is 'onboarding' (a new domain still being connected: expects records to
+ * appear, checks on a timer) or 'monitor' (a live domain being watched: it never
+ * says it is waiting for DNS to spread, and Re-check now is always offered).
  */
-export default function RecordTable({ records, checkedAt, checking = false, onCheck }) {
+export default function RecordTable({ records, checkedAt, checking = false, onCheck, mode = 'onboarding' }) {
+    const monitor = mode === 'monitor';
     const total = records.length;
     const passing = records.filter((r) => r.status === 'passing').length;
     const done = passing === total;
@@ -20,10 +25,10 @@ export default function RecordTable({ records, checkedAt, checking = false, onCh
             <div className={`records-top${done ? ' is-done' : ''}`} role="status">
                 {done ? <span className="records-ok"><CheckIcon size={14} /></span> : <Spinner label={checking ? 'Checking your records' : undefined} />}
                 <span className="records-msg">
-                    <b>{done ? `All ${total} records found` : `${passing} of ${total} records found`}</b>
-                    <p>{checking ? 'Checking now' : `Last checked ${checkedAt}`}{!done && !checking && '. Changes usually appear within 30 minutes'}</p>
+                    <b>{monitor ? (done ? `All ${total} records passing` : `${passing} of ${total} records passing`) : (done ? `All ${total} records found` : `${passing} of ${total} records found`)}</b>
+                    <p>{checking ? 'Checking now' : `Last checked ${checkedAt}`}{!monitor && !done && !checking && '. Changes usually appear within 30 minutes'}</p>
                 </span>
-                {!done && <Button variant="line" size="sm" onClick={onCheck} busy={checking}>Check now</Button>}
+                {(monitor || !done) && <Button variant="line" size="sm" onClick={onCheck} busy={checking}>{monitor ? 'Re-check now' : 'Check now'}</Button>}
             </div>
             <div
                 className="records-bar"
@@ -36,7 +41,7 @@ export default function RecordTable({ records, checkedAt, checking = false, onCh
             >
                 <i style={{ width: `${(passing / total) * 100}%` }} />
             </div>
-            {records.map((record) => <DnsRecordRow key={record.id} record={record} />)}
+            {records.map((record) => <DnsRecordRow key={record.id} record={record} mode={mode} />)}
         </section>
     );
 }

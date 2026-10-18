@@ -30,6 +30,10 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'business_name' => fake()->company(),
+            'phone' => '0803'.fake()->numerify('#######'),
+            'terms_accepted_at' => now(),
+            'terms_version' => '2026-09',
         ];
     }
 
@@ -40,6 +44,17 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * A user with two-factor confirmed. The secret is a fixed test value.
+     */
+    public function withTwoFactor(string $secret = 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'two_factor_secret' => $secret,
+            'two_factor_confirmed_at' => now(),
         ]);
     }
 }

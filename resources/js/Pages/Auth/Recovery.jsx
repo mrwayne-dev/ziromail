@@ -1,44 +1,21 @@
-import { Link } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { Link, useForm } from '@inertiajs/react';
+import { useRef } from 'react';
 import Button from '../../Components/ui/Button';
 import Field, { Input } from '../../Components/ui/Field';
 import Note from '../../Components/ui/Note';
-import { useToast } from '../../Components/ui/Toast';
 import Seo from '../../Components/seo/Seo';
 import useFocusFirstError from '../../Hooks/useFocusFirstError';
-import useQuery from '../../Hooks/useQuery';
 import AuthLayout from '../../Layouts/AuthLayout';
-import { accountFixture } from '../../fixtures/account';
 import { route } from '../../Lib/route';
-import { simulateLatency } from '../../Lib/simulate';
 
-const clean = (value) => value.replace(/[^a-z0-9]/gi, '').toUpperCase();
-
-export default function Recovery() {
-    const email = useQuery().get('email') ?? accountFixture.user.email;
-    const { total, unused, acceptedCode } = accountFixture.recovery;
+export default function Recovery({ email, total, unused, action, backUrl }) {
     const formRef = useRef(null);
-    const [code, setCode] = useState('');
-    const [error, setError] = useState('');
-    const [busy, setBusy] = useState(false);
-    const { toast } = useToast();
-    useFocusFirstError(formRef, error ? { code: error } : {});
+    const form = useForm({ code: '' });
+    useFocusFirstError(formRef, form.errors);
 
-    async function onSubmit(e) {
+    function onSubmit(e) {
         e.preventDefault();
-        if (!clean(code)) {
-            setError('Enter one of your recovery codes.');
-            return;
-        }
-        setBusy(true);
-        await simulateLatency();
-        setBusy(false);
-        if (clean(code) !== clean(acceptedCode)) {
-            setError('That code did not work. Check for typos, or try another one. Each code works only once.');
-            return;
-        }
-        setError('');
-        toast({ tone: 'ok', title: 'Recovery code accepted', message: `You are signed in. ${unused - 1} of ${total} codes are still unused.` });
+        form.post(action ?? route('login.recovery.store'), { onFinish: () => form.reset('code') });
     }
 
     return (
@@ -53,7 +30,7 @@ export default function Recovery() {
             </div>
 
             <form ref={formRef} onSubmit={onSubmit} noValidate>
-                <Field label="Recovery code" error={error} hint="Each code works once. Dashes optional.">
+                <Field label="Recovery code" error={form.errors.code} hint="Each code works once. Dashes optional.">
                     {(p) => (
                         <Input
                             {...p}
@@ -64,8 +41,8 @@ export default function Recovery() {
                             autoComplete="one-time-code"
                             spellCheck="false"
                             autoCapitalize="off"
-                            value={code}
-                            onChange={(e) => { setCode(e.target.value); setError(''); }}
+                            value={form.data.code}
+                            onChange={(e) => { form.setData('code', e.target.value); form.clearErrors('code'); }}
                         />
                     )}
                 </Field>
@@ -77,7 +54,7 @@ export default function Recovery() {
                     {unused} of {total} codes still unused
                 </p>
 
-                <Button type="submit" size="lg" full busy={busy}>Sign in</Button>
+                <Button type="submit" size="lg" full busy={form.processing}>Sign in</Button>
             </form>
 
             <Note tone="warn" title="Out of codes, or never saved them?">
@@ -87,7 +64,7 @@ export default function Recovery() {
                 </p>
             </Note>
 
-            <p className="auth-back"><Link href={route('login.two-factor', { email })}>&larr; Back to the code screen</Link></p>
+            <p className="auth-back"><Link href={backUrl ?? route('login.two-factor')}>&larr; Back to the code screen</Link></p>
         </>
     );
 }

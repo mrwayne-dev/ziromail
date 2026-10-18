@@ -1,0 +1,18 @@
+# Ziroemail cron entries (hosting server 1, PHP 8.3). Commit changes here; the server's crontab is the copy that runs.
+#
+# INSTALL (never replace the crontab: it holds entries for other sites on the account):
+#   crontab -l > /tmp/ct            # keep what is there
+#   cat deployment/crontab.txt | grep -v '^#' | grep -v '^$' >> /tmp/ct
+#   crontab /tmp/ct
+#   crontab -l                      # read back; confirm the entries you did not touch are still there
+#   (the host may rewrite schedules, so check these two lines still read every minute)
+#
+# After every deploy and any cron change verify the work happened, not that it was queued:
+#   php artisan tinker --execute 'echo DB::table("jobs")->count()." jobs, ".DB::table("failed_jobs")->count()." failed";'
+#   the jobs table drains to 0, failed_jobs stays 0, and storage/logs shows the worker ran.
+
+# Scheduler: runs the tasks in routes/console.php (expired reset tokens, etc.)
+* * * * * cd /home/iuewrgivrh/ziromail.mgbah.dev && /opt/alt/php83/usr/bin/php artisan schedule:run >> /dev/null 2>&1
+
+# Queue worker: drains verification, reset and security emails. flock stops a slow run overlapping the next.
+* * * * * cd /home/iuewrgivrh/ziromail.mgbah.dev && /usr/bin/flock -n /tmp/ziroemail-queue.lock /opt/alt/php83/usr/bin/php artisan queue:work --stop-when-empty --max-time=55 --tries=3 >> /dev/null 2>&1

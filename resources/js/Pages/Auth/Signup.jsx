@@ -1,5 +1,5 @@
-import { Link, router } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { useRef } from 'react';
 import Button from '../../Components/ui/Button';
 import Field, { Input } from '../../Components/ui/Field';
 import StrengthMeter from '../../Components/ui/StrengthMeter';
@@ -8,13 +8,9 @@ import useFocusFirstError from '../../Hooks/useFocusFirstError';
 import usePricingState from '../../Hooks/usePricingState';
 import useQuery from '../../Hooks/useQuery';
 import AuthLayout from '../../Layouts/AuthLayout';
-import { accountFixture } from '../../fixtures/account';
 import { plans } from '../../fixtures/plans';
 import { formatPrice } from '../../Lib/money';
 import { route } from '../../Lib/route';
-import { simulateLatency } from '../../Lib/simulate';
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const steps = [
     { title: 'Confirm your email', body: 'One click on the link we send you.' },
@@ -47,45 +43,18 @@ function ChosenPlan() {
 }
 
 export default function Signup() {
-    const plan = useQuery().get('plan');
+    const plan = useQuery().get('plan') ?? '';
+    const { passwordMinLength } = usePage().props.identity;
     const formRef = useRef(null);
-    const [values, setValues] = useState({ business: '', email: '', phone: '', password: '', terms: false });
-    const [errors, setErrors] = useState({});
-    const [busy, setBusy] = useState(false);
+    const form = useForm({ business: '', email: '', phone: '', password: '', terms: false, plan });
+    const { errors } = form;
     useFocusFirstError(formRef, errors);
 
-    const set = (key) => (e) => setValues((v) => ({ ...v, [key]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+    const set = (key) => (e) => form.setData(key, e.target.type === 'checkbox' ? e.target.checked : e.target.value);
 
-    function validate() {
-        const next = {};
-        const email = values.email.trim().toLowerCase();
-        if (!values.business.trim()) next.business = 'Tell us the name of your business.';
-        if (!email) next.email = 'Enter the address we should send your setup link to.';
-        else if (!EMAIL.test(email)) next.email = 'That does not look like an email address. Check for a missing @ or ending.';
-        else if (accountFixture.signup.registeredEmails.includes(email)) {
-            next.email = (
-                <span>
-                    That address is already registered. <Link href={route('login')}>Sign in instead</Link>?
-                </span>
-            );
-        }
-        if (values.phone.replace(/\D/g, '').length < 10) next.phone = 'Enter a WhatsApp number with at least ten digits.';
-        if (values.password.length < accountFixture.signup.passwordMinLength) {
-            next.password = `Use at least ${accountFixture.signup.passwordMinLength} characters.`;
-        }
-        if (!values.terms) next.terms = 'Tick the box to agree before creating your account.';
-        return next;
-    }
-
-    async function onSubmit(e) {
+    function onSubmit(e) {
         e.preventDefault();
-        const next = validate();
-        setErrors(next);
-        if (Object.keys(next).length > 0) return;
-
-        setBusy(true);
-        await simulateLatency();
-        router.visit(route('verification.notice', { email: values.email.trim().toLowerCase(), plan }));
+        form.post(route('register'), { onFinish: () => form.reset('password') });
     }
 
     return (
@@ -100,29 +69,29 @@ export default function Signup() {
 
             <form ref={formRef} onSubmit={onSubmit} noValidate>
                 <Field label="Business name" error={errors.business}>
-                    {(p) => <Input {...p} name="business" type="text" placeholder="Adaobi Foods Ltd" autoComplete="organization" value={values.business} onChange={set('business')} />}
+                    {(p) => <Input {...p} name="business" type="text" placeholder="Adaobi Foods Ltd" autoComplete="organization" value={form.data.business} onChange={set('business')} />}
                 </Field>
 
                 <Field label="Your work email" error={errors.email} hint="We send your receipt and setup link here. It can be your current address, even a Gmail one for now.">
-                    {(p) => <Input {...p} name="email" type="email" placeholder="you@adaobifoods.com" autoComplete="email" spellCheck="false" value={values.email} onChange={set('email')} />}
+                    {(p) => <Input {...p} name="email" type="email" placeholder="you@adaobifoods.com" autoComplete="email" spellCheck="false" value={form.data.email} onChange={set('email')} />}
                 </Field>
 
                 <Field label="WhatsApp number" error={errors.phone} hint="This is how we reach you about setup and renewals. We do not use it for marketing.">
-                    {(p) => <Input {...p} name="phone" type="tel" placeholder="0803 000 0000" autoComplete="tel" value={values.phone} onChange={set('phone')} />}
+                    {(p) => <Input {...p} name="phone" type="tel" placeholder="0803 000 0000" autoComplete="tel" value={form.data.phone} onChange={set('phone')} />}
                 </Field>
 
                 <Field label="Choose a password" error={errors.password} hint="Use something long that you do not use anywhere else.">
                     {(p) => (
                         <>
-                            <Input {...p} name="password" type="password" placeholder={`At least ${accountFixture.signup.passwordMinLength} characters`} autoComplete="new-password" value={values.password} onChange={set('password')} />
-                            <StrengthMeter password={values.password} />
+                            <Input {...p} name="password" type="password" placeholder={`At least ${passwordMinLength} characters`} autoComplete="new-password" value={form.data.password} onChange={set('password')} />
+                            <StrengthMeter password={form.data.password} />
                         </>
                     )}
                 </Field>
 
                 <div className={`field${errors.terms ? ' field-err' : ''}`}>
                     <label className="check">
-                        <input type="checkbox" name="terms" checked={values.terms} onChange={set('terms')} aria-invalid={errors.terms ? true : undefined} aria-describedby={errors.terms ? 'terms-err' : undefined} />
+                        <input type="checkbox" name="terms" checked={form.data.terms} onChange={set('terms')} aria-invalid={errors.terms ? true : undefined} aria-describedby={errors.terms ? 'terms-err' : undefined} />
                         <span>
                             I agree to the <Link href={route('legal.terms')}>terms of service</Link>, the{' '}
                             <Link href={route('legal.aup')}>acceptable use policy</Link> and the{' '}
@@ -132,7 +101,7 @@ export default function Signup() {
                     {errors.terms && <p className="err" id="terms-err">{errors.terms}</p>}
                 </div>
 
-                <Button type="submit" size="lg" full busy={busy}>Create account</Button>
+                <Button type="submit" size="lg" full busy={form.processing}>Create account</Button>
 
                 <p className="legal-line">
                     We will never send marketing email to your customers, and we do not read your mail. Your account is only created once you confirm your address.

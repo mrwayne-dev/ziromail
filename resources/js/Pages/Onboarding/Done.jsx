@@ -38,7 +38,7 @@ export default function Done() {
 
     const next = [
         { title: 'Open your mailbox', note: 'Read and send from the browser, right now.', href: route('mail') },
-        { title: 'Add more mailboxes', note: `You still have ${free} GB unassigned in the pool.`, href: route('dashboard') },
+        { title: 'Add more mailboxes', note: `You still have ${free} GB unassigned in the pool.`, href: route('dashboard.mailboxes') },
         { title: 'Go to the dashboard', note: 'Storage, billing, staff and domain health.', href: route('dashboard') },
     ];
 

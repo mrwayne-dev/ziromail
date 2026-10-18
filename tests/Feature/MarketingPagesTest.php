@@ -51,10 +51,10 @@ class MarketingPagesTest extends TestCase
         }
     }
 
-    public function test_routes_for_later_phases_answer_404_until_built(): void
+    public function test_routes_for_later_phases_are_behind_sign_in_until_built(): void
     {
         foreach (['/mail', '/dashboard'] as $uri) {
-            $this->get($uri)->assertNotFound();
+            $this->get($uri)->assertRedirect(route('login'));
         }
     }
 

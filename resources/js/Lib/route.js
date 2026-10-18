@@ -14,3 +14,8 @@ function withoutEmpty(params) {
 export function routeIs(pattern) {
     return window.route().current(pattern);
 }
+
+// A value from the current route's parameters (e.g. the {mailbox} in /dashboard/mailboxes/{mailbox}).
+export function routeParam(name) {
+    return window.route().params[name];
+}

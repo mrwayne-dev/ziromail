@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Staff;
 use App\Models\User;
 
 return [
@@ -42,6 +43,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Ops console. Separate provider, table, cookie and session store (docs/DASHBOARD_BUILD.md 7.3).
+        'staff' => [
+            'driver' => 'session',
+            'provider' => 'staff',
+        ],
     ],
 
     /*
@@ -67,10 +74,10 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'staff' => [
+            'driver' => 'eloquent',
+            'model' => Staff::class,
+        ],
     ],
 
     /*
@@ -96,7 +103,7 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            'expire' => (int) env('AUTH_RESET_EXPIRE_MINUTES', 30),
             'throttle' => 60,
         ],
     ],
@@ -112,6 +119,15 @@ return [
     |
     */
 
-    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+    /*
+    | Email verification links are signed and expire after this many minutes (24 hours,
+    | matching the copy on the verify screen).
+    */
+
+    'verification' => [
+        'expire' => (int) env('AUTH_VERIFICATION_EXPIRE_MINUTES', 1440),
+    ],
+
+    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 900),
 
 ];

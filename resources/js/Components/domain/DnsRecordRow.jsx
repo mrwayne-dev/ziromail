@@ -3,6 +3,7 @@ import Banner from '../ui/Banner';
 import CopyField from '../ui/CopyField';
 import { AlertIcon, CheckIcon, ChevronDownIcon, ClockIcon, CrossIcon } from '../ui/Icons';
 import Pill from '../ui/Pill';
+import { formatDate } from '../../Lib/format';
 
 /*
  * The four states a record can be in, as the resolver reports them:
@@ -23,11 +24,15 @@ const STATES = {
  * values to paste, each with a Copy button. `record` is one item of the
  * GET /domains/{id}/records response:
  *   { id, type, title, status, message, fields: [{ key, label, value, hint? }],
+ *     observed?: [{ key, label, value }] | null,   what is on the domain now (monitor mode)
+ *     brokenSince?: ISO date | null,
  *     conflict?: { title, found, advice } }
- * Rows that need action open themselves, and rows that pass fold away.
+ * Rows that need action open themselves, and rows that pass fold away. In
+ * `monitor` mode a record that is not passing is a regression, not a wait, so
+ * the "still spreading" wording is not used.
  */
-export default function DnsRecordRow({ record }) {
-    const { type, title, status, message, fields, conflict } = record;
+export default function DnsRecordRow({ record, mode = 'onboarding' }) {
+    const { type, title, status, message, fields, conflict, observed, brokenSince } = record;
     const state = STATES[status];
     const needsAction = status === 'needs_fix' || status === 'missing';
     const [open, setOpen] = useState(status !== 'waiting');
@@ -60,6 +65,19 @@ export default function DnsRecordRow({ record }) {
                     <Banner tone="warn" icon={<AlertIcon />} title="We still cannot see this record">
                         <p>Check it was saved exactly as shown, with nothing extra on the end, then check again.</p>
                     </Banner>
+                )}
+                {mode === 'monitor' && brokenSince && status !== 'passing' && (
+                    <p className="rec-since">Not passing since {formatDate(brokenSince)}.</p>
+                )}
+                {mode === 'monitor' && observed && observed.length > 0 && (
+                    <dl className="rec-observed">
+                        {observed.map((field) => (
+                            <div key={field.key}>
+                                <dt>{field.label} on your domain now</dt>
+                                <dd className="mono">{field.value}</dd>
+                            </div>
+                        ))}
+                    </dl>
                 )}
                 {fields.map((field) => (
                     <CopyField key={field.key} label={field.label} value={field.value} hint={field.hint} />

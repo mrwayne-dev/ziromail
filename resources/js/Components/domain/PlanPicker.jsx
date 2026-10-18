@@ -70,7 +70,7 @@ function PlanPanel({ plan, index, variant }) {
 }
 
 // One plan as a radio card for the onboarding step: name, price, and a one-line summary.
-function PlanOption({ plan, checked, onChange }) {
+function PlanOption({ plan, checked, onChange, current }) {
     const ceiling = plan.ceilingGb === null ? 'Storage expands without a limit.' : `Expandable to ${plan.ceilingGb} GB.`;
 
     return (
@@ -80,7 +80,7 @@ function PlanOption({ plan, checked, onChange }) {
             checked={checked}
             onChange={onChange}
             title={plan.name}
-            badge={plan.featured ? 'Most chosen' : undefined}
+            badge={current ? 'Your plan today' : plan.featured ? 'Most chosen' : undefined}
             aside={<Price price={plan.price} unit={(term) => (term === 'annual' ? ' / year' : ' / month')} wrapper="span" />}
             description={`${plan.poolGb} GB shared across unlimited mailboxes. ${ceiling}`}
         />
@@ -91,15 +91,16 @@ function PlanOption({ plan, checked, onChange }) {
  * The three plans. `variant` picks the presentation:
  *   'home'     compact joined panels, pool as the first tick
  *   'pricing'  the same panels with the pool shown as its own line
- *   'select'   radio cards for choosing one (onboarding); takes `value` and `onChange`
+ *   'select'   radio cards for choosing one (onboarding, add a domain, change plan); takes
+ *              `value` and `onChange`, and `currentCode` to mark the plan already held
  * Prices and pool sizes come from fixtures/plans.js only.
  */
-export default function PlanPicker({ variant = 'home', value, onChange }) {
+export default function PlanPicker({ variant = 'home', value, onChange, currentCode }) {
     if (variant === 'select') {
         return (
             <OptionGroup legend="Choose a plan" hideLegend>
                 {plans.map((plan) => (
-                    <PlanOption key={plan.code} plan={plan} checked={value === plan.code} onChange={onChange} />
+                    <PlanOption key={plan.code} plan={plan} checked={value === plan.code} onChange={onChange} current={currentCode === plan.code} />
                 ))}
             </OptionGroup>
         );

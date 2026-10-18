@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Middleware\ConfigureStaffSession;
+use App\Http\Middleware\EnforceTwoFactor;
+use App\Http\Middleware\EnsureHttps;
+use App\Http\Middleware\EnsureStaffSession;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RequireStaffTwoFactor;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,11 +22,24 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
+        $middleware->prepend(EnsureHttps::class);
+        $middleware->append(SecurityHeaders::class);
+        $middleware->statefulApi();
+        $middleware->authenticateSessions();
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('ops', 'ops/*') ? '/ops/login' : route('login'));
+        $middleware->redirectUsersTo(fn (Request $request) => route('dashboard'));
+        $middleware->alias(['staff.two-factor' => RequireStaffTwoFactor::class]);
+        $middleware->web(prepend: [ConfigureStaffSession::class], append: [
+            EnsureStaffSession::class,
             HandleInertiaRequests::class,
+            EnforceTwoFactor::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->dontFlash([
+            'current_password', 'password', 'password_confirmation', 'code', 'recovery_code', 'token',
+        ]);
+
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );

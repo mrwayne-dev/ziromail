@@ -1,0 +1,50 @@
+import { Link } from '@inertiajs/react';
+import StorageAdder from '../../Components/dashboard/StorageAdder';
+import Card from '../../Components/ui/Card';
+import Note from '../../Components/ui/Note';
+import useCurrentDomain from '../../Hooks/useCurrentDomain';
+import useScenario from '../../Hooks/useScenario';
+import DashboardLayout from '../../Layouts/DashboardLayout';
+import { storageProps } from '../../fixtures/dashboard';
+import { route } from '../../Lib/route';
+
+export default function Storage() {
+    const { current } = useCurrentDomain();
+    const scenario = useScenario();
+    const props = storageProps(current.id, scenario);
+    const withDomain = (name) => `${route(name)}?domain=${props.domain.id}`;
+
+    return (
+        <DashboardLayout page="admin-storage" title="Add storage" description="Buy extra storage for one domain's pool.">
+            <p className="sm mut mb"><Link className="back-link" href={withDomain('dashboard.mailboxes')}>&larr; All mailboxes</Link></p>
+            <div className="page-head">
+                <div>
+                    <h1>Add storage</h1>
+                    <p>Storage is bought per domain and lands in that domain's pool straight away. You hand it out to mailboxes yourself.</p>
+                </div>
+            </div>
+
+            <div className="st-wrap">
+                <div>
+                    <StorageAdder {...props} />
+                    <Note title="What happens to it" className="mt-l">
+                        <p>
+                            Extra storage is attached to your current plan on this domain. It is added to the pool immediately and renews with the domain on the same date, whenever in the term you buy it, so storage bought a month before renewal is charged again at that renewal. Changing plan releases it, and we say so plainly before you confirm. It does not move between domains.
+                        </p>
+                    </Note>
+                </div>
+
+                <div>
+                    <Card>
+                        <h3 className="heading-sm">Before you buy</h3>
+                        <p className="sm mut mt-s">Storage already in the pool but not handed out still counts as yours. Check the pool on <Link href={withDomain('dashboard.mailboxes')}>Mailboxes</Link>: you may have room to reassign rather than buy.</p>
+                    </Card>
+                    <Card className="mt">
+                        <h3 className="heading-sm">Need more than the ceiling?</h3>
+                        <p className="sm mut mt-s">Each plan has a ceiling. Past it, move the domain to a larger plan on <Link href={withDomain('dashboard.billing')}>Plan &amp; storage</Link>, or <Link href={route('contact')}>talk to us</Link>.</p>
+                    </Card>
+                </div>
+            </div>
+        </DashboardLayout>
+    );
+}
