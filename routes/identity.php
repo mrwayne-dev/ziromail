@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LogoutController::class, 'destroy'])->middleware('auth')->name('logout');
 
 Route::get('/verify-email', [VerificationController::class, 'notice'])->name('verification.notice');
-Route::get('/verify-email/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::post('/verify-email', [VerificationController::class, 'confirm'])->name('verification.confirm');
 Route::post('/verify-email/resend', [VerificationController::class, 'resend'])->name('verification.send');
 
 // Password reset (public) ------------------------------------------------------------------------

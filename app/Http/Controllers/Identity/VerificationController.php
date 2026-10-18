@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Identity;
 
 use App\Http\Controllers\Controller;
-use App\Identity\Enums\AuditAction;
-use App\Identity\Services\AuditLogger;
+use App\Identity\Services\EmailVerificationCode;
 use App\Identity\Support\Hmac;
 use App\Models\User;
-use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,42 +25,58 @@ class VerificationController extends Controller
         }
 
         $email = $user?->email ?? $request->session()->get('verification.pending_email');
-        $state = $request->session()->get('verification_state', 'waiting');
 
         return Inertia::render('Auth/VerifyEmail', [
             'email' => $email,
-            'state' => $state,
-            'expiresInHours' => (int) (config('auth.verification.expire') / 60),
+            'digits' => (int) config('identity.verification.code_digits'),
+            'expiresInMinutes' => (int) config('identity.verification.code_minutes'),
             'resendAvailableAt' => $email ? (int) Cache::get($this->cooldownKey($email), 0) : 0,
         ]);
     }
 
     /**
-     * The link in the email. It needs no session, so it works when opened on a phone.
-     * A bad signature, an expired link, an unknown user and a wrong hash all end in the same place.
+     * Check the 6-digit code. It needs no session beyond the address registration put there,
+     * and every failure reads the same: a wrong code, an old one, a used one and an unknown
+     * address cannot be told apart.
      */
-    public function verify(Request $request, AuditLogger $audit, string $id, string $hash): RedirectResponse
+    public function confirm(Request $request, EmailVerificationCode $codes): RedirectResponse
     {
-        $user = URL::hasValidSignature($request) ? User::query()->find($id) : null;
+        $request->validate(['code' => ['required', 'string', 'max:16']]);
 
-        if ($user === null || ! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-            return redirect()->route('verification.notice')->with('verification_state', 'expired');
+        $email = $request->user()?->email ?? $request->session()->get('verification.pending_email');
+
+        if ($email === null) {
+            return redirect()->route('signup');
         }
 
-        if (! $user->hasVerifiedEmail()) {
-            DB::transaction(function () use ($user, $audit) {
-                $user->markEmailAsVerified();
-                $audit->record(AuditAction::EmailVerified, $user);
-            });
-            event(new Verified($user));
+        $key = 'verify-code:'.Hmac::email($email).'|'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, (int) config('identity.verification.confirm_per_15_minutes'))) {
+            throw ValidationException::withMessages(['code' => 'Too many attempts. Wait a few minutes, then try again.'])->status(429);
+        }
+        RateLimiter::hit($key, 900);
+
+        $user = User::query()->where('email', $email)->first();
+        $confirmed = $user !== null && ! $user->hasVerifiedEmail() && $codes->confirm($user, $request->string('code')->toString());
+
+        if (! $confirmed) {
+            if ($user?->hasVerifiedEmail()) {
+                $request->session()->forget('verification.pending_email');
+
+                return redirect()->route('login')->with('status', 'Your email is already confirmed. Sign in to continue.');
+            }
+
+            throw ValidationException::withMessages(['code' => 'That code is not right, or it has expired. Check the latest email or send a new one.']);
         }
 
+        RateLimiter::clear($key);
         $request->session()->forget('verification.pending_email');
 
-        return redirect()->route('login')->with('status', 'Your email is confirmed. Sign in to continue.');
+        return $request->user()
+            ? redirect()->route('dashboard')
+            : redirect()->route('login')->with('status', 'Your email is confirmed. Sign in to continue.');
     }
 
-    public function resend(Request $request, AuditLogger $audit): RedirectResponse
+    public function resend(Request $request): RedirectResponse
     {
         $email = $request->user()?->email ?? $request->session()->get('verification.pending_email');
 
@@ -76,7 +89,7 @@ class VerificationController extends Controller
 
         if (RateLimiter::tooManyAttempts($minute, config('identity.verification.resend_per_minute'))
             || RateLimiter::tooManyAttempts($hour, config('identity.verification.resend_per_hour'))) {
-            return back()->with('status', 'Please wait a minute before asking for another link.');
+            return back()->with('status', 'Please wait a minute before asking for another code.');
         }
 
         RateLimiter::hit($minute, 60);
@@ -86,7 +99,6 @@ class VerificationController extends Controller
         $user = User::query()->where('email', $email)->first();
         if ($user !== null && ! $user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
-            $audit->record(AuditAction::EmailVerificationSent, $user);
         }
 
         return back()->with('status', 'sent');

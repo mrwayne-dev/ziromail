@@ -1,6 +1,7 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Button from '../../Components/ui/Button';
+import CodeInput from '../../Components/ui/CodeInput';
 import { MailIcon } from '../../Components/ui/Icons';
 import Note from '../../Components/ui/Note';
 import { useToast } from '../../Components/ui/Toast';
@@ -10,12 +11,13 @@ import { route } from '../../Lib/route';
 
 const secondsLeft = (availableAt) => Math.max(0, availableAt - Math.floor(Date.now() / 1000));
 
-export default function VerifyEmail({ email, state, expiresInHours, resendAvailableAt }) {
+export default function VerifyEmail({ email, digits, expiresInMinutes, resendAvailableAt }) {
     const [seconds, setSeconds] = useState(() => secondsLeft(resendAvailableAt));
-    const [busy, setBusy] = useState(false);
+    const [resending, setResending] = useState(false);
     const { flash } = usePage().props;
     const { toast } = useToast();
-    const expired = state === 'expired';
+    const form = useForm({ code: '' });
+    const error = form.errors.code;
 
     useEffect(() => setSeconds(secondsLeft(resendAvailableAt)), [resendAvailableAt]);
 
@@ -26,20 +28,30 @@ export default function VerifyEmail({ email, state, expiresInHours, resendAvaila
     }, [seconds]);
 
     useEffect(() => {
-        if (flash?.status === 'sent') toast({ tone: 'ok', title: 'Sent again', message: 'A fresh link is on its way.' });
+        if (flash?.status === 'sent') toast({ tone: 'ok', title: 'Sent again', message: 'A new code is on its way. The old one no longer works.' });
     }, [flash?.status]);
 
+    function submit(code) {
+        form.transform(() => ({ code }));
+        form.post(route('verification.confirm'), { preserveScroll: true, onError: () => form.setData('code', '') });
+    }
+
+    function change(value) {
+        form.setData('code', value);
+        if (value.length === digits && !form.processing) submit(value);
+    }
+
     function resend() {
-        setBusy(true);
-        router.post(route('verification.send'), {}, { preserveScroll: true, onFinish: () => setBusy(false) });
+        setResending(true);
+        router.post(route('verification.send'), {}, { preserveScroll: true, onFinish: () => setResending(false) });
     }
 
     if (!email) {
         return (
             <>
-                <Seo title="Check your inbox | Ziroemail" description="Confirm your email address to finish creating your account." path="/verify-email" noindex />
+                <Seo title="Confirm your email | Ziroemail" description="Confirm your email address to finish creating your account." path="/verify-email" noindex />
                 <h1>Nothing to confirm yet</h1>
-                <p className="lead">Create an account first and we will send the link.</p>
+                <p className="lead">Create an account first and we will send the code.</p>
                 <Button size="lg" full href={route('signup')}>Create an account</Button>
             </>
         );
@@ -47,18 +59,23 @@ export default function VerifyEmail({ email, state, expiresInHours, resendAvaila
 
     return (
         <>
-            <Seo title="Check your inbox | Ziroemail" description="Confirm your email address to finish creating your account." path="/verify-email" noindex />
+            <Seo title="Confirm your email | Ziroemail" description="Confirm your email address to finish creating your account." path="/verify-email" noindex />
             <span className="env"><MailIcon /></span>
             <div data-hero>
-                <h1>{expired ? 'That link has expired' : 'Check your inbox'}</h1>
-                <p className="lead">
-                    {expired
-                        ? `Links work once and last ${expiresInHours} hours. We can send a fresh one to`
-                        : 'We sent a confirmation link to'}
-                </p>
+                <h1>Enter your code</h1>
+                <p className="lead">We sent a {digits}-digit code to</p>
                 <span className="addr">{email}</span>
-                {!expired && <p className="lead">Click it and your account is ready. The link works once and expires in {expiresInHours} hours.</p>}
+                <p className="lead">It works once and expires in {expiresInMinutes} minutes.</p>
             </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); if (form.data.code.length === digits) submit(form.data.code); }} noValidate>
+                <div className="field">
+                    <span className="label" id="code-label">Confirmation code</span>
+                    <CodeInput value={form.data.code} onChange={change} digits={digits} invalid={Boolean(error)} describedBy={error ? 'code-error' : 'code-label'} autoFocus />
+                    {error && <p className="err" id="code-error" role="alert">{error}</p>}
+                </div>
+                <Button type="submit" size="lg" full busy={form.processing} disabled={form.data.code.length !== digits}>Confirm email</Button>
+            </form>
 
             <Note title="Not there after a minute?">
                 <p>
@@ -67,7 +84,7 @@ export default function VerifyEmail({ email, state, expiresInHours, resendAvaila
             </Note>
 
             <div className="resend">
-                <Button variant="line" onClick={resend} disabled={seconds > 0} busy={busy}>Send it again</Button>
+                <Button variant="line" onClick={resend} disabled={seconds > 0} busy={resending}>Send a new code</Button>
                 {seconds > 0 && <span className="sm" role="status">You can resend in <b className="num">{seconds}</b>s</span>}
             </div>
 

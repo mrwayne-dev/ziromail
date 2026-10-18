@@ -5,10 +5,10 @@ namespace Tests\Feature\Identity;
 use App\Models\AuditLog;
 use App\Models\User;
 use App\Notifications\AccountSecurityNotification;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Notifications\VerificationCodeNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class RegistrationAndVerificationTest extends TestCase
@@ -42,7 +42,7 @@ class RegistrationAndVerificationTest extends TestCase
         $this->assertSame('Adaobi Foods Ltd', $user->business_name);
         $this->assertNotNull($user->terms_accepted_at);
         $this->assertGuest();
-        Notification::assertSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, VerificationCodeNotification::class);
         $this->assertDatabaseHas('audit_log', ['action' => 'auth.registered']);
     }
 
@@ -59,7 +59,7 @@ class RegistrationAndVerificationTest extends TestCase
         $this->assertSame(1, User::query()->where('email', 'owner@adaobifoods.test')->count());
         $this->assertSame('owner@adaobifoods.test', session('verification.pending_email'));
         Notification::assertSentTo($existing, AccountSecurityNotification::class);
-        Notification::assertNotSentTo($existing, VerifyEmail::class);
+        Notification::assertNotSentTo($existing, VerificationCodeNotification::class);
         $this->assertDatabaseHas('audit_log', ['action' => 'auth.registration_attempt_on_existing']);
     }
 
@@ -100,40 +100,112 @@ class RegistrationAndVerificationTest extends TestCase
         $this->assertDatabaseCount('users', 0);
     }
 
-    private function link(User $user, ?int $minutes = null, ?string $hash = null): string
+    private function issueCode(User $user): string
     {
-        return URL::temporarySignedRoute('verification.verify', now()->addMinutes($minutes ?? config('auth.verification.expire')), [
-            'id' => $user->getKey(),
-            'hash' => $hash ?? sha1($user->getEmailForVerification()),
-        ]);
+        Notification::fake();
+        $user->sendEmailVerificationNotification();
+        $code = null;
+        Notification::assertSentTo($user, VerificationCodeNotification::class, function (VerificationCodeNotification $notification) use (&$code) {
+            $code = $notification->code;
+
+            return true;
+        });
+
+        return $code;
     }
 
-    public function test_the_signed_link_verifies_without_a_session_and_expires_after_24_hours(): void
+    public function test_the_code_is_six_digits_stored_only_as_a_hash_and_confirms_the_address(): void
     {
-        $this->assertSame(1440, config('auth.verification.expire'));
         $user = User::factory()->unverified()->create();
+        $code = $this->issueCode($user);
 
-        $this->get($this->link($user))->assertRedirect(route('login'));
+        $this->assertMatchesRegularExpression('/^\d{6}$/', $code);
+        $this->assertNotSame($code, $user->fresh()->verification_code_hash);
+        $this->assertStringNotContainsString($code, (string) $user->fresh()->verification_code_hash);
+
+        $this->withSession(['verification.pending_email' => $user->email])->post(route('verification.confirm'), ['code' => $code])
+            ->assertRedirect(route('login'));
 
         $this->assertNotNull($user->fresh()->email_verified_at);
-        $this->assertGuest();
+        $this->assertNull($user->fresh()->verification_code_hash);
         $this->assertDatabaseHas('audit_log', ['action' => 'auth.email_verified']);
     }
 
-    public function test_an_expired_tampered_or_unknown_link_all_end_in_the_same_place(): void
+    public function test_a_code_works_once_and_not_after_it_expires(): void
     {
         $user = User::factory()->unverified()->create();
+        $code = $this->issueCode($user);
+        $session = ['verification.pending_email' => $user->email];
 
-        $expired = $this->link($user, -5);
-        $tampered = $this->link($user, hash: sha1('someone-else@x.test'));
-        $unknown = URL::temporarySignedRoute('verification.verify', now()->addHour(), ['id' => 9999, 'hash' => sha1('x')]);
-        $unsigned = route('verification.verify', ['id' => $user->id, 'hash' => sha1($user->email)]);
+        $this->travel(config('identity.verification.code_minutes') + 1)->minutes();
+        $this->withSession($session)->post(route('verification.confirm'), ['code' => $code])->assertSessionHasErrors('code');
+        $this->assertNull($user->fresh()->email_verified_at);
+    }
 
-        foreach ([$expired, $tampered, $unknown, $unsigned] as $url) {
-            $this->get($url)->assertRedirect(route('verification.notice'))->assertSessionHas('verification_state', 'expired');
+    public function test_five_wrong_guesses_kill_the_code_even_if_the_next_one_is_right(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $code = $this->issueCode($user);
+        $wrong = $code === '000000' ? '111111' : '000000';
+        $session = ['verification.pending_email' => $user->email];
+
+        foreach (range(1, config('identity.verification.code_max_attempts')) as $ignored) {
+            $this->withSession($session)->post(route('verification.confirm'), ['code' => $wrong])->assertSessionHasErrors('code');
         }
 
+        $this->withSession($session)->post(route('verification.confirm'), ['code' => $code])->assertSessionHasErrors('code');
         $this->assertNull($user->fresh()->email_verified_at);
+    }
+
+    public function test_every_failure_reads_the_same_and_an_unknown_address_cannot_be_told_apart(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $this->issueCode($user);
+
+        $wrong = $this->withSession(['verification.pending_email' => $user->email])->post(route('verification.confirm'), ['code' => '123456']);
+        $unknown = $this->withSession(['verification.pending_email' => 'nobody@x.test'])->post(route('verification.confirm'), ['code' => '123456']);
+
+        $wrong->assertSessionHasErrors(['code' => 'That code is not right, or it has expired. Check the latest email or send a new one.']);
+        $unknown->assertSessionHasErrors(['code' => 'That code is not right, or it has expired. Check the latest email or send a new one.']);
+    }
+
+    public function test_confirming_is_rate_limited_per_address(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $this->issueCode($user);
+        $session = ['verification.pending_email' => $user->email];
+
+        foreach (range(1, config('identity.verification.confirm_per_15_minutes')) as $ignored) {
+            $this->withSession($session)->post(route('verification.confirm'), ['code' => '123456']);
+        }
+
+        $this->withSession($session)->post(route('verification.confirm'), ['code' => '123456'])
+            ->assertSessionHasErrors(['code' => 'Too many attempts. Wait a few minutes, then try again.']);
+    }
+
+    public function test_a_new_code_replaces_the_old_one(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $first = $this->issueCode($user);
+        $second = $this->issueCode($user);
+
+        $session = ['verification.pending_email' => $user->email];
+        if ($first !== $second) {
+            $this->withSession($session)->post(route('verification.confirm'), ['code' => $first])->assertSessionHasErrors('code');
+        }
+        $this->withSession($session)->post(route('verification.confirm'), ['code' => $second])->assertRedirect(route('login'));
+    }
+
+    public function test_the_code_email_carries_the_code_and_is_not_queued(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $code = $this->issueCode($user);
+
+        $mail = (new VerificationCodeNotification($code, 15))->toMail($user);
+
+        $this->assertStringContainsString($code, $mail->subject);
+        $this->assertContains("**{$code}**", $mail->introLines);
+        $this->assertNotInstanceOf(ShouldQueue::class, new VerificationCodeNotification($code, 15));
     }
 
     public function test_an_unverified_user_is_held_at_the_verify_screen(): void
@@ -149,12 +221,12 @@ class RegistrationAndVerificationTest extends TestCase
         $user = User::factory()->unverified()->create(['email' => 'known@x.test']);
 
         $this->withSession(['verification.pending_email' => 'known@x.test'])->post(route('verification.send'))->assertSessionHas('status', 'sent');
-        Notification::assertSentToTimes($user, VerifyEmail::class, 1);
+        Notification::assertSentToTimes($user, VerificationCodeNotification::class, 1);
 
         // A second request inside a minute is held back with a neutral message.
         $this->withSession(['verification.pending_email' => 'known@x.test'])->post(route('verification.send'))
-            ->assertSessionHas('status', 'Please wait a minute before asking for another link.');
-        Notification::assertSentToTimes($user, VerifyEmail::class, 1);
+            ->assertSessionHas('status', 'Please wait a minute before asking for another code.');
+        Notification::assertSentToTimes($user, VerificationCodeNotification::class, 1);
 
         $unknown = $this->withSession(['verification.pending_email' => 'nobody@x.test'])->post(route('verification.send'));
         $unknown->assertSessionHas('status', 'sent');

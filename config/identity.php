@@ -19,7 +19,10 @@ return [
     ],
 
     'verification' => [
-        'expire_minutes' => 1440,
+        'code_digits' => 6,
+        'code_minutes' => 15,
+        'code_max_attempts' => 5,
+        'confirm_per_15_minutes' => 10,
         'resend_per_minute' => 1,
         'resend_per_hour' => 6,
     ],
