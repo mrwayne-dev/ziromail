@@ -58,7 +58,7 @@ return [
      * While true, the signed-in screens say their organisation data is
      * demonstration data and honour the ?scenario= preview switch.
      */
-    'prototype' => (bool) env('APP_PROTOTYPE', true),
+    'prototype' => (bool) env('APP_PROTOTYPE', false),
 
     /*
     |--------------------------------------------------------------------------
