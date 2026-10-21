@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -18,6 +19,30 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasTwoFactor, Notifiable;
+
+    /** @return HasMany<Domain, $this> */
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
+    /** @return HasMany<Invoice, $this> */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /** @return HasMany<TeamMember, $this> */
+    public function teamMembers(): HasMany
+    {
+        return $this->hasMany(TeamMember::class, 'owner_id');
+    }
+
+    /** @return HasMany<Delegation, $this> */
+    public function delegations(): HasMany
+    {
+        return $this->hasMany(Delegation::class, 'owner_id');
+    }
 
     /** The confirmation email carries a 6-digit code, not a link (see EmailVerificationCode). */
     public function sendEmailVerificationNotification(): void
