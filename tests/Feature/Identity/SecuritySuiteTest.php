@@ -31,16 +31,21 @@ class SecuritySuiteTest extends TestCase
         $this->assertSame($old, $user->fresh()->password, 'The password changed although its audit row could not be written.');
     }
 
-    public function test_every_authentication_event_is_wired_somewhere_in_the_app(): void
+    public function test_every_audit_event_is_wired_somewhere_in_the_app(): void
     {
-        $source = collect(glob(app_path('{Http/Controllers/Identity,Http/Controllers/Identity/Staff,Identity/Services}/*.php'), GLOB_BRACE))
+        $identity = collect(glob(app_path('{Http/Controllers/Identity,Http/Controllers/Identity/Staff,Identity/Services}/*.php'), GLOB_BRACE))
             ->map(fn ($file) => file_get_contents($file))->implode("\n");
+        $account = collect(glob(app_path('{Http/Controllers/Dashboard,Services/Dashboard,Services/Abuse,Http/Controllers/Ops}/*.php'), GLOB_BRACE))->map(fn ($file) => file_get_contents($file))->implode("\n");
+
+        // Events for features whose backend is not connected yet (DNS checks, payments): defined now, emitted when they exist.
+        $pending = ['domain.verified', 'domain.record_changed', 'billing.storage_added', 'billing.plan_changed'];
 
         foreach (AuditAction::cases() as $case) {
-            if (str_starts_with($case->value, 'access.')) {
-                continue; // defined now, emitted when the Organisations features exist
+            if (in_array($case->value, $pending, true)) {
+                continue;
             }
 
+            $source = str_starts_with($case->value, 'auth.') ? $identity : $account;
             $this->assertStringContainsString('AuditAction::'.$case->name, $source, $case->value.' is never recorded.');
         }
     }

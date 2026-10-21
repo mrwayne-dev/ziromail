@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Identity;
 
+use App\Http\Middleware\VerifyMailServerSignature;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route as LaravelRoute;
@@ -19,8 +20,27 @@ class CsrfAndRoutesTest extends TestCase
     {
         return collect(Route::getRoutes()->getRoutes())
             ->filter(fn (LaravelRoute $route) => array_intersect($route->methods(), ['POST', 'PUT', 'PATCH', 'DELETE']))
+            ->reject(fn (LaravelRoute $route) => $this->isSignedServerRoute($route))
             ->values()
             ->all();
+    }
+
+    /**
+     * The two kinds of route that are not browser forms: our mail server's report (signed with HMAC) and
+     * the Pusher-protocol socket-auth endpoint (the socket presents the session cookie plus the channel
+     * name, and the route returns a signed authorisation; it changes no state).
+     */
+    private function isSignedServerRoute(LaravelRoute $route): bool
+    {
+        return in_array(VerifyMailServerSignature::class, $route->gatherMiddleware(), true)
+            || $route->uri() === 'broadcasting/auth';
+    }
+
+    public function test_the_only_routes_without_csrf_are_the_signed_server_report_and_the_socket_auth(): void
+    {
+        $exempt = collect(Route::getRoutes()->getRoutes())->filter(fn (LaravelRoute $route) => $this->isSignedServerRoute($route));
+
+        $this->assertSame(['api/mail-events', 'broadcasting/auth'], $exempt->map->uri()->sort()->values()->all());
     }
 
     public function test_csrf_has_no_exemptions(): void

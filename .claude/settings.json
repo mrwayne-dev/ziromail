@@ -1,0 +1,17 @@
+{
+    "enabledMcpjsonServers": ["laravel-boost"],
+    "enableAllProjectMcpServers": true,
+    "hooks": {
+        "Stop": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "./scripts/log-reminder.sh"
+                    }
+                ]
+            }
+        ]
+    }
+}

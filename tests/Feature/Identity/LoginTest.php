@@ -220,7 +220,7 @@ class LoginTest extends TestCase
         $response = $this->get('/checkout');
         $props = $response->viewData('page')['props'];
 
-        $this->assertSame(['name', 'email', 'emailVerified', 'twoFactorEnabled', 'recoveryCodesUnused', 'snoozedUntil'], array_keys($props['auth']['user']));
+        $this->assertSame(['id', 'ownerId', 'name', 'email', 'emailVerified', 'twoFactorEnabled', 'recoveryCodesUnused', 'snoozedUntil'], array_keys($props['auth']['user']));
         $json = json_encode($props);
         $this->assertDoesNotMatchRegularExpression('/"(password|remember_token|two_factor_secret|recovery_codes?|token)"/i', $json);
     }

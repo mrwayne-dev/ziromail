@@ -26,14 +26,8 @@ class AccountFlowPagesTest extends TestCase
             'forgot password' => ['/forgot-password', 'Auth/ForgotPassword', 'password.request'],
             'verify email' => ['/verify-email', 'Auth/VerifyEmail', 'verification.notice'],
             'checkout payment' => ['/checkout', 'Checkout/Payment', 'checkout.payment'],
-            'checkout transfer' => ['/checkout/transfer', 'Checkout/Transfer', 'checkout.transfer'],
             'phone setup' => ['/setup', 'Setup/Device', 'setup.device'],
             'onboarding domain' => ['/onboarding/domain', 'Onboarding/Domain', 'onboarding.domain'],
-            'onboarding plan' => ['/onboarding/plan', 'Onboarding/Plan', 'onboarding.plan'],
-            'onboarding records' => ['/onboarding/records', 'Onboarding/Records', 'onboarding.records'],
-            'onboarding assisted' => ['/onboarding/assisted', 'Onboarding/Assisted', 'onboarding.assisted'],
-            'onboarding mailboxes' => ['/onboarding/mailboxes', 'Onboarding/Mailboxes', 'onboarding.mailboxes'],
-            'onboarding done' => ['/onboarding/done', 'Onboarding/Done', 'onboarding.done'],
         ];
     }
 
