@@ -2,7 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\DomainSummaryResource;
+use App\Http\Resources\PlanResource;
+use App\Models\AbuseFlag;
+use App\Models\Plan;
+use App\Services\AccountContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -46,6 +52,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'confirmedUntil' => fn () => ($at = $request->session()->get('auth.password_confirmed_at')) ? $at + config('auth.password_timeout') : null,
                 'user' => fn () => ($user = $request->user('web')) ? [
+                    'id' => $user->id,
+                    'ownerId' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'emailVerified' => $user->hasVerifiedEmail(),
@@ -62,6 +70,17 @@ class HandleInertiaRequests extends Middleware
                 'twoFactorEnabled' => $staff->hasConfirmedTwoFactor(),
                 'recoveryCodesUnused' => $staff->hasConfirmedTwoFactor() ? $staff->unusedRecoveryCodeCount() : 0,
             ] : null,
+            // The nav badge on the console: how many flags wait for a person.
+            'opsCounts' => fn () => $request->user('staff') ? ['abuse' => Cache::remember('ops.abuse.open', 15, fn () => AbuseFlag::query()->where('status', 'open')->count())] : null,
+            // The signed-in customer's account and domains, only on dashboard screens (one scoped query set per request).
+            'account' => fn () => $request->routeIs('dashboard*') && $request->user('web')
+                ? [
+                    'domains' => DomainSummaryResource::collection(app(AccountContext::class)->domains())->resolve(),
+                    'isOwner' => app(AccountContext::class)->isOwner(),
+                ]
+                : null,
+            // Prices and pool sizes, from the plans table, so the website and the dashboard can never disagree.
+            'catalog' => fn () => Cache::remember('plans.catalog', 60, fn () => PlanResource::collection(Plan::query()->where('active', true)->orderBy('sort')->get())->resolve()),
             'identity' => ['passwordMinLength' => config('identity.password.min')],
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),

@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Expired password-reset tokens are useless; remove them daily.
 Schedule::command('auth:clear-resets')->daily();
+
+// The sending bot: counts only, every five minutes. Flags wait for a person; clear-cut cases are locked and audited.
+Schedule::command('abuse:evaluate')->everyFiveMinutes()->withoutOverlapping();
