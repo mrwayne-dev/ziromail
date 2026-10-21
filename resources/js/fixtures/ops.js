@@ -36,15 +36,15 @@ export const platform = {
 };
 
 export const staffRoles = {
-    support: { label: 'Support', can: 'Read any account, answer support messages, re-check DNS records, request a refund, open a customer\'s admin dashboard read-only.', cannot: 'lock an account, approve a refund, restore a backup, or read anybody\'s mail.' },
-    engineer: { label: 'Engineer', can: 'Everything Support can do, plus lock and unlock accounts, restore backups, and move a domain to the backup relay.', cannot: 'approve refunds, change staff access, or read anybody\'s mail.' },
-    owner: { label: 'Owner', can: 'Everything, including approving refunds, changing staff access, and, where a customer has asked in writing, opening a mailbox.', cannot: null },
+    support: { label: 'Support', can: 'Read any account, answer support messages, re-check DNS records and request a refund.', cannot: 'lock an account, approve a refund or restore a backup.' },
+    engineer: { label: 'Engineer', can: 'Everything Support can do, plus lock and unlock accounts, restore backups, and move a domain to the backup relay.', cannot: 'approve refunds or change staff access.' },
+    owner: { label: 'Owner', can: 'Everything, including approving refunds and changing staff access.', cannot: null },
 };
 
 export const opsCan = {
-    support: ['read', 'recheck', 'refund.request', 'viewAs'],
-    engineer: ['read', 'recheck', 'refund.request', 'viewAs', 'lock', 'restore'],
-    owner: ['read', 'recheck', 'refund.request', 'viewAs', 'lock', 'restore', 'refund.approve', 'staff.manage', 'mail.read'],
+    support: ['read', 'recheck', 'refund.request'],
+    engineer: ['read', 'recheck', 'refund.request', 'lock', 'restore'],
+    owner: ['read', 'recheck', 'refund.request', 'lock', 'restore', 'refund.approve', 'staff.manage'],
 };
 
 export const stuckDomains = [
@@ -98,7 +98,7 @@ export const abuseFlags = [
         ],
         subjects: [{ text: 'Updated bank details for outstanding invoice', count: 204 }, { text: 'Re: payment, please use the account below', count: 181 }, { text: 'Document shared with you', count: 75 }],
         verdict: 'This is not the customer. A password was guessed after 218 attempts, the Sent folder was emptied to hide the activity, and the mail is invoice fraud aimed at this haulage company\'s own contacts. Lock it, force a password reset, and telephone the owner. Do not only email, because the attacker can read that mailbox.',
-        actions: [{ key: 'lock-reset', label: 'Lock and force password reset', tone: 'danger' }], clearLabel: null, secondary: { label: 'Owner\'s phone number', routeName: 'ops.orgs.show', params: { org: 'org_bello' } },
+        actions: [{ key: 'lock-reset', label: 'Lock and force password reset', tone: 'danger' }], clearLabel: null, secondary: { label: 'Find the account', routeName: 'ops.users', params: { q: 'bellohaulage.com' } },
     },
 ];
 
@@ -197,8 +197,8 @@ export const restores = [
 ];
 
 export const staffRoster = [
-    { id: 'staff_tola', name: 'Tola Bankole', email: 'tola@ziroops.example', role: 'owner', perms: ['All accounts', 'Lock and unlock', 'Approve refunds', 'Restore backups'], strong: 'Can view customer mail', lastSignInAt: at('07:31'), place: 'Port Harcourt', method: 'authenticator', invited: false },
-    { id: 'staff_amaka', name: 'Amaka Nwosu', email: 'amaka@ziroops.example', role: 'owner', perms: ['All accounts', 'Lock and unlock', 'Approve refunds', 'Restore backups'], strong: 'Can view customer mail', lastSignInAt: at('06:48'), place: 'Lagos', method: 'authenticator', invited: false },
+    { id: 'staff_tola', name: 'Tola Bankole', email: 'tola@ziroops.example', role: 'owner', perms: ['All accounts', 'Lock and unlock', 'Approve refunds', 'Restore backups'], strong: null, lastSignInAt: at('07:31'), place: 'Port Harcourt', method: 'authenticator', invited: false },
+    { id: 'staff_amaka', name: 'Amaka Nwosu', email: 'amaka@ziroops.example', role: 'owner', perms: ['All accounts', 'Lock and unlock', 'Approve refunds', 'Restore backups'], strong: null, lastSignInAt: at('06:48'), place: 'Lagos', method: 'authenticator', invited: false },
     { id: 'staff_halima', name: 'Halima Yusuf', email: 'halima@ziroops.example', role: 'support', perms: ['Read accounts', 'Answer support messages', 'Request refunds', 'Re-check DNS'], strong: null, lastSignInAt: '2026-09-28T17:02:00+01:00', place: 'Port Harcourt', method: 'authenticator', invited: false },
     { id: 'staff_segun', name: 'Segun Ade', email: 'segun@ziroops.example', role: 'support', perms: ['Read accounts', 'Answer support messages', 'Request refunds'], strong: null, lastSignInAt: null, place: null, method: null, invited: true, invitedAt: '2026-09-26' },
 ];
@@ -253,8 +253,8 @@ export const deliverability = {
     bounceSeries: [1.2, 1.4, 1.9, 1.5, 1.3, 1.2, 1.1, 1.3, 1.4, 1.2, 1.5, 1.3, 1.4, 1.4].map((value, index) => ({ label: `${15 + index} Sep`, value })),
     worstDomains: [
         { domain: 'quickloans-ng.com', sent7d: 18400, bounce: '11.2%', complaints: '0.62%', state: 'bad', stateLabel: 'Rate limited', severity: 'high', action: { label: 'Review', routeName: 'ops.abuse.show', params: { flag: 'flag_quickloans' }, primary: true } },
-        { domain: 'lagospropertyhub.com', sent7d: 6110, bounce: '4.8%', complaints: '0.09%', state: 'warn', stateLabel: 'Watching', severity: 'med', action: { label: 'Open', routeName: 'ops.orgs.show', params: { org: 'org_lagosproperty' } } },
-        { domain: 'bellohaulage.com', sent7d: 890, bounce: '2.6%', complaints: '0.00%', state: 'muted', stateLabel: 'Normal', severity: 'low', action: { label: 'Open', routeName: 'ops.orgs.show', params: { org: 'org_bello' } } },
+        { domain: 'lagospropertyhub.com', sent7d: 6110, bounce: '4.8%', complaints: '0.09%', state: 'warn', stateLabel: 'Watching', severity: 'med', action: { label: 'Open', routeName: 'ops.users', params: { q: 'lagospropertyhub.com' } } },
+        { domain: 'bellohaulage.com', sent7d: 890, bounce: '2.6%', complaints: '0.00%', state: 'muted', stateLabel: 'Normal', severity: 'low', action: { label: 'Open', routeName: 'ops.users', params: { q: 'bellohaulage.com' } } },
     ],
     placement: [{ provider: 'Gmail', inbox: 98, spam: 2, miss: 0 }, { provider: 'Outlook', inbox: 94, spam: 6, miss: 0 }, { provider: 'Yahoo', inbox: 96, spam: 4, miss: 0 }, { provider: 'Zoho', inbox: 100, spam: 0, miss: 0 }, { provider: 'Others', inbox: 92, spam: 5, miss: 3 }],
     authCoverage: [['Domains with SPF', '412 / 412'], ['Domains with DKIM', '409 / 412'], ['Domains with DMARC', '361 / 412'], ['DMARC at p=reject', '88']],

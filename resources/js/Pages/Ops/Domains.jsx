@@ -1,88 +1,59 @@
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import Metrics from '../../Components/ops/Metrics';
-import OpsTable, { severityClass } from '../../Components/ops/OpsTable';
+import useOpsLoading from '../../Hooks/useOpsLoading';
+import DataTable from '../../Components/ops/DataTable';
 import RecordStrip from '../../Components/ops/RecordStrip';
-import Banner from '../../Components/ui/Banner';
-import Button from '../../Components/ui/Button';
-import { AlertIcon } from '../../Components/ui/Icons';
-import Note from '../../Components/ui/Note';
-import Pill from '../../Components/ui/Pill';
-import { useToast } from '../../Components/ui/Toast';
+import SectionHeader from '../../Components/ops/SectionHeader';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { brokenDomains, domainFigures, stuckDomains } from '../../fixtures/ops';
-import { formatPrice } from '../../Lib/money';
+import { formatDate } from '../../Lib/format';
 import { route } from '../../Lib/route';
 
-export default function Domains() {
-    const { toast } = useToast();
-    const [busy, setBusy] = useState(false);
-    const atRisk = stuckDomains.reduce((sum, row) => sum + row.paid.minor, 0);
+const FILTERS = [['all', 'All'], ['live', 'Live'], ['pending', 'Not live yet'], ['broken', 'Records failing']];
 
-    function recheck() {
-        setBusy(true);
-        setTimeout(() => { setBusy(false); toast({ tone: 'ok', title: 'Re-check queued', message: 'Preview: nothing was queued. The live product re-checks every live domain, rate limited.' }); }, 700);
-    }
+export default function Domains() {
+    const { query, filter, counts, rows, page } = usePage().props;
+    const [text, setText] = useState(query ?? '');
+    const loading = useOpsLoading();
+    const go = (params) => router.get(route('ops.domains'), params, { preserveState: true });
 
     return (
-        <OpsLayout page="ops-domains" title="Domain status">
-            <div className="ops-head">
-                <div>
-                    <h1>Domain status</h1>
-                    <p>DNS state for all 412 customer domains. Incomplete setups first: those are the accounts most likely to churn or ask for a refund.</p>
-                </div>
-                <Button variant="line" size="sm" busy={busy} onClick={recheck}>Re-check all records</Button>
-            </div>
+        <OpsLayout page="ops-domains" title="Domains">
+            <SectionHeader
+                title="Domain status"
+                description="Every domain on the platform and the account that holds it. A name several accounts are claiming is marked: only one can ever be live."
+            />
 
-            <Metrics items={domainFigures} label="Domain figures" />
-
-            <Banner tone="warn" live icon={<AlertIcon />} title={`${brokenDomains.length} domains that were working have stopped`} className="mt">
-                <p>Records that verified before are now missing. Usually a domain transfer to a new registrar, or a web developer replacing the zone file. Telephone these: their mail is not being delivered right now and they may not know.</p>
-            </Banner>
-
-            <section aria-labelledby="br-h" className="mt-l">
-                <h2 id="br-h">Records that stopped working</h2>
-                <OpsTable
-                    className="mt"
-                    caption="Domains whose DNS records were previously verified and are now missing"
-                    head={<tr><th scope="col">Domain</th><th scope="col">Organisation</th><th scope="col">Records</th><th scope="col" className="num">Broken since</th><th scope="col"><span className="sr-only">Action</span></th></tr>}
-                >
-                    {brokenDomains.map((row) => (
-                        <tr key={row.domain} className={severityClass(row.severity)}>
-                            <td className="mono">{row.domain}</td>
-                            <td className="wide">{row.organisation}</td>
-                            <td><RecordStrip records={row.records} /></td>
-                            <td className="num">{row.brokenFor}</td>
-                            <td><Button variant={row.severity === 'high' ? 'primary' : 'line'} size="sm" href={route('ops.orgs.show', { org: row.orgId })}>{row.severity === 'high' ? 'Call them' : 'Open'}</Button></td>
-                        </tr>
-                    ))}
-                </OpsTable>
-            </section>
-
-            <section aria-labelledby="ns-h" className="mt-l">
-                <div className="between"><h2 id="ns-h">Never finished setup</h2><Pill tone="bad">11 domains &middot; {formatPrice(atRisk, 'NGN')} in this list</Pill></div>
-                <p className="sm mut mt-s">Paid for, but mail has never flowed. Every day here makes a refund request more likely. The registrar column tells you which instructions to read out.</p>
-                <OpsTable
-                    className="mt"
-                    wide
-                    caption="Paid domains where DNS setup was never completed"
-                    head={<tr><th scope="col">Domain</th><th scope="col">Records</th><th scope="col">Registrar</th><th scope="col" className="num">Paid</th><th scope="col" className="num">Waiting</th><th scope="col"><span className="sr-only">Action</span></th></tr>}
-                >
-                    {stuckDomains.map((row) => (
-                        <tr key={row.domain} className={severityClass(row.severity)}>
-                            <td className="mono wide">{row.domain}</td>
-                            <td><RecordStrip records={row.records} /></td>
-                            <td>{row.registrar}</td>
-                            <td className="num">{formatPrice(row.paid.minor, row.paid.currency)}</td>
-                            <td className="num">{row.daysWaiting} days</td>
-                            <td><Button variant={row.severity === 'high' ? 'primary' : 'line'} size="sm" href={route('ops.orgs.show', { org: row.orgId })}>{row.severity === 'high' ? 'Call' : 'Open'}</Button></td>
-                        </tr>
-                    ))}
-                </OpsTable>
-                <p className="hint">DMARC shown in grey is not yet required: we only ask for it once MX, SPF and DKIM verify. A domain is counted as finished without it.</p>
-                <Note title="Most of these never opened the records page" className="mt">
-                    <p>Where a customer gives us registrar access, setup takes minutes instead of days. Nine of the eleven unfinished domains never reached the records step at all. Worth asking on the call where they stopped: that is a product problem we can fix.</p>
-                </Note>
-            </section>
+            <DataTable
+                loading={loading}
+                toolbar={{
+                    caption: 'Domains',
+                    search: { value: text, onChange: (value) => { setText(value); go({ q: value || undefined, filter }); }, placeholder: 'Domain, business or email address' },
+                    chips: FILTERS.map(([key, label]) => ({ value: key, label, count: counts[key], pressed: filter === key, onClick: () => go({ q: query || undefined, filter: key }) })),
+                }}
+                columns={[
+                    { id: 'name', header: 'Domain', accessor: (row) => row.name, mono: true, sortable: true },
+                    { id: 'owner', header: 'Held by', accessor: (row) => (
+                        <span>
+                            <b className="block">{row.owner}</b>
+                            <span className="ops-sm ops-mut">{row.ownerEmail}</span>
+                        </span>
+                    ) },
+                    { id: 'plan', header: 'Plan', accessor: (row) => `${row.plan ?? '—'}${row.subscriptionStatus === 'incomplete' ? ' (unpaid)' : ''}` },
+                    { id: 'records', header: 'Records', accessor: (row) => <RecordStrip records={{ MX: 'na', SPF: 'na', DKIM: 'na', DMARC: 'na', ...row.records }} />, nowrap: true },
+                    { id: 'state', header: 'State', accessor: (row) => (
+                        <span className="ops-inline-gap">
+                            <span className={`ops-pill ${row.state === 'live' ? 'ok' : 'watch'}`}>{row.state}</span>
+                            {row.contested && <span className="ops-pill bad">Contested</span>}
+                        </span>
+                    ) },
+                    { id: 'added', header: 'Added', accessor: (row) => formatDate(row.addedAt), align: 'num', sortable: true, sortValue: (row) => row.addedAt },
+                ]}
+                rows={rows}
+                rowKey={(row) => row.id}
+                rowHref={(row) => route('ops.users.show', { user: row.ownerId })}
+                pagination={{ pageSize: page.perPage, totalRows: page.total, page: page.current, onPage: (p) => go({ q: query || undefined, filter, page: p }) }}
+                emptyState={{ title: 'No domain matches', body: 'Try part of a domain, a business name or an email address.' }}
+            />
         </OpsLayout>
     );
 }

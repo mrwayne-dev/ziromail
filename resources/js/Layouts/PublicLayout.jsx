@@ -233,7 +233,7 @@ export function Footer({ compact = false, light = false }) {
                         </div>
                         {FOOTER.map((col) => (
                             <div key={col.title}>
-                                <h4>{col.title}</h4>
+                                <h2 className="ftr-col-h">{col.title}</h2>
                                 <div className="ftr-l-links">
                                     {col.links.map(([name, label]) => (
                                         <Link key={name} href={route(name)}>
@@ -282,7 +282,7 @@ export function Footer({ compact = false, light = false }) {
                     </div>
                     {FOOTER.map((col) => (
                         <div key={col.title}>
-                            <h4>{col.title}</h4>
+                            <h2 className="ftr-col-h">{col.title}</h2>
                             {col.links.map(([name, label]) => (
                                 <Link key={name} href={route(name)}>{label}</Link>
                             ))}

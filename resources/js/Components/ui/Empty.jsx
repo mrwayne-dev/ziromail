@@ -1,5 +1,6 @@
 // Says what appears here and offers the action that fills it.
-export default function Empty({ icon, title, children, action }) {
+export default function Empty({ icon, title, children, action, headingLevel = 2 }) {
+    const Heading = `h${headingLevel}`;
     return (
         <div className="empty">
             {icon && (
@@ -7,7 +8,7 @@ export default function Empty({ icon, title, children, action }) {
                     {icon}
                 </span>
             )}
-            <h3>{title}</h3>
+            <Heading>{title}</Heading>
             {children && <p>{children}</p>}
             {action}
         </div>

@@ -1,88 +1,86 @@
 import { usePage } from '@inertiajs/react';
-import { useState } from 'react';
-import StaffList from '../../Components/ops/StaffList';
+import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
 import SecurityPanel from '../../Components/domain/SecurityPanel';
-import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
-import Field, { Input } from '../../Components/ui/Field';
-import Modal from '../../Components/ui/Modal';
 import Note from '../../Components/ui/Note';
-import Select from '../../Components/ui/Select';
-import { useToast } from '../../Components/ui/Toast';
-import useDisclosure from '../../Hooks/useDisclosure';
-import useOpsCan from '../../Hooks/useOpsCan';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { staffRoles, staffRoster } from '../../fixtures/ops';
+import { formatRelative, initials } from '../../Lib/format';
 import { staffEndpoints } from '../../Lib/identityEndpoints';
-import { route } from '../../Lib/route';
-import { Link } from '@inertiajs/react';
+
+const ROLE = { owner: 'Owner', engineer: 'Engineer', support: 'Support' };
+const CAN = {
+    support: ['Read any account, re-check DNS records and request a refund.', 'Cannot lock an account, approve a refund or restore a backup.'],
+    engineer: ['Everything Support can do, plus lock and unlock accounts and restore backups.', 'Cannot approve refunds or change staff access.'],
+    owner: ['Everything, including approving refunds and changing staff access.', 'Two owners minimum, so nobody can lock themselves out and no single person can act unchecked.'],
+};
 
 export default function Staff() {
-    const { staff } = usePage().props;
-    const { toast } = useToast();
-    const can = useOpsCan();
-    const invite = useDisclosure();
-    const [people, setPeople] = useState(staffRoster);
-    const [form, setForm] = useState({ name: '', email: '', role: 'support' });
-    const [error, setError] = useState('');
-    const owners = people.filter((person) => person.role === 'owner').length;
-
-    function send(event) {
-        event.preventDefault();
-        if (!form.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email)) return setError('Enter a name and a full email address.');
-        setPeople((list) => [...list, { id: `staff_${form.email}`, name: form.name.trim(), email: form.email.trim(), role: form.role, perms: ['Read accounts'], strong: null, lastSignInAt: null, place: null, method: null, invited: true, invitedAt: '2026-09-29' }]);
-        toast({ tone: 'ok', title: 'Invitation recorded', message: 'Preview: no email is sent. Real staff accounts are created with the staff:create command.' });
-        setError('');
-        setForm({ name: '', email: '', role: 'support' });
-        invite.close();
-    }
+    const { staff, people, owners } = usePage().props;
 
     return (
         <OpsLayout page="ops-staff" title="Staff">
-            <div className="ops-head">
-                <div>
-                    <h1>Staff and permissions</h1>
-                    <p>Who works here and what each person can do. Anything that touches customer mail needs owner-level access and is always recorded.</p>
+            <SectionHeader
+                title="Staff and permissions"
+                description="Who works here and what each person can do. Every action is recorded with the person's name."
+            />
+
+            <section className="ops-card">
+                <h2 className="ops-card-h">Your security</h2>
+                <p className="ops-card-lede">You are signed in as <b>{staff?.name}</b> ({staff?.role}). Two-factor cannot be turned off for a staff account.</p>
+                <div className="mt-14">
+                    <SecurityPanel endpoints={staffEndpoints()} account={staff} mandatoryTwoFactor />
                 </div>
-                {can('staff.manage') && <Button size="sm" onClick={invite.open}>Invite somebody</Button>}
-            </div>
-
-            <div className="mb">
-                <p className="sm mut">You are signed in as <b>{staff?.name}</b> ({staff?.role}). These settings are live. Two-factor cannot be turned off for a staff account.</p>
-                <div className="mt"><SecurityPanel endpoints={staffEndpoints()} account={staff} mandatoryTwoFactor /></div>
-            </div>
-
-            <section aria-labelledby="pp-h" className="mt-l">
-                <h2 id="pp-h">People</h2>
-                <p className="sm mut mt-s">{people.length} accounts in the demonstration roster. Every sign-in requires two-factor authentication.</p>
-                <StaffList people={people} viewerEmail={staff?.email} canManage={can('staff.manage')} onChange={(person) => toast({ tone: 'warn', title: `Change access for ${person.name}`, message: owners <= 2 && person.role === 'owner' ? 'Two owners are the minimum, so an owner cannot be demoted here.' : 'Preview: roles are changed with the staff command for now.' })} onResend={(person) => toast({ tone: 'ok', title: 'Invitation resent', message: person.email })} />
             </section>
 
-            <section aria-labelledby="rl-h" className="mt-l">
-                <h2 id="rl-h">What each role can do</h2>
-                <div className="grid-roles mt">
-                    {Object.entries(staffRoles).map(([key, role]) => (
-                        <Card key={key}>
-                            <h3>{role.label}</h3>
-                            <p className="sm mut mt-s">{role.can}</p>
-                            {role.cannot && <p className="sm mut mt-s"><b>Cannot</b> {role.cannot}</p>}
-                            {key === 'owner' && <p className="sm mut mt-s">Two owners minimum, so nobody can lock themselves out and no single person can act unchecked.</p>}
-                        </Card>
+            <SubSection id="pp-h" title="People" description={`${people.length} ${people.length === 1 ? 'account' : 'accounts'}. Every sign-in requires two-factor authentication.`}>
+                <div className="ops-stack">
+                    {people.map((person) => (
+                        <article key={person.id} className="ops-card ops-person">
+                            <span aria-hidden="true" className="ops-person-av">{initials(person.name)}</span>
+                            <div>
+                                <div className="ops-person-head">
+                                    <b className="ops-person-name">{person.name}</b>
+                                    <span className="ops-sm ops-mut">{person.email}</span>
+                                </div>
+                                <div className="ops-person-perms">
+                                    <span className="ops-pill info">{ROLE[person.role]}</span>
+                                    {person.perms.map((perm) => <span key={perm} className="ops-pill">{perm}</span>)}
+                                </div>
+                                <p className="ops-sm ops-mut mt-6">
+                                    {person.lastSignInAt ? `Signed in ${formatRelative(person.lastSignInAt).toLowerCase()}` : 'Has not signed in yet'}
+                                    {person.twoFactorEnabled ? ' · two-factor on' : ' · two-factor not set up'}
+                                </p>
+                            </div>
+                            <div className="ops-inline-gap">
+                                {person.email === staff?.email && <span className="ops-pill info">You</span>}
+                                {person.disabled && <span className="ops-pill bad">Disabled</span>}
+                            </div>
+                        </article>
                     ))}
                 </div>
-                <Note tone="bad" title="Reading a customer's mail" className="mt">
-                    <p>Only an owner can, only with the customer's written request attached, and the customer is emailed automatically when it happens. The mailbox owner sees a permanent entry in their own activity log.</p>
-                    <Link className="tlink mt" href={`${route('ops.audit')}`}>See these occasions in the audit trail</Link>
-                </Note>
-            </section>
+                {owners < 2 && (
+                    <Note tone="warn" title="Only one owner" className="mt">
+                        <p>The rule is two owners minimum, so nobody can lock themselves out and no single person can act unchecked. Add a second owner.</p>
+                    </Note>
+                )}
+            </SubSection>
 
-            <Modal open={invite.isOpen} onClose={invite.close} title="Invite somebody" size="sm" footer={<><Button variant="quiet" onClick={invite.close}>Cancel</Button><Button type="submit" form="invite-form">Send invitation</Button></>}>
-                <form id="invite-form" noValidate onSubmit={send}>
-                    <Field label="Name">{(props) => <Input {...props} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />}</Field>
-                    <Field label="Work email" error={error}>{(props) => <Input {...props} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />}</Field>
-                    <Field label="Role">{(props) => <Select {...props} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>{Object.entries(staffRoles).map(([key, role]) => <option key={key} value={key}>{role.label}</option>)}</Select>}</Field>
-                </form>
-            </Modal>
+            <SubSection id="rl-h" title="What each role can do">
+                <div className="ops-cards-fit">
+                    {Object.entries(CAN).map(([key, [can, cannot]]) => (
+                        <section key={key} className="ops-card">
+                            <h3 className="ops-card-h-sm">{ROLE[key]}</h3>
+                            <p className="ops-sm ops-mut mt-8">{can}</p>
+                            <p className="ops-sm ops-mut mt-6">{cannot}</p>
+                        </section>
+                    ))}
+                </div>
+                <Note title="Nobody on staff can open a customer's mail" className="mt">
+                    <p>There is no role, permission or screen that reads a mailbox, and no message content is stored on our side. Staff see sizes, states and billing facts only.</p>
+                </Note>
+                <Note title="How staff accounts are made" className="mt">
+                    <p>Staff accounts are created on the server with the staff command, never through a form on this site, so nobody can invite themselves in. Ask an owner to run it.</p>
+                </Note>
+            </SubSection>
         </OpsLayout>
     );
 }

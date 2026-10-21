@@ -183,7 +183,7 @@ p  { margin: 0; }
 
 .eyebrow {
   display: inline-block; font-size: .76rem; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--blue);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--blue-700);
 }
 .bg-ink .eyebrow, .bg-blue .eyebrow { color: var(--blue-300); }
 .bg-blue .eyebrow { color: #CDE1F8; }
@@ -218,8 +218,8 @@ p  { margin: 0; }
 .btn-lg { padding: 16px 28px; font-size: 1.04rem; min-height: 56px; }
 .btn-sm { padding: 9px 16px; font-size: .88rem; min-height: 40px; }
 
-.btn-pri { background: var(--blue); color: #fff; }
-.btn-pri:hover { background: var(--blue-600); }
+.btn-pri { background: var(--blue-700); color: #fff; }
+.btn-pri:hover { background: var(--blue-800); }
 .btn-ink { background: var(--ink-900); color: #fff; }
 .btn-ink:hover { background: var(--ink-700); }
 .btn-line { border-color: var(--line-2); color: var(--tx-1); background: #fff; }
@@ -838,76 +838,6 @@ body.nav-locked { overflow: hidden; }
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 @media print { .hdr, .ftr, .tabbar, .side, .burger { display: none !important; } }
-
-
-/* ==========================================================================
-   OPS CONSOLE — internal only. Denser than the customer surfaces, and visibly
-   different so nobody confuses the two. Dark chrome, tighter rows, data first.
-   ========================================================================== */
-.ops { min-height: 100vh; display: flex; flex-direction: column; background: var(--paper-soft); }
-
-.ops-hdr { background: #000; color: #fff; position: sticky; top: 0; z-index: 90; }
-.ops-hdr .bar { display: flex; align-items: center; gap: 16px; height: 56px; }
-.ops-hdr .tag {
-  font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
-  background: var(--bad); color: #fff; padding: 3px 9px; border-radius: 4px;
-}
-.ops-hdr .who { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: .85rem; color: #9AA6B4; }
-
-.ops-body { flex: 1; }
-@media (min-width: 1100px) { .ops-body { display: grid; grid-template-columns: 214px 1fr; align-items: start; } }
-
-.ops-side {
-  display: none; padding: 18px 12px; background: var(--ink-900); border-right: 1px solid var(--line-dark);
-  position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
-}
-@media (min-width: 1100px) { .ops-side { display: block; } }
-.ops-side .grp + .grp { margin-top: 20px; }
-.ops-side .ttl { font-size: .68rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; color: #6B7686; padding: 0 10px; margin-bottom: 7px; }
-.ops-side a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--r-xs); color: #B9C6D6; font-size: .89rem; font-weight: 500; }
-.ops-side a:hover { background: rgba(255,255,255,.06); color: #fff; }
-.ops-side a[aria-current="page"] { background: var(--blue); color: #fff; font-weight: 650; }
-.ops-side a .n { margin-left: auto; font-size: .75rem; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,.12); }
-.ops-side a .n.hot { background: var(--bad); color: #fff; }
-
-.ops-main { padding: 22px var(--gutter) 70px; min-width: 0; }
-@media (min-width: 1100px) { .ops-main { padding: 26px 30px 70px; } }
-.ops-head { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-.ops-head h1 { font-size: clamp(1.35rem, 1.2rem + .8vw, 1.7rem); }
-.ops-head p { margin-top: 5px; color: var(--tx-3); font-size: .9rem; }
-
-/* metric tiles — tighter than the customer .stat */
-.metrics { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
-@media (min-width: 760px)  { .metrics { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1240px) { .metrics { grid-template-columns: repeat(6, 1fr); } }
-.metric { background: #fff; border: 1px solid var(--line); border-radius: var(--r-xs); padding: 15px; }
-.metric .k { display: block; font-size: .7rem; font-weight: 700; color: var(--tx-3); letter-spacing: .06em; text-transform: uppercase; }
-.metric .v { display: block; font-size: 1.45rem; font-weight: 650; color: var(--tx-1); margin-top: 6px; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
-.metric .d { display: block; font-size: .78rem; margin-top: 5px; color: var(--tx-3); }
-.metric .d.up { color: var(--ok); } .metric .d.down { color: var(--bad); }
-.metric.alert { border-color: var(--bad); box-shadow: 0 0 0 1px var(--bad); }
-.metric.alert .v { color: var(--bad); }
-
-/* dense tables */
-table.ops { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 600px; }
-.tbl-wrap table.ops thead th:first-child { border-top-left-radius: var(--r); }
-.tbl-wrap table.ops thead th:last-child { border-top-right-radius: var(--r); }
-table.ops th {
-  text-align: left; padding: 10px 14px; background: var(--paper-2);
-  font-size: .7rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--tx-2); border-bottom: 1px solid var(--line-2); white-space: nowrap;
-}
-table.ops td { padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-table.ops tbody tr:last-child td { border-bottom: none; }
-table.ops tbody tr:hover td { background: var(--paper-soft); }
-table.ops td.num, table.ops th.num { text-align: right; font-variant-numeric: tabular-nums; }
-table.ops .mono { font-size: .82rem; }
-
-/* severity rail down the left of a row */
-tr.sev-high td:first-child { box-shadow: inset 3px 0 0 var(--bad); }
-tr.sev-med  td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
-tr.sev-low  td:first-child { box-shadow: inset 3px 0 0 var(--line-2); }
-
 /* ==========================================================================
    ADMIN MOTION — restrained on purpose. A dashboard is read every day, so
    anything that moves must earn it: figures that count, meters that fill,
@@ -1225,19 +1155,6 @@ tr.sev-low  td:first-child { box-shadow: inset 3px 0 0 var(--line-2); }
   @media (min-width: 1024px) { .fab { display: none; } }
 
 
-/* An action column's header is visually hidden, so it has no intrinsic width.
-   Without this the header row and body rows disagree about column widths. */
-table.ops th:last-child:has(.sr-only) { width: 1%; }
-table.ops:has(th:last-child .sr-only) td:last-child { text-align: right; }
-table.ops:has(th:last-child .sr-only) td:last-child .btn { display: inline-flex; }
-/* Paint the header band across the whole table, not only behind its cells —
-   a nowrap thead is narrower than the body rows and leaves a bare strip. */
-table.ops { table-layout: auto; }
-table.ops thead { background: var(--paper-2); }
-table.ops thead tr { border-bottom: 1px solid var(--line-2); }
-/* One column absorbs the slack so the header band reaches the table edge.
-   Without it the nowrap headers shrink-wrap and leave a bare strip at the right. */
-table.ops th.wide, table.ops td.wide { width: 100%; }
 
 /* Webmail empty state — a folder with nothing in it should say so plainly. */
 .mail-empty { text-align: center; padding: 64px 24px; color: var(--tx-3); }

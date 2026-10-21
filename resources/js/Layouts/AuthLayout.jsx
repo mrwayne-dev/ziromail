@@ -7,10 +7,15 @@ import { route } from '../Lib/route';
 const PAGE = { centered: 'auth', split: 'auth', checkout: 'checkout', device: 'setup' };
 
 function Brand() {
+    // Visually a wordmark; wrapped in a <div role="banner"> so screen readers see one top-level
+    // banner on these pages. On the checkout variant the Brand is rendered inside the <header>
+    // bar instead, so there is still just one banner. See the variant blocks below.
     return (
-        <Link className="brand" href={route('home')} aria-label="Ziroemail home">
-            <Logo variant="black" />
-        </Link>
+        <div role="banner" className="auth-brand-bar">
+            <Link className="brand" href={route('home')} aria-label="Ziroemail home">
+                <Logo variant="black" />
+            </Link>
+        </div>
     );
 }
 
@@ -64,7 +69,7 @@ export default function AuthLayout({ variant = 'centered', aside, children }) {
                 <>
                     <header className="co-header">
                         <div className="wrap co-bar">
-                            <Brand />
+                            <Link className="brand" href={route('home')} aria-label="Ziroemail home"><Logo variant="black" /></Link>
                             <span className="secure"><LockIcon size={14} /> Secure checkout</span>
                         </div>
                     </header>
@@ -77,7 +82,7 @@ export default function AuthLayout({ variant = 'centered', aside, children }) {
             {variant === 'device' && (
                 <>
                     <header className="dev-header">
-                        <div className="wrap dev-bar"><Brand /></div>
+                        <div className="wrap dev-bar"><Link className="brand" href={route('home')} aria-label="Ziroemail home"><Logo variant="black" /></Link></div>
                     </header>
                     <main id="main" className="dev-main">{children}</main>
                 </>

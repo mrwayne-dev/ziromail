@@ -98,7 +98,7 @@ const isCurrent = (pattern) => window.route().current(pattern);
 export default function DashboardLayout({ page, title, description, children }) {
     useHeroAnimation();
     const { current, domains } = useCurrentDomain();
-    const withDomain = (name, params) => `${route(name, params)}${domains.length > 1 ? `?domain=${current.id}` : ''}`;
+    const withDomain = (name, params) => `${route(name, params)}${domains.length > 1 ? `?domain=${current?.id}` : ''}`;
     const aria = (pattern) => (isCurrent(pattern) ? 'page' : undefined);
 
     return (
@@ -128,8 +128,8 @@ export default function DashboardLayout({ page, title, description, children }) 
                         </div>
                         <div className="side-grp">
                             <p className="side-ttl">Domains</p>
-                            <Link href={withDomain('dashboard.domains.show', { domain: current.id })} aria-current={aria('dashboard.domains.show')}>
-                                <NavIcon name="domain" /><span>{current.name}</span>
+                            <Link href={withDomain('dashboard.domains.show', { domain: current?.id })} aria-current={aria('dashboard.domains.show')}>
+                                <NavIcon name="domain" /><span>{current?.name}</span>
                             </Link>
                             <Link href={route('dashboard.domains')} aria-current={aria('dashboard.domains')}>
                                 <NavIcon name="domains" />All domains <span className="cnt">{domains.length}</span>
@@ -138,7 +138,7 @@ export default function DashboardLayout({ page, title, description, children }) 
                         <div className="side-grp">
                             <p className="side-ttl">People</p>
                             <Link href={withDomain('dashboard.mailboxes')} aria-current={aria('dashboard.mailboxes*')}>
-                                <NavIcon name="mailboxes" />Mailboxes <span className="cnt">{current.mailboxCount}</span>
+                                <NavIcon name="mailboxes" />Mailboxes <span className="cnt">{current?.mailboxCount ?? 0}</span>
                             </Link>
                             <Link href={withDomain('dashboard.aliases')} aria-current={aria('dashboard.aliases')}>
                                 <NavIcon name="aliases" />Extra addresses

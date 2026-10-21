@@ -75,3 +75,4 @@
 .pg-auth .forgot a { color: var(--blue); font-weight: 600; }
 .pg-auth .env-ok { border-color: var(--ok-line); background: var(--ok-bg); color: var(--ok); }
 .pg-auth .env-bad { border-color: var(--bad-line); background: var(--bad-bg); color: var(--bad); }
+.pg-auth .auth-side .eyebrow { color: var(--blue-300); }

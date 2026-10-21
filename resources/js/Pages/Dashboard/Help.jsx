@@ -1,29 +1,25 @@
+import { usePage } from '@inertiajs/react';
 import Button from '../../Components/ui/Button';
 import Card from '../../Components/ui/Card';
 import Note from '../../Components/ui/Note';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { helpProps } from '../../fixtures/dashboard';
-import { initials } from '../../Lib/format';
 import { route } from '../../Lib/route';
 
 export default function Help() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const { support, people, context } = helpProps(current.id, scenario);
-    const subject = encodeURIComponent(`${context.domain}: `);
+    const { support, context } = usePage().props;
+    const subject = encodeURIComponent(`${context.domain ?? 'Account'}: `);
 
     return (
         <DashboardLayout page="admin-help" title="Talk to us" description="How to reach support, and what to send us.">
             <div className="page-head">
                 <div>
                     <h1>Talk to us</h1>
-                    <p className="measure">No ticket numbers and no queue. Message us and you get {people.map((person) => person.name.split(' ')[0]).join(' or ')}, who between them run the servers this account sits on.</p>
+                    <p className="measure">No ticket numbers and no queue. Message us and a person who runs this platform answers.</p>
                 </div>
             </div>
 
             <section className="routes" aria-label="Ways to reach us">
+                {support.whatsappLink && (
                 <div className="route wa">
                     <span className="ic" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.3-.7L3 21l1.9-5.1A8.2 8.2 0 0 1 3.6 11.5 8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></svg>
@@ -34,6 +30,7 @@ export default function Help() {
                     <a className="btn btn-white" href={support.whatsappLink} target="_blank" rel="noopener">Message us on WhatsApp<span className="sr-only"> (opens in a new tab)</span></a>
                     <p className="when when-inv">{support.hours} &middot; {support.firstReply}</p>
                 </div>
+                )}
                 <div className="route">
                     <span className="ic" aria-hidden="true">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.7" /><path d="m3 6.5 9 6.5 9-6.5" stroke="currentColor" strokeWidth="1.7" /></svg>
@@ -71,22 +68,13 @@ export default function Help() {
                         <p className="sm mut mt-s">Check two things before you message us. Between them they explain most outages, and both take a few seconds.</p>
                         <div className="btn-row no-grow mt">
                             <Button variant="line" size="sm" href={route('status')} target="_blank" rel="noopener">System status<span className="sr-only"> (opens in a new tab)</span></Button>
-                            <Button variant="line" size="sm" href={`${route('dashboard.domains.show', { domain: current.id })}?domain=${current.id}`}>Your DNS records</Button>
+                            {context.domainId && <Button variant="line" size="sm" href={`${route('dashboard.domains.show', { domain: context.domainId })}?domain=${context.domainId}`}>Your DNS records</Button>}
                         </div>
                         <p className="hint">If status shows a problem, we already know and are working on it. If your DNS records have broken, that page tells you exactly which one and what to put back.</p>
                     </Card>
                 </div>
 
                 <div className="stack">
-                    <Card as="section">
-                        <h2 className="heading-sm">Who you will be speaking to</h2>
-                        <div className="people">
-                            {people.map((person, index) => <span key={person.name} className={`av ${index === 0 ? 'c' : 'y'}`} aria-hidden="true">{initials(person.name)}</span>)}
-                            <span className="sm mut people-names">{people.map((person) => person.name).join(' and ')}</span>
-                        </div>
-                        <p className="sm mut mt">They run the platform as well as answering messages, so nothing needs escalating to somebody who actually understands it.</p>
-                    </Card>
-
                     <Card as="section">
                         <h2 className="heading-sm">Answers already written</h2>
                         <p className="sm mut mt-s">Most questions we get have been asked before.</p>

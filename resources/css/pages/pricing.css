@@ -1,5 +1,5 @@
 /* Pricing page. Most of it is shared components; this is only the page's own layout. */
-.pg-pricing .pricing-note { margin-top: var(--sp-4); color: var(--tx-2); }
+.pg-pricing .pricing-note { margin-top: var(--sp-4); color: var(--tx-1); }
 .pg-pricing .page-hero .toggles { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; margin-top: var(--sp-6); }
 .pg-pricing .pricing-plans { padding-bottom: var(--sp-9); }
 .pg-pricing .pricing-vat { margin-top: var(--sp-6); color: var(--tx-2); }

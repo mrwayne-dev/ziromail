@@ -1,4 +1,6 @@
+import { router } from '@inertiajs/react';
 import { useId, useState } from 'react';
+import { route } from '../../Lib/route';
 import { checkQuota, quotaBounds } from '../../Lib/pool';
 import { formatGb } from '../../Lib/format';
 import Button from '../ui/Button';
@@ -20,7 +22,11 @@ export default function QuotaEditor({ mailbox, pool }) {
 
     function save() {
         if (!check.ok) return;
-        toast({ tone: 'ok', title: 'Quota saved', message: `${mailbox.address} now has ${formatGb(parseFloat(value))}.` });
+        router.patch(route('dashboard.mailboxes.update', { mailbox: mailbox.id }), { quota_gb: parseFloat(value) }, {
+            preserveScroll: true,
+            onSuccess: () => toast({ tone: 'ok', title: 'Quota saved', message: `${mailbox.address} now has ${formatGb(parseFloat(value))}.` }),
+            onError: (errors) => toast({ tone: 'warn', title: 'Quota not saved', message: errors.quota_gb ?? 'Try again.' }),
+        });
     }
 
     return (

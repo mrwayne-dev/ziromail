@@ -1,34 +1,31 @@
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AddressDialog from '../../Components/dashboard/AddressDialog';
 import Button from '../../Components/ui/Button';
 import Empty from '../../Components/ui/Empty';
-import Modal from '../../Components/ui/Modal';
 import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
 import Table from '../../Components/ui/Table';
 import { useToast } from '../../Components/ui/Toast';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
 import useDisclosure from '../../Hooks/useDisclosure';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { aliasesProps } from '../../fixtures/dashboard';
+import { route } from '../../Lib/route';
 
 const short = (address) => `${address.split('@')[0]}@`;
 
 export default function Aliases() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const props = aliasesProps(current.id, scenario);
-    const { domain, mailboxes } = props;
+    const { domain, aliases, mailboxes } = usePage().props;
     const { toast } = useToast();
-    const [list, setList] = useState(props.aliases);
-    const [catchAll, setCatchAll] = useState(props.catchAll.on);
     const [editing, setEditing] = useState(null);
     const dialog = useDisclosure();
-    const confirmCatchAll = useDisclosure();
-
-    const save = (alias) => setList((items) => (items.some((item) => item.id === alias.id) ? items.map((item) => (item.id === alias.id ? alias : item)) : [...items, alias]));
     const openFor = (alias) => { setEditing(alias); dialog.open(); };
+
+    function remove(alias) {
+        router.delete(route('dashboard.aliases.destroy', { alias: alias.id }), {
+            preserveScroll: true,
+            onSuccess: () => toast({ tone: 'ok', title: 'Address removed', message: alias.address }),
+        });
+    }
 
     return (
         <DashboardLayout page="admin-aliases" title="Extra addresses" description="Addresses that deliver into an existing mailbox.">
@@ -40,7 +37,7 @@ export default function Aliases() {
                 <Button onClick={() => openFor(null)} disabled={mailboxes.length === 0}>Add an address</Button>
             </div>
 
-            {list.length === 0 ? (
+            {aliases.length === 0 ? (
                 <Empty icon="@" title="No extra addresses yet" action={<Button onClick={() => openFor(null)} disabled={mailboxes.length === 0}>Add an address</Button>}>
                     Add info@ or orders@ and choose which mailbox receives it.
                 </Empty>
@@ -49,12 +46,17 @@ export default function Aliases() {
                     caption="Extra addresses and where each delivers"
                     head={<tr><th scope="col">Address</th><th scope="col">Delivers to</th><th scope="col">Type</th><th scope="col"><span className="sr-only">Actions</span></th></tr>}
                 >
-                    {list.map((alias) => (
+                    {aliases.map((alias) => (
                         <tr key={alias.id}>
                             <td className="al-addr">{alias.address}</td>
                             <td><span className="al-to">{alias.destinations.map(short).join(' and ')}</span></td>
                             <td>{alias.type === 'forward' ? <Pill tone="info">Forwards to {alias.destinations.length}</Pill> : <Pill tone="muted">Alias</Pill>}</td>
-                            <td className="cell-end"><Button variant="line" size="sm" aria-label={`Edit ${alias.address}`} onClick={() => openFor(alias)}>Edit</Button></td>
+                            <td className="cell-end">
+                                <span className="act-btns">
+                                    <Button variant="line" size="sm" aria-label={`Edit ${alias.address}`} onClick={() => openFor(alias)}>Edit</Button>
+                                    <Button variant="quiet" size="sm" aria-label={`Remove ${alias.address}`} onClick={() => remove(alias)}>Remove</Button>
+                                </span>
+                            </td>
                         </tr>
                     ))}
                 </Table>
@@ -64,40 +66,12 @@ export default function Aliases() {
                 <Note title="Alias or forwarding?">
                     <p>An <b>alias</b> is another name for one mailbox: replies come from the main address. <b>Forwarding</b> copies mail to several mailboxes, which suits a shared address like <span className="mono">info@</span>.</p>
                 </Note>
-                <Note tone="warn" title={catchAll ? 'Catch-all is on' : 'Catch-all is off'}>
-                    <p>
-                        A catch-all accepts mail to any address at your domain, including ones that do not exist. It attracts a great deal of spam, so we leave it off.
-                        {catchAll ? ' Turn it off again if the spam is more than you need.' : ' Turn it on only if you genuinely need it.'}
-                    </p>
-                    <Button variant="line" size="sm" className="mt-s" onClick={catchAll ? () => setCatchAll(false) : confirmCatchAll.open}>{catchAll ? 'Turn off catch-all' : 'Turn on catch-all'}</Button>
+                <Note tone="warn" title="Catch-all is off">
+                    <p>A catch-all accepts mail to any address at your domain, including ones that do not exist. It attracts a great deal of spam, so we leave it off. If you genuinely need one, contact support.</p>
                 </Note>
             </div>
 
-            <AddressDialog
-                key={editing?.id ?? 'new'}
-                open={dialog.isOpen}
-                onClose={dialog.close}
-                domainName={domain.name}
-                mailboxes={mailboxes}
-                existing={list}
-                editing={editing}
-                onSave={save}
-            />
-
-            <Modal
-                open={confirmCatchAll.isOpen}
-                onClose={confirmCatchAll.close}
-                title="Turn on catch-all?"
-                size="sm"
-                footer={(
-                    <>
-                        <Button variant="quiet" onClick={confirmCatchAll.close}>Cancel</Button>
-                        <Button variant="ink" onClick={() => { setCatchAll(true); confirmCatchAll.close(); toast({ tone: 'warn', title: 'Catch-all is on', message: 'Expect more spam in the receiving mailbox.' }); }}>Turn on</Button>
-                    </>
-                )}
-            >
-                <p>Mail to any address at {domain.name}, including addresses that do not exist, will be delivered. Expect much more spam.</p>
-            </Modal>
+            <AddressDialog key={editing?.id ?? 'new'} open={dialog.isOpen} onClose={dialog.close} domain={domain} mailboxes={mailboxes} editing={editing} />
         </DashboardLayout>
     );
 }

@@ -4,25 +4,27 @@ import OrderSummary from '../../Components/domain/OrderSummary';
 import PlanPicker from '../../Components/domain/PlanPicker';
 import TermSwitch from '../../Components/domain/TermSwitch';
 import Button from '../../Components/ui/Button';
-import OptionCard, { OptionGroup } from '../../Components/ui/OptionCard';
+import Note from '../../Components/ui/Note';
 import Seo from '../../Components/seo/Seo';
 import useOnboarding from '../../Hooks/useOnboarding';
 import usePricingState from '../../Hooks/usePricingState';
 import OnboardingLayout from '../../Layouts/OnboardingLayout';
-import { onboardingFixture } from '../../fixtures/onboarding';
 import { buildOrder } from '../../Lib/order';
 import { route } from '../../Lib/route';
 
 export default function Plan() {
-    const { domain, planCode: initialPlan } = useOnboarding();
+    const { domain, domainId, planCode: initialPlan } = useOnboarding();
     const { term, currency } = usePricingState();
     const [planCode, setPlanCode] = useState(initialPlan);
-    const [payment, setPayment] = useState(onboardingFixture.payment[0].value);
+    const [saving, setSaving] = useState(false);
     const order = buildOrder({ planCode, term, currency });
 
     function onSubmit(e) {
         e.preventDefault();
-        router.visit(route('onboarding.records', { domain, plan: planCode }));
+        router.put(route('onboarding.plan.update', { domain: domainId }), { plan: planCode }, {
+            onStart: () => setSaving(true),
+            onFinish: () => setSaving(false),
+        });
     }
 
     return (
@@ -41,7 +43,7 @@ export default function Plan() {
                             <span className="k">Setting up</span>
                             <span className="v">{domain}</span>
                         </span>
-                        <Link className="btn btn-line btn-sm" href={route('onboarding.domain', { domain, plan: planCode })}>Change domain</Link>
+                        <Link className="btn btn-line btn-sm" href={route('onboarding.domain')}>Change domain</Link>
                     </div>
 
                     <form onSubmit={onSubmit} noValidate>
@@ -53,15 +55,11 @@ export default function Plan() {
 
                         <PlanPicker variant="select" value={planCode} onChange={setPlanCode} />
 
-                        <h2 className="pay-h">How would you like to pay?</h2>
-                        <OptionGroup legend="Payment method" hideLegend>
-                            {onboardingFixture.payment.map((method) => (
-                                <OptionCard key={method.value} name="pay" value={method.value} checked={payment === method.value} onChange={setPayment} title={method.title} description={method.description} />
-                            ))}
-                        </OptionGroup>
+                        <Note title="Payment opens soon" className="pay-note">
+                            <p>Your domain and plan are saved. You can set up your DNS records and mailboxes now; mail starts flowing once payment is switched on for your account.</p>
+                        </Note>
 
-                        <Button type="submit" size="lg" full>Pay and continue setup</Button>
-                        <p className="hint center">You can cancel within 14 days for a full refund, no questions asked.</p>
+                        <Button type="submit" size="lg" full busy={saving}>Save plan and continue</Button>
                     </form>
                 </div>
 

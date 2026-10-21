@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import ActivityFeed from '../../Components/dashboard/ActivityFeed';
 import { MailboxStatus } from '../../Components/dashboard/MailboxTable';
@@ -8,15 +8,12 @@ import Card from '../../Components/ui/Card';
 import Field, { Input, Textarea } from '../../Components/ui/Field';
 import Modal from '../../Components/ui/Modal';
 import Note from '../../Components/ui/Note';
-import StrengthMeter from '../../Components/ui/StrengthMeter';
 import Switch from '../../Components/ui/Switch';
 import { useToast } from '../../Components/ui/Toast';
 import useDisclosure from '../../Hooks/useDisclosure';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { mailboxProps } from '../../fixtures/dashboard';
 import { formatDate, formatGb, formatRelative, initials } from '../../Lib/format';
-import { route, routeParam } from '../../Lib/route';
+import { route } from '../../Lib/route';
 
 const SECTIONS = [
     ['overview', 'Overview'],
@@ -29,27 +26,30 @@ const SECTIONS = [
     ['activity', 'Activity'],
 ];
 
-const GENERATED = 'Planting-Garri-47-Market';
-
 export default function Mailbox() {
-    const scenario = useScenario();
-    const { mailbox, domain, pool, forwarding, autoReply, filtering, limits } = mailboxProps(routeParam('mailbox'), scenario);
+    const { mailbox, domain, pool, forwarding, autoReply, filtering, limits, activity } = usePage().props;
     const { toast } = useToast();
     const confirm = useDisclosure();
     const [pending, setPending] = useState('suspend');
     const [displayName, setDisplayName] = useState(mailbox.displayName);
-    const [password, setPassword] = useState('');
     const [requireChange, setRequireChange] = useState(mailbox.requirePasswordChange);
     const [twoFactor, setTwoFactor] = useState(mailbox.requireTwoFactor);
-    const [devices, setDevices] = useState(mailbox.devices);
-    const [aliases, setAliases] = useState(mailbox.aliases);
     const [forward, setForward] = useState(forwarding);
     const [reply, setReply] = useState(autoReply);
     const [filters, setFilters] = useState(filtering);
     const [sendLimits, setSendLimits] = useState({ hourly: limits.hourly, daily: limits.daily });
+    const [errors, setErrors] = useState({});
     const share = Math.round((mailbox.usedGb / mailbox.quotaGb) * 100);
-    const saved = (title) => () => toast({ tone: 'ok', title });
     const mailboxesLink = `${route('dashboard.mailboxes')}?domain=${domain.id}`;
+
+    // One save path for every section: the server validates, and its message is shown beside the control.
+    function save(data, title) {
+        router.patch(route('dashboard.mailboxes.update', { mailbox: mailbox.id }), data, {
+            preserveScroll: true,
+            onSuccess: () => { setErrors({}); toast({ tone: 'ok', title }); },
+            onError: (e) => { setErrors(e); toast({ tone: 'warn', title: 'Not saved', message: Object.values(e)[0] }); },
+        });
+    }
 
     function openConfirm(kind) {
         setPending(kind);
@@ -57,8 +57,9 @@ export default function Mailbox() {
     }
 
     function confirmed() {
-        toast({ tone: 'ok', title: pending === 'delete' ? 'Mailbox scheduled for deletion' : 'Mailbox suspended', message: pending === 'delete' ? 'It is held for 30 days, then removed.' : 'Sign-in and sending have stopped. Mail still arrives.' });
         confirm.close();
+        if (pending === 'delete') router.delete(route('dashboard.mailboxes.destroy', { mailbox: mailbox.id }));
+        else router.post(route('dashboard.mailboxes.suspend', { mailbox: mailbox.id }), {}, { preserveScroll: true, onSuccess: () => toast({ tone: 'ok', title: 'Mailbox suspended', message: 'Sign-in and sending have stopped. Mail still arrives.' }) });
     }
 
     return (
@@ -94,9 +95,8 @@ export default function Mailbox() {
                             <span className="nm"><b>Storage</b><span>{formatGb(mailbox.usedGb)} used of a {formatGb(mailbox.quotaGb)} quota</span></span>
                             <MailboxStatus mailbox={mailbox} />
                         </div>
-                        <div className="row"><span className="nm"><b>Received this month</b><span>Within the normal range</span></span><b className="num">{mailbox.receivedMonth.toLocaleString('en-NG')}</b></div>
-                        <div className="row"><span className="nm"><b>Sent this month</b><span>{mailbox.bouncedMonth} bounced</span></span><b className="num">{mailbox.sentMonth.toLocaleString('en-NG')}</b></div>
-                        <div className="row"><span className="nm"><b>Devices signed in</b><span>{devices.length === 0 ? 'None yet' : devices.map((d) => d.client).join(' and ')}</span></span><b className="num">{devices.length}</b></div>
+                        <div className="row"><span className="nm"><b>Mail this month</b><span>Counts of messages received and sent appear here once the mail server is connected.</span></span></div>
+                        <div className="row"><span className="nm"><b>Devices signed in</b><span>{mailbox.devices.length === 0 ? 'None yet' : mailbox.devices.map((d) => d.client).join(' and ')}</span></span><b className="num">{mailbox.devices.length}</b></div>
                         <div className="btn-row mt no-grow">
                             <Button variant="line" size="sm" href={route('setup.device')}>Send a setup link</Button>
                             <Button variant="quiet" size="sm" href="#security">Reset the password</Button>
@@ -114,38 +114,20 @@ export default function Mailbox() {
                                 {(props) => <Input {...props} className="input mono is-fixed" value={mailbox.address} readOnly />}
                             </Field>
                         </div>
-                        <Button className="mt" onClick={saved('Name saved')}>Save changes</Button>
+                        <Button className="mt" onClick={() => save({ display_name: displayName }, 'Name saved')}>Save changes</Button>
                     </Card>
 
                     <Card as="section" className="sec" id="security" aria-labelledby="se-h">
                         <h2 className="heading-sm" id="se-h">Password &amp; security</h2>
                         <p className="sm mut mt-s">This mailbox is reached with its own address and password. Whoever holds the password holds the mailbox, which is why resetting it is how you take it back.</p>
-                        <div className="mt">
-                            <Field label="Set a new password" hint="The user is signed out of every device and must sign in again.">
-                                {(props) => (
-                                    <>
-                                        <Input {...props} type="text" autoComplete="off" placeholder="At least 12 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
-                                        <StrengthMeter password={password} />
-                                    </>
-                                )}
-                            </Field>
-                        </div>
-                        <div className="btn-row no-grow">
-                            <Button disabled={password.length < 12} onClick={() => { saved('Password set')(); setPassword(''); }}>Set password</Button>
-                            <Button variant="line" onClick={() => setPassword(GENERATED)}>Generate a strong one</Button>
-                        </div>
-                        <Switch label="Require a new password at next sign-in" description="The user chooses their own, and you never know it." checked={requireChange} onChange={setRequireChange} />
-                        <Switch label="Two-factor sign-in" description="An authenticator code on top of the password. Strongly recommended for any mailbox that sends invoices." checked={twoFactor} onChange={setTwoFactor} />
+                        <Note title="Setting a password" className="mt">
+                            <p>Passwords are set on the mail server, which is not connected yet. Until it is, turn on "Require a new password at next sign-in" below and the person chooses their own.</p>
+                        </Note>
+                        <Switch label="Require a new password at next sign-in" description="The user chooses their own, and you never know it." checked={requireChange} onChange={(v) => { setRequireChange(v); save({ require_password_change: v }, 'Saved'); }} />
+                        <Switch label="Two-factor sign-in" description="An authenticator code on top of the password. Strongly recommended for any mailbox that sends invoices." checked={twoFactor} onChange={(v) => { setTwoFactor(v); save({ require_two_factor: v }, 'Saved'); }} />
 
                         <h3 className="heading-xs">Signed-in devices</h3>
-                        {devices.length === 0 && <p className="sm mut mt-s">No devices have signed in yet.</p>}
-                        {devices.map((device) => (
-                            <div className="row" key={device.id}>
-                                <span className="nm"><b>{device.label}</b><span>{device.client} &middot; last active {formatRelative(device.lastActiveAt).toLowerCase()}</span></span>
-                                <Button variant="line" size="sm" aria-label={`Sign out ${device.label}`} onClick={() => setDevices(devices.filter((d) => d.id !== device.id))}>Sign out</Button>
-                            </div>
-                        ))}
-                        {devices.length > 0 && <Button variant="line" full className="mt" onClick={() => setDevices([])}>Sign out everywhere</Button>}
+                        <p className="sm mut mt-s">Mail apps connected to this mailbox will be listed here once the mail server is connected.</p>
                     </Card>
 
                     <Card as="section" className="sec" id="storage" aria-labelledby="q-h">
@@ -158,11 +140,11 @@ export default function Mailbox() {
                     <Card as="section" className="sec" id="routing" aria-labelledby="ro-h">
                         <h2 className="heading-sm" id="ro-h">Aliases &amp; forwarding</h2>
                         <p className="sm mut mt-s">An alias is another address that delivers here. It uses no storage of its own and is not charged.</p>
-                        {aliases.length === 0 && <p className="sm mut mt-s">No aliases on this mailbox.</p>}
-                        {aliases.map((alias) => (
+                        {mailbox.aliases.length === 0 && <p className="sm mut mt-s">No aliases on this mailbox.</p>}
+                        {mailbox.aliases.map((alias) => (
                             <div className="row" key={alias.id}>
                                 <span className="nm"><b className="mono">{alias.address}</b><span>Alias &middot; added {formatRelative(alias.addedAt).toLowerCase()}</span></span>
-                                <Button variant="line" size="sm" aria-label={`Remove ${alias.address}`} onClick={() => setAliases(aliases.filter((a) => a.id !== alias.id))}>Remove</Button>
+                                <Button variant="line" size="sm" href={`${route('dashboard.aliases')}?domain=${domain.id}`}>Manage</Button>
                             </div>
                         ))}
                         <Button variant="line" full className="mt" href={`${route('dashboard.aliases')}?domain=${domain.id}`}>Add an alias</Button>
@@ -173,7 +155,7 @@ export default function Mailbox() {
                             {(props) => <Input {...props} type="email" placeholder="someone@example.com" autoComplete="off" value={forward.to} onChange={(e) => setForward({ ...forward, to: e.target.value })} />}
                         </Field>
                         <Switch label="Keep a copy here" description="Off means forwarded mail does not stay in this mailbox. Leave it on unless you are certain." checked={forward.keepCopy} onChange={(keepCopy) => setForward({ ...forward, keepCopy })} />
-                        <Button className="mt" onClick={saved('Forwarding saved')}>Save forwarding</Button>
+                        <Button className="mt" onClick={() => save({ forwarding: forward }, 'Forwarding saved')}>Save forwarding</Button>
                     </Card>
 
                     <Card as="section" className="sec" id="away" aria-labelledby="aw-h">
@@ -187,7 +169,7 @@ export default function Mailbox() {
                         <Field label="Message">
                             {(props) => <Textarea {...props} rows={3} placeholder="Thank you for writing. We reply to orders within one working day." value={reply.message} onChange={(e) => setReply({ ...reply, message: e.target.value })} />}
                         </Field>
-                        <Button onClick={saved('Auto-reply saved')}>Save auto-reply</Button>
+                        <Button onClick={() => save({ auto_reply: reply }, 'Auto-reply saved')}>Save auto-reply</Button>
                     </Card>
 
                     <Card as="section" className="sec" id="filtering" aria-labelledby="fl-h">
@@ -201,12 +183,12 @@ export default function Mailbox() {
                             <Field label="Messages a day">{(props) => <Input {...props} type="number" min="1" step="50" value={sendLimits.daily} onChange={(e) => setSendLimits({ ...sendLimits, daily: e.target.value })} />}</Field>
                         </div>
                         <p className="hint">The plan default is {limits.planDefaults.hourly} an hour and {limits.planDefaults.daily} a day. A mailbox that suddenly sends far above its own pattern is locked automatically and we tell you.</p>
-                        <Button className="mt-s" onClick={saved('Limits saved')}>Save limits</Button>
+                        <Button className="mt-s" onClick={() => save({ filtering: filters, limits: { hourly: Number(sendLimits.hourly), daily: Number(sendLimits.daily) } }, 'Filtering and limits saved')}>Save limits</Button>
                     </Card>
 
                     <Card as="section" className="sec" id="activity" aria-labelledby="ac-h">
                         <h2 className="heading-sm" id="ac-h">Activity</h2>
-                        {mailbox.activity.length === 0 ? <p className="sm mut mt-s">Nothing has changed on this mailbox yet.</p> : <ActivityFeed items={mailbox.activity} />}
+                        {activity.length === 0 ? <p className="sm mut mt-s">Nothing has changed on this mailbox yet.</p> : <ActivityFeed items={activity} />}
                         <Link className="small mt link-strong inline-block" href={route('dashboard.audit')}>See the full log</Link>
                     </Card>
 

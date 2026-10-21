@@ -1,3 +1,4 @@
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AddAdminPanel from '../../Components/dashboard/AddAdminPanel';
 import ExportCard from '../../Components/dashboard/ExportCard';
@@ -11,19 +12,15 @@ import Table from '../../Components/ui/Table';
 import { useToast } from '../../Components/ui/Toast';
 import useConfirmPassword from '../../Hooks/useConfirmPassword';
 import useDisclosure from '../../Hooks/useDisclosure';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { teamProps } from '../../fixtures/dashboard';
 import { webEndpoints } from '../../Lib/identityEndpoints';
+import { route } from '../../Lib/route';
 import { ROLE_MATRIX } from '../../Lib/permissions';
 
 export default function Team() {
-    const scenario = useScenario();
-    const props = teamProps(scenario);
+    const { domain, people, delegations, canManageAccess, canExport } = usePage().props;
     const { toast } = useToast();
     const [adding, setAdding] = useState(false);
-    const [people, setPeople] = useState(props.people);
-    const [delegations, setDelegations] = useState(props.delegations);
     const [withdrawing, setWithdrawing] = useState(null);
     const withdraw = useDisclosure();
     const { confirm, dialog } = useConfirmPassword(webEndpoints().confirmPassword);
@@ -35,10 +32,17 @@ export default function Team() {
 
     function doWithdraw() {
         withdraw.close();
-        confirm(async () => {
-            setDelegations((list) => list.map((item) => (item.id === withdrawing.id ? { ...item, revokedAt: '2026-09-29' } : item)));
-            toast({ tone: 'ok', title: 'Access withdrawn', message: `${withdrawing.granteeName} can no longer sign in to your account.` });
-        });
+        confirm(() => router.delete(route('dashboard.team.withdraw', { delegation: withdrawing.id }), {
+            preserveScroll: true,
+            onSuccess: () => toast({ tone: 'ok', title: 'Access withdrawn', message: `${withdrawing.granteeName} can no longer sign in to your account.` }),
+        }));
+    }
+
+    function removeMember(person) {
+        confirm(() => router.delete(route('dashboard.team.remove', { member: person.id }), {
+            preserveScroll: true,
+            onSuccess: () => toast({ tone: 'ok', title: 'Administrator removed', message: person.email }),
+        }));
     }
 
     return (
@@ -46,9 +50,9 @@ export default function Team() {
             <div className="page-head">
                 <div>
                     <h1>Team &amp; access</h1>
-                    <p>Who can administer <span className="mono">{props.domain.name}</span>, and what each of them can do.</p>
+                    <p>Who can administer <span className="mono">{domain?.name ?? 'your domain'}</span>, and what each of them can do.</p>
                 </div>
-                {props.canManageAccess && <Button onClick={() => setAdding(true)}>Add an administrator</Button>}
+                {canManageAccess && <Button onClick={() => setAdding(true)}>Add an administrator</Button>}
             </div>
 
             <Card as="section" aria-labelledby="people-h">
@@ -56,17 +60,12 @@ export default function Team() {
                 <TeamList
                     people={people}
                     delegations={delegations}
-                    onChange={props.canManageAccess ? () => setAdding(true) : undefined}
-                    onWithdraw={props.canManageAccess ? askWithdraw : undefined}
+                    onChange={canManageAccess ? removeMember : undefined}
+                    onWithdraw={canManageAccess ? askWithdraw : undefined}
                 />
             </Card>
 
-            {adding && (
-                <AddAdminPanel
-                    onCancel={() => setAdding(false)}
-                    onAdded={(email) => setPeople((list) => [...list, { id: `p_${email}`, name: email.split('@')[0], email, role: 'admin', locked: false, kind: 'person', grantedAt: '2026-09-29' }])}
-                />
-            )}
+            {adding && <AddAdminPanel onCancel={() => setAdding(false)} />}
 
             <h2 className="heading-sm spaced">What each role can do</h2>
             <Table
@@ -97,7 +96,7 @@ export default function Team() {
                 <div className="mt"><SecurityPanel /></div>
             </div>
 
-            {props.canExport && <ExportCard />}
+            {canExport && <ExportCard />}
 
             <Modal
                 open={withdraw.isOpen}

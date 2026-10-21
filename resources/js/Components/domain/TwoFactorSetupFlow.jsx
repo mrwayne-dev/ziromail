@@ -67,7 +67,7 @@ export default function TwoFactorSetupFlow({ endpoints, ensureConfirmed, onDone,
             <>
                 <p className="lead">Two-factor adds a six-digit code from an authenticator app to every sign in, so a stolen password is not enough.</p>
                 {error && <p className="err" role="alert">{error}</p>}
-                <Button size="lg" full onClick={begin} busy={busy}>Set up two-factor</Button>
+                <Button size="lg" full className="tf-start" onClick={begin} busy={busy}>Set up two-factor</Button>
             </>
         );
     }

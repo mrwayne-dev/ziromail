@@ -1,69 +1,88 @@
-import { Link } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import Metrics from '../../Components/ops/Metrics';
-import OpsTable, { severityClass } from '../../Components/ops/OpsTable';
-import Button from '../../Components/ui/Button';
+import useOpsLoading from '../../Hooks/useOpsLoading';
+import DataTable from '../../Components/ops/DataTable';
+import { MetricRow } from '../../Components/ops/MetricTile';
+import SectionHeader from '../../Components/ops/SectionHeader';
 import Note from '../../Components/ui/Note';
-import Pill from '../../Components/ui/Pill';
-import { useToast } from '../../Components/ui/Toast';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { mailboxFigures, mailboxFilters, opsMailboxRows } from '../../fixtures/ops';
 import { formatRelative } from '../../Lib/format';
 import { route } from '../../Lib/route';
 
-const TONE = { full: 'bad', near: 'warn', limited: 'bad', not_set_up: 'muted', locked: 'bad' };
+const FILTERS = [['attention', 'Needs attention'], ['full', 'Over 90% full'], ['never', 'Never signed in'], ['suspended', 'Suspended'], ['all', 'All']];
+
+function state(row) {
+    const share = row.quotaGb > 0 ? row.usedGb / row.quotaGb : 0;
+    if (row.state === 'locked' || row.state === 'suspended') return { tone: 'bad', label: row.state === 'locked' ? 'Sending locked' : 'Suspended' };
+    if (share >= 0.9) return { tone: 'bad', label: `${Math.round(share * 100)}% full` };
+    if (share >= 0.75) return { tone: 'watch', label: `${Math.round(share * 100)}% full` };
+    if (!row.lastLoginAt) return { tone: null, label: 'Never signed in' };
+    return { tone: 'ok', label: 'Active' };
+}
 
 export default function Mailboxes() {
-    const { toast } = useToast();
-    const [text, setText] = useState('');
-    const [filter, setFilter] = useState('attention');
-    const term = text.trim().toLowerCase();
-    const rows = opsMailboxRows.filter((row) => (filter === 'all' || row.filters.includes(filter)) && (!term || row.address.includes(term) || row.orgName.toLowerCase().includes(term)));
+    useRealtimeReload({ channel: 'ops', map: { mailboxes: ['rows', 'filters'], abuse: ['rows'] } });
+
+    const { query, filter, counts, figures, rows, page } = usePage().props;
+    const [text, setText] = useState(query ?? '');
+    const loading = useOpsLoading();
+    const go = (params) => router.get(route('ops.mailboxes'), params, { preserveState: true });
+
+    const tiles = [
+        { k: 'Total', v: figures.total.toLocaleString('en-NG'), d: 'on the platform' },
+        { k: 'Active in 30d', v: figures.active30.toLocaleString('en-NG'), d: 'signed in recently' },
+        { k: 'Over 90% full', v: figures.over90, d: 'delivery stops at 100%', tone: figures.over90 > 0 ? 'watch' : undefined },
+        { k: 'Never signed in', v: figures.never, d: 'created but unused' },
+        { k: 'Suspended', v: figures.suspended, d: 'or sending locked', tone: figures.suspended > 0 ? 'watch' : undefined },
+        { k: 'Median size', v: figures.medianGb === null ? '—' : figures.medianGb, unit: figures.medianGb === null ? undefined : 'GB', d: 'used per mailbox' },
+    ];
 
     return (
         <OpsLayout page="ops-mailboxes" title="Mailboxes">
-            <div className="ops-head">
-                <div>
-                    <h1>Mailboxes</h1>
-                    <p>All 3,106 mailboxes on the platform. Sorted by the ones about to cause a problem: full, dormant, or never set up.</p>
-                </div>
-                <Button variant="line" size="sm" onClick={() => toast({ tone: 'warn', title: 'Export is not connected yet' })}>Export as CSV</Button>
+            <SectionHeader
+                title="Mailboxes"
+                description="Every mailbox on the platform by size, state and last sign-in. The fullest and the dormant come first."
+            />
+
+            <MetricRow items={tiles} label="Mailbox figures" />
+
+            <div className="mt-24">
+                <DataTable
+                    toolbar={{
+                        caption: 'Mailboxes',
+                        search: { value: text, onChange: (value) => { setText(value); go({ q: value || undefined, filter }); }, placeholder: 'Address, domain or business' },
+                        chips: FILTERS.map(([key, label]) => ({
+                            value: key, label, count: counts[key], pressed: filter === key,
+                            onClick: () => go({ q: query || undefined, filter: key }),
+                        })),
+                    }}
+                    columns={[
+                        { id: 'address', header: 'Address', accessor: (row) => row.address, mono: true, sortable: true },
+                        { id: 'owner', header: 'Held by', accessor: (row) => row.owner, sortable: true },
+                        { id: 'storage', header: 'Storage', accessor: (row) => {
+                            const share = row.quotaGb > 0 ? row.usedGb / row.quotaGb : 0;
+                            const tone = share >= 0.9 ? 'bad' : share >= 0.75 ? 'watch' : null;
+                            return <span className="ops-usage">
+                                <span className="ops-usage-bar">
+                                    <i className={`ops-usage-fill ${tone ?? ''}`.trim()} style={{ width: `${Math.min(share * 100, 100)}%` }} />
+                                </span>
+                                <span className="ops-sm ops-tnum">{row.usedGb} / {row.quotaGb} GB</span>
+                            </span>;
+                        }, sortValue: (row) => row.usedGb },
+                        { id: 'last', header: 'Last sign-in', accessor: (row) => <span className="ops-mut">{formatRelative(row.lastLoginAt)}</span>, sortable: true, sortValue: (row) => row.lastLoginAt ?? '' },
+                        { id: 'state', header: 'State', accessor: (row) => { const value = state(row); return <span className={`ops-pill${value.tone ? ' ' + value.tone : ''}`}>{value.label}</span>; } },
+                    ]}
+                    rows={rows}
+                    rowKey={(row) => row.id}
+                    rowHref={(row) => route('ops.users.show', { user: row.ownerId })}
+                    pagination={{ pageSize: page.perPage, totalRows: page.total, page: page.current, onPage: (p) => go({ q: query || undefined, filter, page: p }) }}
+                    emptyState={{ title: 'No mailbox matches', body: 'Try a different filter or clear the search.' }}
+                />
             </div>
 
-            <Metrics items={mailboxFigures} label="Mailbox figures" />
-
-            <form className="mt" role="search" onSubmit={(e) => e.preventDefault()}>
-                <label className="sr-only" htmlFor="mq">Search mailboxes by address or domain</label>
-                <input className="input" type="search" id="mq" autoComplete="off" spellCheck="false" placeholder="Address or domain" value={text} onChange={(e) => setText(e.target.value)} />
-                <div className="chips" role="group" aria-label="Filter mailboxes">
-                    {mailboxFilters.map(([key, label, count]) => <button type="button" className="chip" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}<span className="c">{count.toLocaleString('en-NG')}</span></button>)}
-                </div>
-            </form>
-
-            <OpsTable
-                className="mt"
-                caption="Mailboxes matching the filter"
-                head={<tr><th scope="col" className="wide">Address</th><th scope="col">Organisation</th><th scope="col">Storage</th><th scope="col">Last sign-in</th><th scope="col">State</th><th scope="col"><span className="sr-only">Action</span></th></tr>}
-            >
-                {rows.length === 0 && <tr><td colSpan={6} className="empty-cell">No mailbox matches.</td></tr>}
-                {rows.map((row) => {
-                    const share = row.usedGb / row.quotaGb;
-                    const action = row.action ?? { label: 'Open', routeName: 'ops.orgs.show', params: { org: row.orgId } };
-                    return (
-                        <tr key={row.address} className={severityClass(row.severity)}>
-                            <td className="mono">{row.address}</td>
-                            <td className="wide"><Link href={route('ops.orgs.show', { org: row.orgId })}>{row.orgName}</Link></td>
-                            <td className="use"><span className="bar-mini"><i className={share >= 0.9 ? 'bad' : share >= 0.75 ? 'warn' : undefined} style={{ width: `${Math.min(share * 100, 100)}%` }} /></span>{row.usedGb} / {row.quotaGb} GB</td>
-                            <td>{formatRelative(row.lastLoginAt)}</td>
-                            <td><Pill tone={TONE[row.state]}>{row.stateLabel}</Pill></td>
-                            <td><Button variant={action.primary ? 'primary' : 'line'} size="sm" href={route(action.routeName, action.params)}>{action.label}</Button></td>
-                        </tr>
-                    );
-                })}
-            </OpsTable>
-
             <Note title="What happens when a mailbox fills up" className="mt">
-                <p>At 90% the owner is emailed. At 100% incoming mail is held in the queue for 72 hours rather than rejected, so nothing is lost while somebody frees space or raises the quota from the pool. If the pool itself is full, that is a sales conversation, not a support one.</p>
+                <p>At 90% the owner is emailed. At 100% incoming mail is held in the queue for 72 hours rather than rejected, so nothing is lost while somebody frees space or raises the quota. If the pool itself is full, that is a sales conversation, not a support one.</p>
             </Note>
         </OpsLayout>
     );

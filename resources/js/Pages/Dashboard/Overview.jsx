@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import ActivityFeed from '../../Components/dashboard/ActivityFeed';
 import MailboxTable from '../../Components/dashboard/MailboxTable';
 import Banner from '../../Components/ui/Banner';
@@ -7,11 +8,7 @@ import Card from '../../Components/ui/Card';
 import { AlertIcon } from '../../Components/ui/Icons';
 import Meter from '../../Components/ui/Meter';
 import Pill from '../../Components/ui/Pill';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { overviewProps } from '../../fixtures/dashboard';
-import { plansFixture } from '../../fixtures/plans';
 import { formatDate, formatGb, greeting } from '../../Lib/format';
 import { formatPrice } from '../../Lib/money';
 import { route } from '../../Lib/route';
@@ -23,13 +20,13 @@ const QUICK_ACTIONS = [
     { icon: '₦', title: 'View invoices', note: 'Download receipts', routeName: 'dashboard.billing' },
 ];
 
-export default function Index() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const { org, domain, stats, alerts, mailboxes, subscription, activity } = overviewProps(current.id, scenario);
-    const plan = plansFixture.plans.find((candidate) => candidate.code === domain.planCode);
+export default function Overview() {
+    const owner = usePage().props.auth?.user?.ownerId ?? usePage().props.auth?.user?.id;
+    useRealtimeReload({ channel: `account.${owner}`, map: { domain: ['account','cards','alerts'], mailbox: ['cards','alerts'], security: ['alerts','activity'] } });
+
+    const { org, domain, stats, alerts, mailboxes, subscription, activity } = usePage().props;
     const term = subscription.term === 'annual' ? 'yearly' : 'monthly';
-    const price = plan.price.NGN[term === 'yearly' ? 'yearly' : 'monthly'];
+    const price = subscription.priceNet;
     const withDomain = (name, params) => `${route(name, params)}?domain=${domain.id}`;
 
     return (
@@ -61,7 +58,7 @@ export default function Index() {
                     <div className="hb-fig">
                         <span className="k">Plan</span>
                         <span className="v">{stats.planName}</span>
-                        <span className="s">renews {formatDate(stats.renewsAt)}</span>
+                        <span className="s">renews {stats.renewsAt ? formatDate(stats.renewsAt) : 'not set'}</span>
                     </div>
                     <div className="hb-fig">
                         <span className="k">Domain health</span>
@@ -127,7 +124,7 @@ export default function Index() {
                         </div>
                         <div className="mini-row">
                             <div>
-                                <b>{formatPrice(price, 'NGN')} per {term === 'yearly' ? 'year' : 'month'}</b>
+                                <b>{formatPrice(price, subscription.currency)} per {term === 'yearly' ? 'year' : 'month'}</b>
                                 <span className="sub">Plus VAT at checkout</span>
                             </div>
                         </div>

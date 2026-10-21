@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { router, usePage } from '@inertiajs/react';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import AuditTable from '../../Components/dashboard/AuditTable';
 import Button from '../../Components/ui/Button';
 import Empty from '../../Components/ui/Empty';
 import Note from '../../Components/ui/Note';
-import { useToast } from '../../Components/ui/Toast';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { auditProps, CATEGORIES } from '../../fixtures/dashboard';
+import { route } from '../../Lib/route';
+
+const CATEGORIES = [['all', 'Everything'], ['mailboxes', 'Mailboxes'], ['storage', 'Storage'], ['billing', 'Billing'], ['access', 'Access'], ['domain', 'Domain']];
 
 export default function Audit() {
-    const scenario = useScenario();
-    const [filter, setFilter] = useState('all');
-    const { entries, retentionMonths } = auditProps(filter, scenario);
-    const { toast } = useToast();
+    const owner = usePage().props.auth?.user?.ownerId ?? usePage().props.auth?.user?.id;
+    useRealtimeReload({ channel: `account.${owner}`, map: { domain: ['rows'], mailbox: ['rows'], security: ['rows'] } });
+
+    const { filter, entries, retentionMonths } = usePage().props;
+    const exportUrl = filter === 'all' ? route('dashboard.audit.export') : `${route('dashboard.audit.export')}?filter=${filter}`;
+    const choose = (key) => router.get(route('dashboard.audit'), key === 'all' ? {} : { filter: key }, { preserveScroll: true, preserveState: true });
 
     return (
         <DashboardLayout page="admin-audit" title="Activity log" description="Everything that changed on this account, and who changed it.">
@@ -21,12 +24,12 @@ export default function Audit() {
                     <h1>Activity log</h1>
                     <p>Everything that changed on this account, and who changed it.</p>
                 </div>
-                <Button variant="line" onClick={() => toast({ tone: 'warn', title: 'Export is not connected yet', message: 'In the live product this downloads the filtered log as a CSV file.' })}>Export as CSV</Button>
+                <a className="btn btn-line" href={exportUrl} download>Export as CSV</a>
             </div>
 
             <div className="filters" role="group" aria-label="Filter the log">
                 {CATEGORIES.map(([key, label]) => (
-                    <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}</button>
+                    <button type="button" key={key} aria-pressed={filter === key} onClick={() => choose(key)}>{label}</button>
                 ))}
             </div>
 

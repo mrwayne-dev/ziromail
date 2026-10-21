@@ -42,7 +42,8 @@ export default function TeamList({ people, delegations, onChange, onWithdraw }) 
                         <span className="nm"><b>{person.name}</b><span>{person.email}</span></span>
                     </span>
                     <Pill tone={ROLE[person.role][0]}>{ROLE[person.role][1]}</Pill>
-                    {onChange && <Button variant="line" size="sm" aria-label={`Change ${person.name}`} onClick={() => onChange(person)}>Change</Button>}
+                    {person.pending && <Pill tone="muted">Invited</Pill>}
+                    {onChange && <Button variant="line" size="sm" aria-label={`Remove ${person.name}`} onClick={() => onChange(person)}>Remove</Button>}
                 </div>
             ))}
             {delegations.filter((delegation) => !delegation.revokedAt).map((delegation) => (

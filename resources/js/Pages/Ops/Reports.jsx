@@ -1,74 +1,74 @@
-import Metrics from '../../Components/ops/Metrics';
-import OpsTable from '../../Components/ops/OpsTable';
+import { usePage } from '@inertiajs/react';
+import DataTable from '../../Components/ops/DataTable';
+import { MetricRow } from '../../Components/ops/MetricTile';
+import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
 import SeriesChart from '../../Components/ops/SeriesChart';
-import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
 import Note from '../../Components/ui/Note';
-import { useToast } from '../../Components/ui/Toast';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { reports } from '../../fixtures/ops';
 import { formatPrice } from '../../Lib/money';
 
-function Rows({ rows }) {
-    return <div className="kv">{rows.map(([k, v, tone]) => <div className="r" key={k}><span>{k}</span><b className={tone}>{v}</b></div>)}</div>;
-}
-
 export default function Reports() {
-    const { toast } = useToast();
-    const { headline: h } = reports;
-    const notReady = () => toast({ tone: 'warn', title: 'PDF reports are not connected yet' });
-    const figures = [
-        { k: 'New customers', v: h.newCustomers, d: `+${h.newDelta} on August`, tone: 'up' },
-        { k: 'Left', v: h.left, d: `${h.leftPct}% of the base` },
-        { k: 'Billed', v: `₦${(h.billed / 1e6).toFixed(2)}m`, d: `+${h.billedDeltaPct}% on August`, tone: 'up' },
-        { k: 'Refunded', v: `₦${(h.refunded / 1000).toFixed(1)}k`, d: `${h.refundedPct}% of billings` },
-        { k: 'Uptime', v: `${h.uptime}%`, d: `${h.downMinutes} minutes down`, tone: 'up' },
-        { k: 'Storage sold', v: `${h.storageSoldGb} GB`, d: `${h.addOns} add-ons` },
+    const { month, headline: h, usersByMonth, billing, earlier } = usePage().props;
+    const tiles = [
+        { k: 'New users', v: h.newUsers, d: `${h.newUsersLast} last month`, delta: typeof h.newUsersLast === 'number' ? { value: h.newUsers - h.newUsersLast, unit: '', label: 'vs last month' } : null },
+        { k: 'New domains', v: h.newDomains, d: 'added this month' },
+        { k: 'New mailboxes', v: h.newMailboxes, d: 'created this month' },
+        { k: 'Billed', v: formatPrice(h.billedMinor, 'NGN'), d: 'paid invoices this month' },
+        { k: 'Storage assigned', v: h.assignedGb, unit: 'GB', d: 'across all mailboxes' },
     ];
-    const bars = reports.customersByMonth.map(([label, value], index, all) => ({ label, value, tone: index === all.length - 1 ? 'now' : 'plain' }));
+    const bars = usersByMonth.map((point, index, all) => ({ label: point.label, value: point.total, tone: index === all.length - 1 ? 'now' : 'plain' }));
 
     return (
         <OpsLayout page="ops-reports" title="Reports">
-            <div className="ops-head">
-                <div>
-                    <h1>Monthly report</h1>
-                    <p>{reports.month}, to 29 September. The numbers a founder actually needs: who joined, who left, what it earned, and whether it stayed up. (Illustrative figures.)</p>
-                </div>
-                <Button variant="line" size="sm" onClick={notReady}>Download as PDF</Button>
-            </div>
+            <SectionHeader
+                title={`Monthly report, ${month}`}
+                description="Counted from our records: who joined, what was added, what was billed."
+            />
 
-            <Metrics items={figures} label={`Headline figures for ${reports.month}`} />
+            <MetricRow items={tiles} label={`Headline figures for ${month}`} />
 
-            <section aria-labelledby="gr-h" className="mt-l">
-                <h2 id="gr-h">Customers, month by month</h2>
-                <p className="sm mut mt-s">Total paying organisations at the end of each month since launch.</p>
-                <Card className="mt">
-                    <div className="bars-wrap"><SeriesChart kind="bars" points={bars} label="Customer growth from 34 in March 2026 to 412 in September 2026, rising every month" height={132} /></div>
-                    <div className="bars-ax">{reports.customersByMonth.map(([label, value]) => <span key={label}>{label}<br />{value}</span>)}</div>
-                </Card>
-            </section>
+            <SubSection id="gr-h" title="Users, month by month" description="Total accounts at the end of each of the last six months.">
+                <section className="ops-card">
+                    <div className="ops-reports-chart"><SeriesChart kind="bars" points={bars} label={`Accounts by month: ${usersByMonth.map((p) => `${p.label} ${p.total}`).join(', ')}`} height={132} /></div>
+                    <div className="ops-axis-row">
+                        {usersByMonth.map((p) => <span key={p.label} className="ops-center">{p.label}<br /><b className="ops-tnum">{p.total}</b></span>)}
+                    </div>
+                </section>
+            </SubSection>
 
-            <div className="rp-grid mt-l">
-                <Card as="section" aria-labelledby="mn-h"><h3 id="mn-h">Money</h3><Rows rows={reports.money} /><p className="hint">{reports.moneyNote}</p></Card>
-                <Card as="section" aria-labelledby="ch-h"><h3 id="ch-h">Who left, and why</h3><Rows rows={reports.departures} /><p className="hint">{reports.departuresNote}</p></Card>
-                <Card as="section" aria-labelledby="sv-h"><h3 id="sv-h">Service</h3><Rows rows={reports.service} /></Card>
-                <Card as="section" aria-labelledby="sp-h"><h3 id="sp-h">Support</h3><Rows rows={reports.support} /><p className="hint">{reports.supportNote}</p></Card>
-            </div>
+            <SubSection id="mn-h" title="Billing">
+                <section className="ops-card">
+                    <dl>
+                        {[
+                            ['Paid to date', formatPrice(billing.paidMinor, 'NGN')],
+                            ['Invoices issued', billing.invoices],
+                            ['Unpaid or failed', billing.overdue],
+                        ].map(([k, v]) => (
+                            <div className="ops-kv-row">
+                                <dt>{k}</dt>
+                                <dd className="num">{v}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </section>
+            </SubSection>
 
-            <Note title="What this month says" className="mt"><p>{reports.narrative}</p></Note>
+            <Note title="Not in this report yet">
+                <p>Uptime, support volume, departures and why customers left, and refunds are not recorded anywhere yet. They appear here once the systems that produce them are connected.</p>
+            </Note>
 
-            <section aria-labelledby="ar-h" className="mt-l">
-                <h2 id="ar-h">Earlier reports</h2>
-                <OpsTable
-                    className="mt"
-                    caption="Previous monthly reports"
-                    head={<tr><th scope="col">Month</th><th scope="col" className="num">Customers</th><th scope="col" className="num">Billed</th><th scope="col" className="num">Left</th><th scope="col" className="num">Uptime</th><th scope="col"><span className="sr-only">Download</span></th></tr>}
-                >
-                    {reports.earlier.map((row) => (
-                        <tr key={row.month}><td>{row.month}</td><td className="num">{row.customers}</td><td className="num">{formatPrice(row.billed * 100, 'NGN')}</td><td className="num">{row.left}</td><td className="num">{row.uptime}</td><td><Button variant="line" size="sm" aria-label={`PDF for ${row.month}`} onClick={notReady}>PDF</Button></td></tr>
-                    ))}
-                </OpsTable>
-            </section>
+            <SubSection id="ar-h" title="Earlier months">
+                <DataTable
+                    columns={[
+                        { id: 'month', header: 'Month', accessor: (row) => row.month, nowrap: true },
+                        { id: 'users', header: 'Accounts', accessor: (row) => row.users.toLocaleString('en-NG'), align: 'num', sortable: true, sortValue: (row) => row.users },
+                        { id: 'billed', header: 'Billed', accessor: (row) => formatPrice(row.billedMinor, 'NGN'), align: 'num', sortable: true, sortValue: (row) => row.billedMinor },
+                    ]}
+                    rows={earlier}
+                    rowKey={(row) => row.month}
+                    emptyState={{ title: 'No history yet' }}
+                />
+            </SubSection>
         </OpsLayout>
     );
 }

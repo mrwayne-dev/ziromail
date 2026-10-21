@@ -1,17 +1,12 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import StorageAdder from '../../Components/dashboard/StorageAdder';
 import Card from '../../Components/ui/Card';
 import Note from '../../Components/ui/Note';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { storageProps } from '../../fixtures/dashboard';
 import { route } from '../../Lib/route';
 
 export default function Storage() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const props = storageProps(current.id, scenario);
+    const props = usePage().props;
     const withDomain = (name) => `${route(name)}?domain=${props.domain.id}`;
 
     return (

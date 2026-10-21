@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import QrCode from '../../Components/domain/QrCode';
 import Button from '../../Components/ui/Button';
 import { CheckIcon } from '../../Components/ui/Icons';
@@ -6,22 +6,17 @@ import Note from '../../Components/ui/Note';
 import { useToast } from '../../Components/ui/Toast';
 import Seo from '../../Components/seo/Seo';
 import useOnboarding from '../../Hooks/useOnboarding';
-import useQuery from '../../Hooks/useQuery';
 import OnboardingLayout from '../../Layouts/OnboardingLayout';
 import { onboardingFixture } from '../../fixtures/onboarding';
-import { plans } from '../../fixtures/plans';
-import { decodeMailboxes, quotaOf, rowsFromFixture } from '../../Lib/onboarding';
 import { route } from '../../Lib/route';
 
 const NUMBER_WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
 
 export default function Done() {
-    const { domain, planCode } = useOnboarding();
-    const plan = plans.find((p) => p.code === planCode) ?? plans[0];
-    const rows = decodeMailboxes(useQuery().get('mailboxes')) ?? rowsFromFixture(onboardingFixture.mailboxes.initial);
-    const assigned = Math.round(rows.reduce((sum, row) => sum + quotaOf(row), 0) * 10) / 10;
+    const { domain, plan } = useOnboarding();
+    const { mailboxes: rows, live, recordsPassing, recordsTotal } = usePage().props;
+    const assigned = Math.round(rows.reduce((sum, row) => sum + row.quotaGb, 0) * 10) / 10;
     const free = Math.max(0, Math.round((plan.poolGb - assigned) * 10) / 10);
-    const { importMinutesRemaining, filtering } = onboardingFixture.done;
     const count = NUMBER_WORDS[rows.length] ?? String(rows.length);
     const { toast } = useToast();
 
@@ -29,11 +24,10 @@ export default function Done() {
         toast({ tone: 'warn', title: 'Sending is not live yet', message: `The setup link for ${local}@${domain} will go out on WhatsApp once messaging is connected.` });
     }
 
+    const recordsDone = recordsTotal > 0 && recordsPassing === recordsTotal;
     const checks = [
-        { done: true, title: 'All four records verified', note: 'MX, SPF, DKIM and DMARC are passing' },
-        { done: true, title: `${count} ${rows.length === 1 ? 'mailbox' : 'mailboxes'} created`, note: `${assigned} GB assigned, ${free} GB still free in your pool` },
-        { done: filtering, title: 'Filtering is on', note: 'Spam, phishing and malware, from the first message' },
-        { done: false, title: 'Importing your old mail', note: `About ${importMinutesRemaining} minutes remaining. You can leave this page` },
+        { done: recordsDone, title: recordsDone ? 'All four records verified' : `${recordsPassing} of ${recordsTotal} records verified`, note: recordsDone ? 'MX, SPF, DKIM and DMARC are passing' : 'Mail starts arriving once all four pass. Check them from your dashboard.' },
+        { done: rows.length > 0, title: `${count} ${rows.length === 1 ? 'mailbox' : 'mailboxes'} created`, note: `${assigned} GB assigned, ${free} GB still free in your pool` },
     ];
 
     const next = [
@@ -48,9 +42,11 @@ export default function Done() {
 
             <div className="done-hero" data-hero>
                 <span className="done-tick" aria-hidden="true"><CheckIcon size={34} /></span>
-                <h1>You are live.</h1>
+                <h1>{live ? 'You are live.' : 'Your setup is saved.'}</h1>
                 <p className="lead">
-                    <span className="mono strong">{domain}</span> is verified and your {count.toLowerCase()} {rows.length === 1 ? 'mailbox is' : 'mailboxes are'} ready to receive. Mail sent to {rows.length === 1 ? 'it' : 'them'} now arrives here.
+                    {live
+                        ? <><span className="mono strong">{domain}</span> is verified and your {count.toLowerCase()} {rows.length === 1 ? 'mailbox is' : 'mailboxes are'} ready to receive.</>
+                        : <><span className="mono strong">{domain}</span> goes live once its records verify and payment is switched on. Your {count.toLowerCase()} {rows.length === 1 ? 'mailbox is' : 'mailboxes are'} waiting for it.</>}
                 </p>
             </div>
 

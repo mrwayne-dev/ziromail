@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import AddDomainDialog from '../../Components/dashboard/AddDomainDialog';
 import Button from '../../Components/ui/Button';
 import Meter from '../../Components/ui/Meter';
@@ -6,22 +6,16 @@ import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
 import useDisclosure from '../../Hooks/useDisclosure';
 import useQuery from '../../Hooks/useQuery';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { domainsProps } from '../../fixtures/dashboard';
 import { formatDate, formatGb, pluralise } from '../../Lib/format';
 import { route } from '../../Lib/route';
 
 const PLAN_NAME = { starter: 'Starter', business: 'Business', premium: 'Premium' };
 
 export default function Domains() {
-    const scenario = useScenario();
     const query = useQuery();
-    const props = domainsProps(scenario);
-    const [added, setAdded] = useState([]);
+    const { domains, canAddDomain } = usePage().props;
     const dialog = useDisclosure(query.get('add') === '1' || window.location.hash === '#add');
-    const domains = [...props.domains, ...added];
-
     return (
         <DashboardLayout page="admin-domains" title="Your domains" description="Every domain on this account, its plan and its storage.">
             <div className="page-head">
@@ -29,7 +23,7 @@ export default function Domains() {
                     <h1>Your domains</h1>
                     <p>Each domain carries its own plan and its own storage pool. Nothing is shared between them.</p>
                 </div>
-                {props.canAddDomain && <Button onClick={dialog.open}>Add a domain</Button>}
+                {canAddDomain && <Button onClick={dialog.open}>Add a domain</Button>}
             </div>
 
             <section className="dom-list" aria-labelledby="est-h">
@@ -44,11 +38,11 @@ export default function Domains() {
                                 <span className="sub">
                                     <Pill tone={healthy ? 'ok' : 'warn'}>{healthy ? 'All records passing' : domain.healthNote}</Pill>
                                     <span>{pluralise(domain.mailboxCount, 'mailbox', 'mailboxes')}</span>
-                                    <span>Renews {formatDate(domain.renewsAt)}</span>
+                                    {domain.renewsAt && <span>Renews {formatDate(domain.renewsAt)}</span>}
                                 </span>
                             </div>
                             <div className="dom-pool">
-                                <span className="k">{PLAN_NAME[domain.planCode]} &middot; storage</span>
+                                <span className="k">{PLAN_NAME[domain.planCode] ?? 'No plan yet'} &middot; storage</span>
                                 <span className="v">{formatGb(domain.usedGb)} of {formatGb(domain.poolGb)} used</span>
                                 <Meter used={domain.usedGb} total={domain.poolGb} label={`${formatGb(domain.usedGb)} of ${formatGb(domain.poolGb)} used, ${share} per cent`} />
                             </div>
@@ -69,7 +63,7 @@ export default function Domains() {
                 </p>
             </Note>
 
-            <AddDomainDialog open={dialog.isOpen} onClose={dialog.close} existing={domains} onAdd={(domain) => setAdded((list) => [...list, domain])} />
+            <AddDomainDialog open={dialog.isOpen} onClose={dialog.close} />
         </DashboardLayout>
     );
 }

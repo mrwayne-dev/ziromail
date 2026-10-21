@@ -1,3 +1,4 @@
+import { useForm } from '@inertiajs/react';
 import { useId, useState } from 'react';
 import { fitsInPool } from '../../Lib/pool';
 import { formatGb } from '../../Lib/format';
@@ -6,6 +7,7 @@ import Button from '../ui/Button';
 import Field, { Input } from '../ui/Field';
 import { InfoIcon } from '../ui/Icons';
 import Modal from '../ui/Modal';
+import { route } from '../../Lib/route';
 import { useToast } from '../ui/Toast';
 
 const ADDRESS = /^[a-z0-9](?:[a-z0-9._-]{0,62}[a-z0-9])?$/;
@@ -28,35 +30,30 @@ export function checkNewMailbox({ local, quota }, existing, pool) {
     return { address, gb, errors, valid: Object.keys(errors).length === 0 };
 }
 
-/* Adds a mailbox to this domain's pool. In the preview it only adds a row to the page. */
-export default function AddMailboxDialog({ open, onClose, domain, mailboxes, pool, onAdd }) {
+/* Adds a mailbox to this domain's pool. The checks here are a convenience; the server re-checks the pool and the address. */
+export default function AddMailboxDialog({ open, onClose, domain, mailboxes, pool }) {
     const id = useId();
     const { toast } = useToast();
-    const [form, setForm] = useState({ local: '', name: '', quota: '2', password: 'link', secret: '' });
+    const form = useForm({ domain: domain.id, local_part: '', display_name: '', quota_gb: '2', password_mode: 'link', first_password: '' });
     const [touched, setTouched] = useState(false);
-    const result = checkNewMailbox(form, mailboxes, pool);
-    const set = (key) => (event) => setForm({ ...form, [key]: event.target.value });
-    const show = (field) => (touched ? result.errors[field] : undefined);
+    const result = checkNewMailbox({ local: form.data.local_part, quota: form.data.quota_gb }, mailboxes, pool);
+    const set = (key) => (event) => form.setData(key, event.target.value);
+    const show = (field, serverField = field) => form.errors[serverField] ?? (touched ? result.errors[field] : undefined);
 
     function submit(event) {
         event.preventDefault();
         setTouched(true);
         if (!result.valid) return;
-        onAdd({
-            id: `mb_new_${result.address}`,
-            domainId: domain.id,
-            local: result.address,
-            roleLabel: 'Staff',
-            quotaGb: result.gb,
-            usedGb: 0,
-            lastLoginAt: null,
-            state: 'not_set_up',
-            setupCompletedAt: null,
+        form.transform((data) => ({ ...data, domain: domain.id }));
+        form.post(route('dashboard.mailboxes.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast({ tone: 'ok', title: `${result.address}@${domain.name} added`, message: form.data.password_mode === 'link' ? 'A setup link is ready to send.' : 'They will be asked to change the password at first sign-in.' });
+                form.reset();
+                setTouched(false);
+                onClose();
+            },
         });
-        toast({ tone: 'ok', title: `${result.address}@${domain.name} added`, message: form.password === 'link' ? 'A setup link is ready to send.' : 'They will be asked to change the password at first sign-in.' });
-        setForm({ local: '', name: '', quota: '2', password: 'link', secret: '' });
-        setTouched(false);
-        onClose();
     }
 
     return (
@@ -67,30 +64,30 @@ export default function AddMailboxDialog({ open, onClose, domain, mailboxes, poo
             footer={(
                 <>
                     <Button variant="quiet" onClick={onClose}>Cancel</Button>
-                    <Button type="submit" form={`${id}-form`}>Add mailbox</Button>
+                    <Button type="submit" form={`${id}-form`} busy={form.processing}>Add mailbox</Button>
                 </>
             )}
         >
             <form id={`${id}-form`} noValidate onSubmit={submit}>
                 <p className="hint">On <span className="mono">{domain.name}</span>. Its storage comes out of this domain's pool.</p>
 
-                <Field label="Address" error={show('local')} hint="Letters, numbers, dots and hyphens. This becomes the sign-in name.">
+                <Field label="Address" error={show('local', 'local_part')} hint="Letters, numbers, dots and hyphens. This becomes the sign-in name.">
                     {(props) => (
                         <span className="addr-in">
-                            <Input {...props} className="input mono" value={form.local} placeholder="sales" autoComplete="off" spellCheck="false" autoCapitalize="off" onChange={set('local')} />
+                            <Input {...props} className="input mono" value={form.data.local_part} placeholder="sales" autoComplete="off" spellCheck="false" autoCapitalize="off" onChange={set('local_part')} />
                             <span className="at mono">@{domain.name}</span>
                         </span>
                     )}
                 </Field>
 
                 <Field label="Display name" optional hint="What recipients see as the sender. You can change it later.">
-                    {(props) => <Input {...props} value={form.name} placeholder="Adaobi Foods Sales" autoComplete="off" onChange={set('name')} />}
+                    {(props) => <Input {...props} value={form.data.display_name} placeholder="Adaobi Foods Sales" autoComplete="off" onChange={set('display_name')} />}
                 </Field>
 
-                <Field label="Storage for this mailbox" error={show('quota')} hint={`${formatGb(Math.max(pool.unassignedGb, 0))} is unassigned in the pool.`}>
+                <Field label="Storage for this mailbox" error={show('quota', 'quota_gb')} hint={`${formatGb(Math.max(pool.unassignedGb, 0))} is unassigned in the pool.`}>
                     {(props) => (
                         <span className="q-in">
-                            <Input {...props} type="number" min="0.5" step="0.5" value={form.quota} onChange={set('quota')} />
+                            <Input {...props} type="number" min="0.5" step="0.5" value={form.data.quota_gb} onChange={set('quota_gb')} />
                             <span className="gb">GB</span>
                         </span>
                     )}
@@ -100,23 +97,23 @@ export default function AddMailboxDialog({ open, onClose, domain, mailboxes, poo
                     <legend className="label">First password</legend>
                     <div className="pw-opts">
                         <label className="pw-opt">
-                            <input type="radio" name={`${id}-pw`} value="link" checked={form.password === 'link'} onChange={set('password')} />
+                            <input type="radio" name={`${id}-pw`} value="link" checked={form.data.password_mode === 'link'} onChange={set('password_mode')} />
                             <span className="bd"><b>Send a setup link</b><span>They choose their own password and set up their phone. You never see it.</span></span>
                         </label>
                         <label className="pw-opt">
-                            <input type="radio" name={`${id}-pw`} value="set" checked={form.password === 'set'} onChange={set('password')} />
+                            <input type="radio" name={`${id}-pw`} value="set" checked={form.data.password_mode === 'set'} onChange={set('password_mode')} />
                             <span className="bd"><b>Set one myself</b><span>Hand it over in person. They are asked to change it at first sign-in.</span></span>
                         </label>
                     </div>
-                    {form.password === 'set' && (
-                        <Field label="Password" hint="At least 12 characters.">
-                            {(props) => <Input {...props} type="text" value={form.secret} autoComplete="off" onChange={set('secret')} />}
+                    {form.data.password_mode === 'set' && (
+                        <Field label="Password" error={form.errors.first_password} hint="At least 12 characters. It goes to the mail server and is never kept by us.">
+                            {(props) => <Input {...props} type="text" value={form.data.first_password} autoComplete="off" onChange={set('first_password')} />}
                         </Field>
                     )}
                 </fieldset>
 
                 <Banner tone="info" icon={<InfoIcon />} className="mt">
-                    Preview: nothing is created on a mail server yet. The mailbox appears in this list only.
+                    The mail server is not connected yet, so the mailbox is saved here and activated when it is.
                 </Banner>
             </form>
         </Modal>

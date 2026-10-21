@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import Reveal from '../craft/Reveal';
 import OptionCard, { OptionGroup } from '../ui/OptionCard';
-import { plans } from '../../fixtures/plans';
+import { plans as fixturePlans } from '../../fixtures/plans';
 import { route } from '../../Lib/route';
 import Price from './Price';
 
@@ -49,7 +49,7 @@ function PlanPanel({ plan, index, variant }) {
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 {plan.featured && <span>Most chosen</span>}
             </div>
-            <h3>{plan.name}</h3>
+            <h2 className="plan-name-h">{plan.name}</h2>
             <p className="panel-tag">{copy.tagline}</p>
             <div className="panel-price">
                 <Price price={plan.price} unit={perDomain} />
@@ -95,7 +95,7 @@ function PlanOption({ plan, checked, onChange, current }) {
  *              `value` and `onChange`, and `currentCode` to mark the plan already held
  * Prices and pool sizes come from fixtures/plans.js only.
  */
-export default function PlanPicker({ variant = 'home', value, onChange, currentCode }) {
+export default function PlanPicker({ variant = 'home', value, onChange, currentCode, plans = fixturePlans }) {
     if (variant === 'select') {
         return (
             <OptionGroup legend="Choose a plan" hideLegend>

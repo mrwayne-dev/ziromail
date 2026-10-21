@@ -1,114 +1,160 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
+import SectionHeader from '../../Components/ops/SectionHeader';
 import SeriesChart from '../../Components/ops/SeriesChart';
 import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
 import Note from '../../Components/ui/Note';
-import Pill from '../../Components/ui/Pill';
 import { useToast } from '../../Components/ui/Toast';
 import useOpsCan from '../../Hooks/useOpsCan';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { abuseDetails, abuseFlags } from '../../fixtures/ops';
-import { formatDate } from '../../Lib/format';
-import { route, routeParam } from '../../Lib/route';
+import { formatDate, formatRelative } from '../../Lib/format';
+import { route } from '../../Lib/route';
 
 const DECISIONS = {
-    lock: { title: 'Lock sending', confirm: 'Lock sending', tone: 'danger', done: 'Sending locked. Receiving continues.' },
-    warn: { title: 'Keep the limit and email a warning', confirm: 'Email the warning', tone: 'primary', done: 'Warning emailed. The limit stays.' },
-    lift: { title: 'Lift the limit: not abuse', confirm: 'Lift the limit', tone: 'ink', done: 'Limit lifted.' },
+    locked:  { title: 'Lock sending', confirm: 'Lock sending', tone: 'danger' },
+    warned:  { title: 'Keep the limit and email a warning', confirm: 'Email the warning', tone: 'primary' },
+    cleared: { title: 'Lift the limit: not abuse', confirm: 'Lift the limit', tone: 'ink' },
 };
 
 export default function AbuseDetail() {
-    const flag = abuseFlags.find((candidate) => candidate.id === routeParam('flag')) ?? abuseFlags[0];
-    const detail = abuseDetails[flag.id];
+    useRealtimeReload({ channel: 'ops', map: { abuse: ['flag', 'detail', 'exemptReason'] } });
+
+    const { flag, detail, rules, exemptReason } = usePage().props;
     const { toast } = useToast();
     const can = useOpsCan();
     const [decision, setDecision] = useState(null);
-    const hours = detail.series.today.map((value, index) => ({ label: `${index}`, value, tone: value > detail.series.baseline[index] * 5 ? 'hot' : 'base' }));
-    const hot = detail.series.today.filter((value, index) => value > detail.series.baseline[index] * 5).length;
-    const max = Math.max(...detail.series.today);
+    const [exempting, setExempting] = useState(false);
+    const isOwner = usePage().props.staff?.role === 'owner';
+    const isHot = (value) => value >= rules.minVolume && value > detail.baselinePerHour * rules.volumeMultiple;
+    const hours = detail.series.map((value, index) => ({ label: `${index}`, value, tone: isHot(value) ? 'hot' : 'base' }));
+    const hot = detail.series.filter(isHot).length;
+    const max = Math.max(...detail.series, 1);
+    const start = new Date(detail.startsAt);
+    const hourLabel = (offset) => new Date(start.getTime() + offset * 3600000).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const toneForSeverity = flag.severity === 'high' ? 'bad' : flag.severity === 'medium' ? 'watch' : 'info';
 
-    function confirm() {
-        toast({ tone: 'ok', title: DECISIONS[decision].done, message: 'Preview: nothing was sent or changed.' });
-        setDecision(null);
+    function confirm(reason) {
+        router.post(route('ops.abuse.resolve', { flag: flag.id }), { outcome: decision, reason }, {
+            onSuccess: () => toast({ tone: 'ok', title: 'Decision recorded.', message: 'It is in the audit trail with your name on it.' }),
+            onFinish: () => setDecision(null),
+        });
+    }
+
+    function exempt(reason) {
+        router.post(route('ops.abuse.exempt', { mailbox: flag.mailboxId }), { reason }, {
+            preserveScroll: true,
+            onSuccess: () => toast({ tone: 'ok', title: 'Sending checks switched off for this mailbox.', message: 'It is in the audit trail with your name on it.' }),
+            onFinish: () => setExempting(false),
+        });
+    }
+
+    function restore() {
+        router.post(route('ops.abuse.exempt', { mailbox: flag.mailboxId }), {}, { preserveScroll: true });
     }
 
     return (
-        <OpsLayout page="ops-abuse-detail" title="Sending review">
-            <div className="ops-head">
-                <div>
-                    <h1>Sending review</h1>
-                    <p>Everything the anomaly detector saw, and everything it did not. The decision is yours and it is recorded with your name on it.</p>
-                </div>
-                <Pill tone={flag.severity === 'high' ? 'bad' : 'warn'}>{flag.stateLabel}</Pill>
-            </div>
-            <p className="sm mut mb"><Link href={route('ops.abuse')}>&larr; Abuse queue</Link></p>
+        <OpsLayout page="ops-abuse-detail" title="Sending review" parent={{ href: route('ops.abuse'), label: 'Abuse queue' }}>
+            <SectionHeader
+                title="Sending review"
+                description="Everything the bot counted, and nothing it could not see. The decision is yours and it is recorded with your name on it."
+                badge={flag.stateLabel}
+                actions={<Button variant="line" size="sm" href={route('ops.users.show', { user: flag.ownerId })}>User record</Button>}
+            />
 
-            <Card>
-                <div className="between">
-                    <div>
-                        <h2 className="mono heading-md">{flag.address}</h2>
-                        <p className="sm mut">{flag.orgName} &middot; {detail.subscription} &middot; customer since {formatDate(flag.customerSince)} &middot; {detail.mailboxCount} mailboxes</p>
-                    </div>
-                    <Button variant="line" size="sm" href={route('ops.orgs.show', { org: flag.orgId })}>Organisation record</Button>
-                </div>
-            </Card>
+            <section className={`ops-card tone-${toneForSeverity === 'bad' ? 'high' : toneForSeverity === 'watch' ? 'med' : 'low'}`}>
+                <h2 className="ops-card-h mono">{flag.address}</h2>
+                <p className="ops-card-lede">{flag.orgName} &middot; {detail.plan ?? 'No'} plan &middot; customer since {formatDate(flag.customerSince)} &middot; {detail.mailboxCount} {detail.mailboxCount === 1 ? 'mailbox' : 'mailboxes'}</p>
+            </section>
 
-            <div className="ab-grid mt">
-                <div>
-                    <Card as="section" aria-labelledby="vol-h">
-                        <h3 id="vol-h">Messages sent, last 24 hours</h3>
-                        <p className="sm mut mt-s">Grey is this account's own 30-day hourly average. Red is the hours that broke the {flag.severity === 'high' ? 'limit' : 'pattern'}.</p>
-                        <SeriesChart kind="bars" points={hours} max={max} label={`Hourly sending volume: ${hot} hour${hot === 1 ? '' : 's'} far above the account's own average, peaking at ${max.toLocaleString('en-NG')} messages`} />
-                        <div className="hrs-ax"><span>09:00 yesterday</span><span>00:00</span><span>08:00 today</span></div>
-                        <p className="hint">{detail.summary}</p>
-                    </Card>
-
-                    <Card as="section" aria-labelledby="rec-h" className="mt">
-                        <h3 id="rec-h">Who received them</h3>
-                        <div className="kv mt-s">{detail.recipients.map(([k, v]) => <div className="r" key={k}><span>{k}</span><b>{v}</b></div>)}</div>
-                        <p className="hint">{detail.recipientsNote}</p>
-                    </Card>
-
-                    <Card as="section" aria-labelledby="sig-h" className="mt">
-                        <h3 id="sig-h">Signals that did <em>not</em> fire</h3>
-                        <p className="sm mut mt-s">Worth reading before you lock. These are the reasons this might still be the account owner acting honestly.</p>
-                        <div className="kv mt-s">{detail.signals.map(([k, v]) => <div className="r" key={k}><span>{k}</span><b>{v}</b></div>)}</div>
-                        <p className="hint">{detail.signalsNote}</p>
-                    </Card>
-                </div>
-
-                <div className="stack">
-                    <Card>
-                        <h3>Decide</h3>
-                        <p className="sm mut mt-s">Sending is already rate limited to {flag.baselineHourly} messages an hour, applied automatically. Choose what happens next.</p>
-                        <div className="stack mt">
-                            {can('lock')
-                                ? <Button variant="danger" full onClick={() => setDecision('lock')}>Lock sending</Button>
-                                : <Button variant="line" full disabled title="Only Engineers and Owners can lock an account">Lock sending</Button>}
-                            <Button full onClick={() => setDecision('warn')}>Keep the limit, email a warning</Button>
-                            <Button variant="line" full onClick={() => setDecision('lift')}>Lift the limit: not abuse</Button>
-                            <p className="hint">Whichever you pick, you write a sentence saying why. It appears in the audit trail and in the email the customer receives.</p>
+            <div className="ops-row2 mt-20">
+                <div className="ops-stack">
+                    <section className="ops-card" aria-labelledby="vol-h">
+                        <h3 className="ops-card-h" id="vol-h">Messages sent, last 24 hours</h3>
+                        <p className="ops-card-lede">Red marks hours more than {rules.volumeMultiple} times this mailbox's own hourly average ({detail.baselinePerHour}).</p>
+                        <div className="mt-14">
+                            <SeriesChart kind="bars" points={hours} max={max} label={`Hourly sending volume: ${hot} hour${hot === 1 ? '' : 's'} far above the mailbox's own average, peaking at ${max.toLocaleString('en-NG')} messages`} />
+                            <div className="ops-axis-row ops-tnum mt-8">
+                                <span>{hourLabel(0)}</span><span>{hourLabel(12)}</span><span>{hourLabel(23)}</span>
+                            </div>
                         </div>
-                    </Card>
+                        <p className="ops-sm ops-mut mt-10">{flag.summary}.</p>
+                    </section>
+
+                    <section className="ops-card" aria-labelledby="rec-h">
+                        <h3 className="ops-card-h" id="rec-h">What the bot counted</h3>
+                        <dl className="mt-10">
+                            {flag.evidence.map((item) => (
+                                <div key={item.key} className="ops-kv-row">
+                                    <dt>{item.k}</dt>
+                                    <dd className={item.hot ? 'num hot' : 'num'}>{item.v}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                        <p className="ops-sm ops-mut mt-10">{flag.verdict}</p>
+                    </section>
+
+                    <Note title="What the bot cannot see">
+                        <p>It never reads subject lines, message bodies or recipient addresses, and neither can you. Counts and rates are all that is kept. If you need to know what was sent, ask the owner.</p>
+                    </Note>
+                </div>
+
+                <div className="ops-stack">
+                    <section className="ops-card">
+                        <h3 className="ops-card-h">Decide</h3>
+                        <p className="ops-card-lede">
+                            {flag.sendingState === 'locked' ? 'Sending is locked now.' : flag.sendingState === 'limited' ? `Sending is slowed to ${rules.limitedPerHour} messages an hour, applied automatically.` : 'Sending is not restricted.'} Choose what happens next.
+                        </p>
+                        <div className="ops-stack ops-stack-tight mt-12">
+                            {can('lock')
+                                ? <Button variant="danger" full onClick={() => setDecision('locked')} disabled={flag.sendingState === 'locked'}>Lock sending</Button>
+                                : <Button variant="line" full disabled title="Only Engineers and Owners can lock an account">Lock sending</Button>}
+                            <Button full onClick={() => setDecision('warned')}>Keep the limit, email a warning</Button>
+                            <Button variant="line" full onClick={() => setDecision('cleared')}>Lift the limit: not abuse</Button>
+                        </div>
+                        <p className="ops-sm ops-mut mt-10">Whichever you pick, you write a sentence saying why. It appears in the audit trail and in the email the customer receives.</p>
+                    </section>
+
+                    {isOwner && (
+                        <section className="ops-card">
+                            <h3 className="ops-card-h">Sending checks</h3>
+                            {exemptReason
+                                ? <>
+                                    <p className="ops-card-lede">Switched off for this mailbox: {exemptReason}</p>
+                                    <Button variant="line" full className="mt-10" onClick={restore}>Switch checks back on</Button>
+                                  </>
+                                : <>
+                                    <p className="ops-card-lede">For a customer who legitimately sends in bulk. The bot stops flagging this mailbox. Use sparingly.</p>
+                                    <Button variant="line" full className="mt-10" onClick={() => setExempting(true)}>Switch checks off</Button>
+                                  </>}
+                        </section>
+                    )}
 
                     <Note tone="warn" title="What a lock does">
-                        <p>Sending stops immediately. Mail still arrives, sign-in still works and nothing is deleted. The owner gets an email with the reason and a reply address. Support can lift a lock; only an owner-level account can delete data.</p>
+                        <p>Sending stops immediately. Mail still arrives, sign-in still works and nothing is deleted. The owner gets an email with the reason and a reply address.</p>
                     </Note>
 
-                    <Card>
-                        <h3>Account history</h3>
-                        <div className="feed-lite mt-s">{detail.history.map(([when, what]) => <p key={when}><b>{when}</b>: {what}</p>)}</div>
-                        <p className="hint">{detail.historyNote}</p>
-                    </Card>
+                    <section className="ops-card">
+                        <h3 className="ops-card-h">History on this mailbox</h3>
+                        {detail.history.length === 0
+                            ? <p className="ops-sm ops-mut mt-10">Nothing has been recorded yet.</p>
+                            : <div className="ops-stack-tight mt-10">
+                                {detail.history.map((item) => (
+                                    <p key={item.id} className="ops-sm m-0">
+                                        <b>{formatRelative(item.at)}</b>: {item.text}{item.detail ? ` (${item.detail})` : ''}
+                                    </p>
+                                ))}
+                              </div>}
+                    </section>
 
                     <Note tone="bad" title="If this reaches a blocklist">
-                        <p>The four sending IPs carry all 412 customers. A Spamhaus listing caused by this account puts every other customer's mail in the spam folder within hours, and delisting takes days. The cost of locking wrongly is one annoyed customer; the cost of waiting is all of them.</p>
+                        <p>Customers share sending addresses, so a listing caused by one account can put every other customer's mail in the spam folder within hours, and delisting takes days. The cost of locking wrongly is one annoyed customer; the cost of waiting is all of them.</p>
                     </Note>
                 </div>
             </div>
 
+            <ReasonDialog open={exempting} onClose={() => setExempting(false)} title="Switch sending checks off" description={`${flag.address}. The bot will stop flagging this mailbox until an owner switches it back on.`} confirmLabel="Switch off" tone="ink" onConfirm={exempt} />
             <ReasonDialog
                 open={Boolean(decision)}
                 onClose={() => setDecision(null)}

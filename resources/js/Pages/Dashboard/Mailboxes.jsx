@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { Link, usePage } from '@inertiajs/react';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import AddMailboxDialog from '../../Components/dashboard/AddMailboxDialog';
 import { MailboxStatus } from '../../Components/dashboard/MailboxTable';
 import PoolBar from '../../Components/domain/PoolBar';
@@ -10,30 +10,19 @@ import { AlertIcon } from '../../Components/ui/Icons';
 import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
 import Table from '../../Components/ui/Table';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
 import useDisclosure from '../../Hooks/useDisclosure';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { overviewProps } from '../../fixtures/dashboard';
-import { plansFixture } from '../../fixtures/plans';
-import { can } from '../../Lib/permissions';
 import { formatGb, formatRelative, initials } from '../../Lib/format';
-import { poolSummary } from '../../Lib/pool';
 import { route } from '../../Lib/route';
 
 export default function Mailboxes() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const props = overviewProps(current.id, scenario);
-    const { domain } = props;
-    const [added, setAdded] = useState([]);
+    const owner = usePage().props.auth?.user?.ownerId ?? usePage().props.auth?.user?.id;
+    useRealtimeReload({ channel: `account.${owner}`, map: { mailbox: ['mailboxes','pool','domain'], domain: ['domain','pool'] } });
+
+    const { domain, plan, pool, mailboxes, can } = usePage().props;
     const dialog = useDisclosure();
-    const mailboxes = [...props.mailboxes, ...added.filter((mailbox) => mailbox.domainId === domain.id)];
-    const pool = poolSummary(domain, mailboxes);
-    const plan = plansFixture.plans.find((candidate) => candidate.code === domain.planCode);
     const withDomain = (name, params) => `${route(name, params)}?domain=${domain.id}`;
     const recordsBroken = domain.recordsPassing < domain.recordsTotal;
-    const role = 'owner';
 
     const segments = mailboxes.map((mailbox) => ({ key: mailbox.id, gb: mailbox.quotaGb, label: `${mailbox.quotaGb} GB` }));
     const description = `${formatGb(pool.poolGb)} pool: ${mailboxes.map((mailbox) => `${mailbox.local} ${mailbox.quotaGb} GB`).join(', ')}${pool.unassignedGb > 0 ? `, ${formatGb(pool.unassignedGb)} unassigned` : ''}`;
@@ -46,8 +35,8 @@ export default function Mailboxes() {
                     <p>Everything here belongs to <span className="mono">{domain.name}</span>. Switch domain at the top to manage another.</p>
                 </div>
                 <div className="btn-row no-grow">
-                    {can(role, 'mailboxes.manage') && <Button onClick={dialog.open}>Add a mailbox</Button>}
-                    {can(role, 'storage.buy') && <Button variant="line" href={withDomain('dashboard.storage')}>Add extra storage</Button>}
+                    {can.create && <Button onClick={dialog.open}>Add a mailbox</Button>}
+                    {can.buyStorage && <Button variant="line" href={withDomain('dashboard.storage')}>Add extra storage</Button>}
                 </div>
             </div>
 
@@ -148,7 +137,6 @@ export default function Mailboxes() {
                 domain={domain}
                 mailboxes={mailboxes}
                 pool={pool}
-                onAdd={(mailbox) => setAdded((list) => [...list, mailbox])}
             />
         </DashboardLayout>
     );

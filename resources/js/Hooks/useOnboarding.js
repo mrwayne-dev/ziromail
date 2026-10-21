@@ -1,15 +1,18 @@
-import { onboardingFixture } from '../fixtures/onboarding';
-import useQuery from './useQuery';
+import { usePage } from '@inertiajs/react';
 
 /*
- * What the wizard carries from step to step: the domain and the chosen plan.
- * Until there is a server to remember them they travel in the URL, falling back
- * to the fixture's. `carry(extra)` is the params for the next step's route().
+ * What the wizard carries from step to step: the domain being set up and the plan on it.
+ * The server holds both, so a refresh or a second device picks up where setup left off.
+ * `carry(extra)` is the params for the next step's route(): just the domain's public id.
  */
 export default function useOnboarding() {
-    const query = useQuery();
-    const domain = query.get('domain') ?? onboardingFixture.domain;
-    const planCode = query.get('plan') ?? onboardingFixture.plan;
+    const { onboarding } = usePage().props;
 
-    return { domain, planCode, carry: (extra = {}) => ({ domain, plan: planCode, ...extra }) };
+    return {
+        domain: onboarding.domain.name,
+        domainId: onboarding.domain.id,
+        plan: onboarding.plan,
+        planCode: onboarding.plan.code,
+        carry: (extra = {}) => ({ domain: onboarding.domain.id, ...extra }),
+    };
 }

@@ -1,31 +1,14 @@
+import { router, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import Button from '../../Components/ui/Button';
 import Field, { Input } from '../../Components/ui/Field';
-import { CheckIcon, InfoIcon } from '../../Components/ui/Icons';
 import AsideCards from '../../Components/ui/AsideCards';
-import OptionCard, { OptionGroup } from '../../Components/ui/OptionCard';
 import Seo from '../../Components/seo/Seo';
 import useFocusFirstError from '../../Hooks/useFocusFirstError';
-import useQuery from '../../Hooks/useQuery';
-import useOnboarding from '../../Hooks/useOnboarding';
 import OnboardingLayout from '../../Layouts/OnboardingLayout';
-import { onboardingFixture } from '../../fixtures/onboarding';
+import { plans } from '../../fixtures/plans';
 import { checkDomainInput } from '../../Lib/domain';
 import { route } from '../../Lib/route';
-import { simulateLatency } from '../../Lib/simulate';
-
-const kinds = [
-    {
-        value: 'own',
-        title: 'I already own it',
-        description: 'Bought from Whogohost, GoDaddy, Namecheap or anywhere else. You keep it there and point its mail at us.',
-    },
-    {
-        value: 'external',
-        title: 'It is managed by someone else',
-        description: 'Your web developer or agency holds the login. We will send them the records to add.',
-    },
-];
 
 const asides = [
     {
@@ -43,31 +26,28 @@ const asides = [
 ];
 
 export default function Domain() {
-    const initial = useQuery().get('domain') ?? '';
-    const { planCode } = useOnboarding();
+    const { errors } = usePage().props;
     const formRef = useRef(null);
-    const [kind, setKind] = useState('own');
-    const [domain, setDomain] = useState(initial);
-    const [manager, setManager] = useState('');
-    const [error, setError] = useState('');
-    const [checking, setChecking] = useState(false);
-    const [result, setResult] = useState(null);
+    const [domain, setDomain] = useState('');
+    const [problem, setProblem] = useState('');
+    const [saving, setSaving] = useState(false);
+    const error = problem || errors.name || '';
     useFocusFirstError(formRef, error ? { domain: error } : {});
 
-    async function onSubmit(e) {
+    function onSubmit(e) {
         e.preventDefault();
-        const { domain: clean, error: problem } = checkDomainInput(domain);
-        setResult(null);
-        if (problem) {
-            setError(problem);
+        const { domain: clean, error: invalid } = checkDomainInput(domain);
+        if (invalid) {
+            setProblem(invalid);
             return;
         }
-        setError('');
+        setProblem('');
         setDomain(clean);
-        setChecking(true);
-        await simulateLatency();
-        setChecking(false);
-        setResult({ domain: clean, ...onboardingFixture.domainCheck });
+        const plan = plans.find((p) => p.featured) ?? plans[0];
+        router.post(route('onboarding.domain.store'), { name: clean, plan: plan.code }, {
+            onStart: () => setSaving(true),
+            onFinish: () => setSaving(false),
+        });
     }
 
     return (
@@ -82,52 +62,15 @@ export default function Domain() {
                     </div>
 
                     <form ref={formRef} onSubmit={onSubmit} noValidate>
-                        <OptionGroup legend="Where is this domain now?">
-                            {kinds.map((k) => (
-                                <OptionCard key={k.value} name="domkind" value={k.value} checked={kind === k.value} onChange={setKind} title={k.title} description={k.description} />
-                            ))}
-                        </OptionGroup>
-
                         <div className="dom-field">
                             <Field label="Your domain" error={error} hint={<>Just the domain: no <span className="mono">www</span>, no <span className="mono">https://</span>, no email address.</>}>
                                 {(p) => (
-                                    <Input {...p} name="domain" type="text" placeholder="yourbusiness.com" autoComplete="off" spellCheck="false" autoCapitalize="off" value={domain} onChange={(e) => { setDomain(e.target.value); setError(''); setResult(null); }} />
+                                    <Input {...p} name="domain" type="text" placeholder="yourbusiness.com" autoComplete="off" spellCheck="false" autoCapitalize="off" value={domain} onChange={(e) => { setDomain(e.target.value); setProblem(''); }} />
                                 )}
                             </Field>
                         </div>
 
-                        {kind === 'external' && (
-                            <Field label="Who manages it? (optional)" hint="We will email them the four records to add, and copy you in. You can also skip this and send the records on yourself.">
-                                {(p) => <Input {...p} name="manager" type="email" placeholder="developer@agency.com" autoComplete="off" spellCheck="false" value={manager} onChange={(e) => setManager(e.target.value)} />}
-                            </Field>
-                        )}
-
-                        <Button type="submit" size="lg" busy={checking}>Check this domain</Button>
-
-                        {result && (
-                            <div className="found" role="status">
-                                <div className="found-row">
-                                    <span className="found-ic found-ic-ok"><CheckIcon /></span>
-                                    <span className="found-name">
-                                        <b>{result.domain} is available to connect</b>
-                                        <span>Not already set up with another Ziroemail account</span>
-                                    </span>
-                                </div>
-                                <div className="found-row">
-                                    <span className="found-ic found-ic-info"><InfoIcon size={13} /></span>
-                                    <span className="found-name">
-                                        <b>Your mail is handled by {result.currentProvider} today</b>
-                                        <span>We read your MX records to work this out. Nothing has changed.</span>
-                                    </span>
-                                </div>
-                                <div className="found-row found-foot">
-                                    <span className="found-name sm">
-                                        {result.importsMail && `We will import your existing mail from ${result.currentProvider.split(' ')[0]} once your records verify.`}
-                                    </span>
-                                    <Button size="sm" href={route('onboarding.plan', { domain: result.domain, plan: planCode })}>Continue to payment</Button>
-                                </div>
-                            </div>
-                        )}
+                        <Button type="submit" size="lg" busy={saving}>Continue</Button>
                     </form>
                 </div>
 

@@ -1,9 +1,10 @@
+import { usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import Metrics from '../../Components/ops/Metrics';
-import OpsTable from '../../Components/ops/OpsTable';
+import DataTable from '../../Components/ops/DataTable';
+import { MetricRow } from '../../Components/ops/MetricTile';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
+import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
 import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
 import Field, { Input } from '../../Components/ui/Field';
 import Note from '../../Components/ui/Note';
 import Select from '../../Components/ui/Select';
@@ -14,11 +15,9 @@ import OpsLayout from '../../Layouts/OpsLayout';
 import { orgRows, refundFigures, refunds, rules } from '../../fixtures/ops';
 import { formatDate, formatTime } from '../../Lib/format';
 import { formatPrice } from '../../Lib/money';
-import { usePage } from '@inertiajs/react';
 
 const PLAN_PRICE = { starter: 1612500, business: 2967000, premium: 5805000 };
 
-// The published policy, as arithmetic: inside the guarantee a full refund; after it, only unused whole months of a yearly plan.
 function policyAmount(planCode, days) {
     const price = PLAN_PRICE[planCode];
     if (days <= rules.refundGuaranteeDays) return { minor: price, note: `Inside the ${rules.refundGuaranteeDays}-day guarantee: full refund.` };
@@ -37,6 +36,8 @@ export default function Refunds() {
     const draftOrg = orgRows.find((row) => row.id === draft.org);
     const draftAmount = policyAmount(draftOrg.planCode, Number(draft.days) || 0);
 
+    const tiles = refundFigures.map((row) => ({ k: row.k, v: row.v, d: row.d }));
+
     function decide(reason) {
         const verb = { approve: 'approved', decline: 'declined' }[pending.kind];
         setWaiting((list) => list.filter((item) => item.id !== pending.refund.id));
@@ -53,61 +54,72 @@ export default function Refunds() {
 
     return (
         <OpsLayout page="ops-refunds" title="Refunds">
-            <div className="ops-head">
-                <div>
-                    <h1>Refunds</h1>
-                    <p>Money going back out. Anything above {formatPrice(rules.refundSecondApproverMinor, 'NGN')} needs a second person to approve it, and every refund records who asked and who agreed.</p>
-                </div>
-                {can('refund.request') && <Button variant="line" size="sm" onClick={start.open}>Start a refund</Button>}
-            </div>
+            <SectionHeader
+                title="Refunds"
+                description={`Money going back out. Anything above ${formatPrice(rules.refundSecondApproverMinor, 'NGN')} needs a second person to approve it, and every refund records who asked and who agreed.`}
+                badge={`${waiting.length} waiting`}
+                actions={can('refund.request') ? <Button variant="line" size="sm" onClick={start.open}>Start a refund</Button> : null}
+            />
 
-            <Metrics items={refundFigures} label="Refund figures" />
+            <MetricRow items={tiles} label="Refund figures" />
 
-            <section aria-labelledby="pd-h" className="mt-l">
-                <h2 id="pd-h">Waiting for a decision</h2>
-                {waiting.length === 0 && <p className="sm mut mt-s">Nothing is waiting.</p>}
-                {waiting.map((refund) => (
-                    <article className="rf" key={refund.id} aria-labelledby={`${refund.id}-h`}>
-                        <div className="rf-top">
-                            <div>
-                                <h3 id={`${refund.id}-h`}>{refund.orgName}</h3>
-                                <p className="sm mut"><span className="mono">{refund.domain}</span> &middot; {refund.planName} plan &middot; paid {formatDate(refund.paidAt)}</p>
+            <SubSection id="pd-h" title="Waiting for a decision">
+                {waiting.length === 0 && (
+                    <div className="ops-card ops-empty"><b>Nothing is waiting</b></div>
+                )}
+                <div className="ops-stack">
+                    {waiting.map((refund) => (
+                        <article key={refund.id} className="ops-card" aria-labelledby={`${refund.id}-h`}>
+                            <div className="ops-flag-top">
+                                <div>
+                                    <h3 id={`${refund.id}-h`} className="ops-card-h">{refund.orgName}</h3>
+                                    <p className="ops-card-lede"><span className="mono">{refund.domain}</span> &middot; {refund.planName} plan &middot; paid {formatDate(refund.paidAt)}</p>
+                                </div>
+                                <span className="ops-refund-amt">{formatPrice(refund.paid.minor, refund.paid.currency)}</span>
                             </div>
-                            <span className="rf-amt">{formatPrice(refund.paid.minor, refund.paid.currency)}</span>
-                        </div>
-                        <div className="kv">
-                            <div className="r"><span>Reason given</span><b>{refund.reason}</b></div>
-                            <div className="r"><span>Days since payment</span><b>{refund.daysSincePayment}{refund.insideGuarantee ? `, inside the ${rules.refundGuaranteeDays}-day guarantee` : ''}</b></div>
-                            <div className="r"><span>Mail ever delivered</span><b>{refund.mailEverDelivered}</b></div>
-                            {refund.extra.map(([k, v]) => <div className="r" key={k}><span>{k}</span><b>{v}</b></div>)}
-                            <div className="r"><span>Requested by</span><b>{refund.requestedBy} &middot; {formatDate(refund.requestedAt, { year: false })}, {formatTime(refund.requestedAt)}</b></div>
-                        </div>
-                        <p className="sm mut mt">{refund.recommendation}</p>
-                        <div className="rf-acts">
-                            <Button size="sm" disabled={!canApprove(refund)} title={canApprove(refund) ? undefined : 'An Owner other than the requester must approve'} onClick={() => setPending({ kind: 'approve', refund })}>Approve {formatPrice(refund.paid.minor, refund.paid.currency)}</Button>
-                            <Button variant="line" size="sm" href={`tel:+2348034112287`}>Call before deciding</Button>
-                            <Button variant="quiet" size="sm" disabled={!can('refund.approve')} onClick={() => setPending({ kind: 'decline', refund })}>Decline with a reason</Button>
-                        </div>
-                        <p className="hint">{approverHint(refund)}</p>
-                    </article>
-                ))}
-            </section>
-
-            <section aria-labelledby="ph-h" className="mt-l">
-                <h2 id="ph-h">Paid out this month</h2>
-                <OpsTable
-                    className="mt"
-                    caption="Refunds paid this month"
-                    head={<tr><th scope="col">Organisation</th><th scope="col">Reason</th><th scope="col" className="num">Amount</th><th scope="col">Approved by</th><th scope="col" className="num">Paid</th></tr>}
-                >
-                    {refunds.paid.map((row) => (
-                        <tr key={row.id}><td>{row.orgName}</td><td className="wide">{row.reason}</td><td className="num">{formatPrice(row.amount.minor, row.amount.currency)}</td><td>{row.approvedBy}</td><td className="num">{formatDate(row.paidAt, { year: false })}</td></tr>
+                            <dl className="mt-14">
+                                {[
+                                    ['Reason given', refund.reason],
+                                    ['Days since payment', `${refund.daysSincePayment}${refund.insideGuarantee ? `, inside the ${rules.refundGuaranteeDays}-day guarantee` : ''}`],
+                                    ['Mail ever delivered', refund.mailEverDelivered],
+                                    ...refund.extra,
+                                    ['Requested by', `${refund.requestedBy} · ${formatDate(refund.requestedAt, { year: false })}, ${formatTime(refund.requestedAt)}`],
+                                ].map(([k, v]) => (
+                                    <div className="ops-kv-row">
+                                        <dt>{k}</dt>
+                                        <dd className="right">{v}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                            <p className="ops-sm ops-mut mt-10">{refund.recommendation}</p>
+                            <div className="ops-actions">
+                                <Button size="sm" disabled={!canApprove(refund)} title={canApprove(refund) ? undefined : 'An Owner other than the requester must approve'} onClick={() => setPending({ kind: 'approve', refund })}>Approve {formatPrice(refund.paid.minor, refund.paid.currency)}</Button>
+                                <Button variant="line" size="sm" href="tel:+2348034112287">Call before deciding</Button>
+                                <Button variant="quiet" size="sm" disabled={!can('refund.approve')} onClick={() => setPending({ kind: 'decline', refund })}>Decline with a reason</Button>
+                                <span className="ops-sm ops-mut ops-approver-hint">{approverHint(refund)}</span>
+                            </div>
+                        </article>
                     ))}
-                </OpsTable>
+                </div>
+            </SubSection>
+
+            <SubSection id="ph-h" title="Paid out this month">
+                <DataTable
+                    columns={[
+                        { id: 'org', header: 'Organisation', accessor: (row) => row.orgName, sortable: true },
+                        { id: 'reason', header: 'Reason', accessor: (row) => row.reason },
+                        { id: 'amount', header: 'Amount', accessor: (row) => formatPrice(row.amount.minor, row.amount.currency), align: 'num', sortable: true, sortValue: (row) => row.amount.minor },
+                        { id: 'approver', header: 'Approved by', accessor: (row) => row.approvedBy },
+                        { id: 'paid', header: 'Paid', accessor: (row) => formatDate(row.paidAt, { year: false }), align: 'num', sortable: true, sortValue: (row) => row.paidAt },
+                    ]}
+                    rows={refunds.paid}
+                    rowKey={(row) => row.id}
+                    emptyState={{ title: 'No refunds this month' }}
+                />
                 <Note title="What we promise" className="mt">
                     <p>Fourteen days, no questions, full amount: that is what the pricing page says, so that is what we honour without argument. Outside fourteen days it is a judgement call, and the deciding question is whether the service actually worked. If mail never flowed, refund it however long ago they paid.</p>
                 </Note>
-            </section>
+            </SubSection>
 
             <ReasonDialog
                 open={Boolean(pending)}
@@ -129,7 +141,7 @@ export default function Refunds() {
             >
                 <Field label="Organisation">{(props) => <Select {...props} value={draft.org} onChange={(e) => setDraft({ ...draft, org: e.target.value })}>{orgRows.map((row) => <option key={row.id} value={row.id}>{row.name}</option>)}</Select>}</Field>
                 <Field label="Days since payment">{(props) => <Input {...props} type="number" min="0" value={draft.days} onChange={(e) => setDraft({ ...draft, days: e.target.value })} />}</Field>
-                <p className="sm"><b>{formatPrice(draftAmount.minor, 'NGN')}</b>. {draftAmount.note}</p>
+                <p className="ops-sm"><b>{formatPrice(draftAmount.minor, 'NGN')}</b>. {draftAmount.note}</p>
             </ReasonDialog>
         </OpsLayout>
     );

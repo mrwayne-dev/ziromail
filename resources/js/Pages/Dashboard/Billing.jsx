@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import PlanChangePreview from '../../Components/dashboard/PlanChangePreview';
 import PlanPicker from '../../Components/domain/PlanPicker';
@@ -9,11 +10,7 @@ import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
 import Table from '../../Components/ui/Table';
 import { useToast } from '../../Components/ui/Toast';
-import useCurrentDomain from '../../Hooks/useCurrentDomain';
-import useScenario from '../../Hooks/useScenario';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { billingProps } from '../../fixtures/dashboard';
-import { plansFixture } from '../../fixtures/plans';
 import { planChangePreview } from '../../Lib/billing';
 import { formatDate, formatGb } from '../../Lib/format';
 import { formatPrice } from '../../Lib/money';
@@ -21,6 +18,7 @@ import { route } from '../../Lib/route';
 
 const PAID_BY = { transfer: 'Bank transfer', card: 'Card', ussd: 'USSD', usd: 'Dollar card' };
 const STATE_BANNER = {
+    incomplete: ['warn', 'Payment is needed to start this domain', 'Add the DNS records, then pay, and mail starts flowing. Payments open once the payment provider is connected.'],
     past_due: ['bad', 'Your last payment did not go through', 'Mail keeps working while we retry. Pay before the grace period ends to avoid a pause on sending.'],
     grace: ['warn', 'You are in the grace period', 'Mail still works. Pay soon: sending pauses when the grace period ends.'],
     suspended: ['bad', 'This domain is suspended', 'Sending is paused and mail is held. Pay the outstanding invoice to restore it.'],
@@ -28,21 +26,19 @@ const STATE_BANNER = {
 };
 
 export default function Billing() {
-    const { current } = useCurrentDomain();
-    const scenario = useScenario();
-    const { domain, subscription, plan, invoices, storage, paymentMethod, can } = billingProps(current.id, scenario);
+    const { domain, subscription, plan, plans, invoices, storage, paymentMethod, can } = usePage().props;
     const { toast } = useToast();
     const [changing, setChanging] = useState(false);
     const [target, setTarget] = useState(plan.code);
-    const preview = planChangePreview({ domain, subscription, targetCode: target });
-    const net = subscription.priceExVat.minor;
-    const total = net + subscription.vat.minor;
+    const preview = planChangePreview({ domain, subscription, plans, targetCode: target });
+    const net = subscription.priceNet;
+    const total = net + subscription.vat;
     const banner = STATE_BANNER[subscription.status];
     const ceilingPct = storage.ceilingGb ? 100 / storage.ceilingGb : 0;
     const withDomain = (name) => `${route(name)}?domain=${domain.id}`;
 
     function confirm() {
-        toast({ tone: 'ok', title: preview.direction === 'up' ? 'Upgrade requested' : 'Change scheduled', message: 'Preview: nothing is charged or changed yet.' });
+        toast({ tone: 'warn', title: 'Plan changes open soon', message: 'Payments are not connected yet, so nothing was changed.' });
         setChanging(false);
         setTarget(plan.code);
     }
@@ -88,7 +84,7 @@ export default function Billing() {
                             <div className="blocks">
                                 <div className="blocks-copy">
                                     <b>Need more room?</b>
-                                    <span className="sm mut">{formatPrice(plansFixture.extraStorage.price.NGN.yearly, 'NGN')} for each {storage.extra.blockGb} GB a year, renewing with the plan. Added to the pool immediately.</span>
+                                    <span className="sm mut">{formatPrice(plan.extraStorage.price.NGN.yearly, 'NGN')} for each {storage.extra.blockGb} GB a year, renewing with the plan. Added to the pool immediately.</span>
                                 </div>
                                 <Button href={withDomain('dashboard.storage')}>Add {storage.extra.blockGb} GB</Button>
                             </div>
@@ -122,8 +118,8 @@ export default function Billing() {
                         <div className="plan-rows">
                             <div className="plan-row"><span>Plan</span><b>{plan.name}</b></div>
                             <div className="plan-row"><span>Domain</span><b className="mono small-mono">{domain.name}</b></div>
-                            <div className="plan-row"><span>Renews</span><b>{formatDate(subscription.renewsAt)}</b></div>
-                            <div className="plan-row"><span>Paid by</span><b>{PAID_BY[paymentMethod.channel]}</b></div>
+                            <div className="plan-row"><span>Renews</span><b>{subscription.renewsAt ? formatDate(subscription.renewsAt) : 'Not set'}</b></div>
+                            <div className="plan-row"><span>Paid by</span><b>{PAID_BY[paymentMethod.channel] ?? 'Not paid yet'}</b></div>
                         </div>
                         <div className="btn-row no-grow mt">
                             {can.changePlan && <Button variant="white" size="sm" onClick={() => setChanging(true)}>Change plan</Button>}
@@ -135,7 +131,7 @@ export default function Billing() {
                         <section className="chg" aria-labelledby="chg-h">
                             <h3 className="heading-sm" id="chg-h">Change plan</h3>
                             <p className="sm mut mt-s">You are on <b>{plan.name}</b>, {plan.poolGb} GB for {formatPrice(plan.price.NGN.yearly, 'NGN')} a year.</p>
-                            <PlanPicker variant="select" value={target} onChange={setTarget} currentCode={plan.code} />
+                            <PlanPicker variant="select" value={target} onChange={setTarget} currentCode={plan.code} plans={plans} />
                             <PlanChangePreview preview={preview} onConfirm={confirm} />
                             <Button variant="quiet" size="sm" full className="mt-s" onClick={() => { setChanging(false); setTarget(plan.code); }}>Cancel</Button>
                         </section>

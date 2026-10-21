@@ -124,3 +124,29 @@ export const plansFixture = {
 export const plans = plansFixture.plans;
 export const startingYearlyPrice = (currency = 'NGN') =>
     Math.min(...plans.map((p) => p.price[currency].yearly));
+
+/*
+ * Prices, pool sizes and ceilings live in the plans table. The server shares them as `catalog`,
+ * and this writes them over the fixture once per page load, so every component that reads
+ * `plans` (the website, onboarding, the dashboard) sees the same numbers. Marketing copy
+ * (taglines, feature lists) stays here: it is words, not data. With no catalog (a page that
+ * did not share one) the fixture's own numbers stand.
+ */
+export function hydratePlans(catalog) {
+    if (!Array.isArray(catalog) || catalog.length === 0) return;
+
+    for (const live of catalog) {
+        const plan = plansFixture.plans.find((candidate) => candidate.code === live.code);
+        if (!plan) continue;
+        plan.name = live.name;
+        plan.poolGb = live.poolGb;
+        plan.ceilingGb = live.ceilingGb;
+        plan.featured = live.featured;
+        plan.price = live.price;
+    }
+
+    const extra = catalog[0]?.extraStorage;
+    if (extra) {
+        plansFixture.extraStorage = { blockGb: extra.blockGb, price: extra.price };
+    }
+}

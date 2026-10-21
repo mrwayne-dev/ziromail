@@ -76,7 +76,7 @@ export default function Pricing() {
                       </li>
                     </ul>
                     <div className="note note-warn">
-                      <h4>One plan covers one domain</h4>
+                      <h3>One plan covers one domain</h3>
                       <p>
                         Storage is shared freely between mailboxes on the same domain, but never across domains. A second domain needs its own plan. That boundary is what keeps one domain's sending reputation from affecting another's.
                       </p>

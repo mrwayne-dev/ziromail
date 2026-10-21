@@ -20,7 +20,7 @@ export default function DomainSwitcher() {
     return (
         <div className="dom-switch" ref={ref}>
             <button type="button" aria-expanded={isOpen} aria-haspopup="true" aria-controls="dom-menu" onClick={toggle}>
-                <span className="cur">{current.name}</span>
+                <span className="cur">{current?.name}</span>
                 <svg className="chev" width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true">
                     <path d="M1 1.5 6 6.5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -31,7 +31,7 @@ export default function DomainSwitcher() {
                     <Link
                         key={domain.id}
                         href={`${path}?domain=${domain.id}`}
-                        aria-current={domain.id === current.id ? 'true' : undefined}
+                        aria-current={domain.id === current?.id ? 'true' : undefined}
                         onClick={close}
                     >
                         <b>{domain.name}</b>

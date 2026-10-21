@@ -44,6 +44,7 @@
 .pg-ob .plans-head h2, .pg-ob .pay-h { font-size: 1.1rem; font-weight: 600; }
 .pg-ob .plans-head + .sm { margin: var(--sp-2) 0 var(--sp-4); color: var(--tx-2); }
 .pg-ob .pay-h { margin: var(--sp-7) 0 var(--sp-3); }
+.pg-ob .pay-note { margin: var(--sp-7) 0 var(--sp-5); }
 .pg-ob .opt-aside span { font-size: .84rem; font-weight: 500; color: var(--tx-2); }
 .pg-ob .opt-aside b { font-weight: 650; }
 

@@ -1,75 +1,82 @@
-import { useState } from 'react';
+import { router, usePage } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
+import useOpsLoading from '../../Hooks/useOpsLoading';
+import DataTable from '../../Components/ops/DataTable';
+import SectionHeader from '../../Components/ops/SectionHeader';
 import Button from '../../Components/ui/Button';
 import Note from '../../Components/ui/Note';
 import Select from '../../Components/ui/Select';
-import { useToast } from '../../Components/ui/Toast';
 import OpsLayout from '../../Layouts/OpsLayout';
-import { auditKinds, opsAudit, staffRoster } from '../../fixtures/ops';
 import { formatDay, formatTime } from '../../Lib/format';
+import { route } from '../../Lib/route';
 
+const KINDS = [['all', 'Everything'], ['sign-in', 'Sign-ins and passwords'], ['account', 'Customer account changes'], ['access', 'Access changes'], ['staff', 'Staff actions']];
 const dayKey = (iso) => new Date(iso).toLocaleDateString('en-CA', { timeZone: 'Africa/Lagos' });
 
 export default function Audit() {
-    const { toast } = useToast();
-    const [form, setForm] = useState({ q: '', who: 'any', kind: 'all' });
-    const [applied, setApplied] = useState(form);
-    const [pages, setPages] = useState(1);
-    const term = applied.q.trim().toLowerCase();
-    const entries = opsAudit.filter((entry) => (
-        (applied.who === 'any' || entry.actor === applied.who)
-        && (applied.kind === 'all' || entry.kind === applied.kind)
-        && (!term || `${entry.text} ${entry.detail} ${entry.reason ?? ''}`.toLowerCase().includes(term))
-    ));
-    const groups = entries.reduce((acc, entry) => {
-        const key = dayKey(entry.at);
-        (acc[key] ??= []).push(entry);
-        return acc;
-    }, {});
-    const people = ['System', ...staffRoster.map((person) => person.name)];
-    const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
+    const { filters, people, entries, nextBefore } = usePage().props;
+    const [form, setForm] = useState(filters);
+    const loading = useOpsLoading();
+    const query = (extra = {}) => ({ q: form.q || undefined, who: form.who === 'any' ? undefined : form.who, kind: form.kind === 'all' ? undefined : form.kind, ...extra });
+    const go = (params) => router.get(route('ops.audit'), params, { preserveState: true, preserveScroll: true });
+
+    const rows = useMemo(() => entries, [entries]);
+    const sections = (row, previous) => {
+        const day = dayKey(row.at);
+        if (previous && dayKey(previous.at) === day) return null;
+        return formatDay(row.at);
+    };
 
     return (
         <OpsLayout page="ops-audit" title="Audit trail">
-            <div className="ops-head">
-                <div>
-                    <h1>Audit trail</h1>
-                    <p>Every action any member of staff has taken. Append-only: nothing here can be edited or deleted by anybody, including an owner.</p>
+            <SectionHeader
+                title="Audit trail"
+                description="Every recorded action: sign-ins, account changes and staff actions. Append-only: nothing here can be edited or deleted by anybody, including an owner."
+                actions={<Button size="sm" variant="line" onClick={() => go(query())}>Apply filter</Button>}
+            />
+
+            <DataTable
+                loading={loading}
+                toolbar={{
+                    caption: 'Audit trail',
+                    search: { value: form.q ?? '', onChange: (value) => setForm({ ...form, q: value }), placeholder: 'An action or a word from it' },
+                    right: (
+                        <>
+                            <Select value={form.who} onChange={(e) => setForm({ ...form, who: e.target.value })} aria-label="Person" className="ops-toolbar-sel">
+                                <option value="any">Anybody</option>
+                                <option value="system">System</option>
+                                {people.map((person) => <option key={person.value} value={person.value}>{person.label}</option>)}
+                            </Select>
+                            <Select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })} aria-label="Kind" className="ops-toolbar-sel">
+                                {KINDS.map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                            </Select>
+                        </>
+                    ),
+                }}
+                columns={[
+                    { id: 'at', header: 'Time', accessor: (row) => formatTime(row.at), mono: true, nowrap: true, align: 'num', width: 92 },
+                    { id: 'actor', header: 'Who', accessor: (row) => row.actor, nowrap: true, width: 160 },
+                    { id: 'text', header: 'What', accessor: (row) => (
+                        <span>
+                            <b>{row.text}</b>{row.detail ? <span className="ops-mut">: {row.detail}</span> : null}
+                            {row.reason && <span className="ops-row-detail-italic">{row.reason}</span>}
+                        </span>
+                    ) },
+                ]}
+                rows={rows}
+                rowKey={(row) => row.id}
+                sections={sections}
+                emptyState={{ title: 'Nothing matches', body: 'Try different filters or a wider search.' }}
+            />
+
+            {nextBefore && (
+                <div className="ops-centered mt-14">
+                    <Button variant="line" size="sm" onClick={() => go(query({ before: nextBefore }))}>Load older entries</Button>
                 </div>
-                <Button variant="line" size="sm" onClick={() => toast({ tone: 'warn', title: 'Export is not connected yet' })}>Export as CSV</Button>
-            </div>
+            )}
 
-            <form className="flt" onSubmit={(e) => { e.preventDefault(); setApplied(form); }}>
-                <div><label htmlFor="aq">Search</label><input className="input" type="search" id="aq" autoComplete="off" spellCheck="false" placeholder="Domain, address or action" value={form.q} onChange={set('q')} /></div>
-                <div><label htmlFor="aw">Person</label><Select id="aw" value={form.who} onChange={set('who')}><option value="any">Anybody</option>{people.map((name) => <option key={name} value={name}>{name}</option>)}</Select></div>
-                <div><label htmlFor="ak">Kind</label><Select id="ak" value={form.kind} onChange={set('kind')}>{auditKinds.map(([key, label]) => <option key={key} value={key}>{label}</option>)}</Select></div>
-                <Button type="submit">Filter</Button>
-            </form>
-
-            {entries.length === 0 && <p className="sm mut mt">Nothing matches those filters.</p>}
-            {Object.entries(groups).sort(([a], [b]) => b.localeCompare(a)).map(([day, list]) => (
-                <section key={day} aria-label={formatDay(list[0].at)}>
-                    <p className="day">{formatDay(list[0].at)}</p>
-                    <div>
-                        {list.map((entry) => (
-                            <div className={`ent${entry.grave ? ' grave' : ''}`} key={entry.id}>
-                                <span className="tm">{formatTime(entry.at)}</span>
-                                <span className="bd">
-                                    <b>{entry.text}</b>: {entry.detail}
-                                    {entry.reason && <span className="why">{entry.reason.endsWith('.') && !entry.reason.startsWith('Automatic') && !entry.reason.startsWith('Written') ? `“${entry.reason}”` : entry.reason}</span>}
-                                </span>
-                                <span className="who">{entry.actor}</span>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            ))}
-
-            <div className="btn-row no-grow mt">
-                <Button variant="line" size="sm" disabled={pages > 1} onClick={() => { setPages(2); toast({ title: 'No older entries in the preview' }); }}>Load older entries</Button>
-            </div>
-
-            <Note title="Why the reason field is compulsory" className="mt">
-                <p>An entry saying &ldquo;account locked&rdquo; is almost useless six months later. An entry saying why, by whom, and what the customer was told is a defence if the decision is ever questioned: by the customer, by a regulator, or by us reviewing our own judgement. Entries are kept for seven years.</p>
+            <Note title="What is and is not recorded" className="mt">
+                <p>We record that something happened, who did it, when and from where. We never record passwords, codes or the contents of anybody's mail.</p>
             </Note>
         </OpsLayout>
     );

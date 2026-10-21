@@ -1,15 +1,16 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import useRealtimeReload from '../../Hooks/useRealtimeReload';
+import { useState } from 'react';
 import RecordTable from '../../Components/domain/RecordTable';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
 import Card from '../../Components/ui/Card';
 import { AlertIcon } from '../../Components/ui/Icons';
 import Pill from '../../Components/ui/Pill';
-import useRecordChecks from '../../Hooks/useRecordChecks';
-import useScenario from '../../Hooks/useScenario';
+import { useToast } from '../../Components/ui/Toast';
 import DashboardLayout from '../../Layouts/DashboardLayout';
-import { domainDetailProps } from '../../fixtures/dashboard';
-import { route, routeParam } from '../../Lib/route';
+import { formatRelative } from '../../Lib/format';
+import { route } from '../../Lib/route';
 
 const DAYS = 20;
 
@@ -22,15 +23,26 @@ function History({ label, days }) {
 }
 
 export default function Domain() {
-    const scenario = useScenario();
-    const { domain, records: initial, checkedAt: opened, placement, reputation } = domainDetailProps(routeParam('domain'), scenario);
-    const { records, checkedAt, checking, check } = useRecordChecks({
-        items: initial.map((record) => ({ ...record, messages: { [record.status]: record.message } })),
-        checks: [initial.map((record) => record.status), initial.map((record) => record.status)],
-        checkedAt: opened,
-    });
+    const owner = usePage().props.auth?.user?.ownerId ?? usePage().props.auth?.user?.id;
+    useRealtimeReload({ channel: `account.${owner}`, map: { domain: ['domain','records','checkedAt'] } });
+
+    const { domain, records, checkedAt: checkedIso, placement, reputation } = usePage().props;
+    const { toast } = useToast();
+    const [checking, setChecking] = useState(false);
+    const checkedAt = checkedIso ? formatRelative(checkedIso).toLowerCase() : 'never';
     const failing = records.filter((record) => record.status !== 'passing');
     const passing = records.length - failing.length;
+
+    function check() {
+        setChecking(true);
+        router.post(route('dashboard.domains.recheck', { domain: domain.id }), {}, {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                if (page.props.flash?.status === 'dns-unavailable') toast({ tone: 'warn', title: 'DNS checks are not connected yet', message: 'Your records have not been re-checked. We will check them automatically once the mail platform is connected.' });
+            },
+            onFinish: () => setChecking(false),
+        });
+    }
 
     return (
         <DashboardLayout page="admin-domain" title={domain.name} description="Authentication and delivery health for this domain.">
@@ -67,25 +79,36 @@ export default function Domain() {
                     </section>
 
                     <h2 className="heading-sm spaced">Inbox placement</h2>
-                    <p className="sm mut mt-s">We send test messages to seeded accounts and record where they land. This is evidence, not a promise. The figures cover the whole platform, not only this domain.</p>
-                    <div className="place mt">
-                        {[['gmail', 'Gmail'], ['outlook', 'Outlook'], ['yahoo', 'Yahoo']].map(([key, label]) => (
-                            <div className="place-i" key={key}>
-                                <b>{placement[key]}</b>
-                                <span>{label}</span>
-                                <History label={label} days={placement.badDays[key]} />
+                    {placement ? (
+                        <>
+                            <p className="sm mut mt-s">We send test messages to seeded accounts and record where they land. This is evidence, not a promise.</p>
+                            <div className="place mt">
+                                {[['gmail', 'Gmail'], ['outlook', 'Outlook'], ['yahoo', 'Yahoo']].map(([key, label]) => (
+                                    <div className="place-i" key={key}>
+                                        <b>{placement[key]}</b>
+                                        <span>{label}</span>
+                                        <History label={label} days={placement.badDays[key]} />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    ) : (
+                        <p className="sm mut mt-s">Not enough data yet. Placement results appear here once this domain has sent mail.</p>
+                    )}
                 </div>
 
                 <div className="stack">
                     <Card>
                         <h3 className="heading-sm">Sending reputation</h3>
-                        <div className="between mt rep-row"><span className="mut">Bounce rate</span><b className="num">{reputation.bounceRate}</b></div>
-                        <div className="between rep-row"><span className="mut">Complaint rate</span><b className="num">{reputation.complaintRate}</b></div>
-                        <div className="between rep-row"><span className="mut">Blocklists</span><Pill tone="ok">Clear</Pill></div>
-                        <p className="hint">{reputation.note}</p>
+                        {reputation ? (
+                            <>
+                                <div className="between mt rep-row"><span className="mut">Bounce rate</span><b className="num">{reputation.bounceRate}</b></div>
+                                <div className="between rep-row"><span className="mut">Complaint rate</span><b className="num">{reputation.complaintRate}</b></div>
+                                <p className="hint">{reputation.note}</p>
+                            </>
+                        ) : (
+                            <p className="sm mut mt-s">Not enough data yet. Bounce and complaint rates appear once this domain has sent mail.</p>
+                        )}
                     </Card>
 
                     <Card>

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Banner from '../ui/Banner';
 import CopyField from '../ui/CopyField';
 import { AlertIcon, CheckIcon, ChevronDownIcon, ClockIcon, CrossIcon } from '../ui/Icons';
@@ -27,22 +26,16 @@ const STATES = {
  *     observed?: [{ key, label, value }] | null,   what is on the domain now (monitor mode)
  *     brokenSince?: ISO date | null,
  *     conflict?: { title, found, advice } }
- * Rows that need action open themselves, and rows that pass fold away. In
+ * `open` and `onToggle` are controlled by RecordTable, which keeps one row open at a time. In
  * `monitor` mode a record that is not passing is a regression, not a wait, so
  * the "still spreading" wording is not used.
  */
-export default function DnsRecordRow({ record, mode = 'onboarding' }) {
+export default function DnsRecordRow({ record, mode = 'onboarding', open, onToggle }) {
     const { type, title, status, message, fields, conflict, observed, brokenSince } = record;
     const state = STATES[status];
     const needsAction = status === 'needs_fix' || status === 'missing';
-    const [open, setOpen] = useState(status !== 'waiting');
-
-    useEffect(() => {
-        setOpen(needsAction);
-    }, [needsAction]);
-
     return (
-        <details className="rec" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+        <details className="rec" open={open} onToggle={(e) => onToggle?.(e.currentTarget.open)}>
             <summary className="rec-head">
                 <span className={`rec-ic rec-ic-${state.tone}`} aria-hidden="true">{state.icon}</span>
                 <span className="rec-name">

@@ -12,7 +12,7 @@ import { useToast } from '../ui/Toast';
  * the plan's ceiling and, in block mode, to whole blocks. The price shown is display
  * arithmetic; the server quotes the real amount when payment starts.
  */
-export default function StorageAdder({ domain, pool, plan, extraStorage, renewsAt, presets }) {
+export default function StorageAdder({ domain, pool, plan, extraStorage, renewsAt, presets, paymentsConnected = false }) {
     const id = useId();
     const { toast } = useToast();
     const block = extraStorage.mode === 'block' ? extraStorage.blockGb : 1;
@@ -27,14 +27,14 @@ export default function StorageAdder({ domain, pool, plan, extraStorage, renewsA
     else if (gb > maxAddable) problem = maxAddable === 0 ? `This pool is already at the ${plan.name} ceiling.` : `Your ${plan.name} plan allows ${formatGb(maxAddable)} more in this pool.`;
 
     const valid = !problem;
-    const price = valid ? extraStoragePrice(gb, extraStorage.currency) : { net: 0, vat: 0, total: 0 };
+    const price = valid ? extraStoragePrice(gb, plan, extraStorage.currency) : { net: 0, vat: 0, total: 0 };
     const order = { currency: extraStorage.currency, subtotal: price.net, vat: price.vat, total: price.total, vatPercent: Math.round(extraStorage.vatRate * 1000) / 10 };
     const afterPool = pool.poolGb + (valid ? gb : 0);
 
     function submit(event) {
         event.preventDefault();
         if (!valid) return;
-        toast({ tone: 'ok', title: 'On to payment', message: `Preview: this would charge ${formatPrice(price.total, extraStorage.currency)} and add ${formatGb(gb)} to ${domain.name}.` });
+        toast({ tone: 'warn', title: paymentsConnected ? 'On to payment' : 'Storage purchases open soon', message: paymentsConnected ? '' : `Payments are not connected yet. This would charge ${formatPrice(price.total, extraStorage.currency)} for ${formatGb(gb)} on ${domain.name}.` });
     }
 
     const track = pool.ceilingGb ? 100 / pool.ceilingGb : 0;
@@ -92,7 +92,7 @@ export default function StorageAdder({ domain, pool, plan, extraStorage, renewsA
             </fieldset>
 
             <OrderSummary order={order} rows={[{ label: `Extra storage ${valid ? formatGb(gb) : ''}`.trim(), value: formatPrice(price.net, extraStorage.currency) }]} totalLabel="Charged today">
-                <p className="sm mut">Renews with <span className="mono">{domain.name}</span> on <b>{formatDate(renewsAt)}</b>.</p>
+                <p className="sm mut">Renews with <span className="mono">{domain.name}</span> on <b>{renewsAt ? formatDate(renewsAt) : 'the day you pay'}</b>.</p>
                 <Button type="submit" size="lg" full className="mt" disabled={!valid}>Continue to payment</Button>
             </OrderSummary>
         </form>

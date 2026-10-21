@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Button from '../ui/Button';
 import { CheckIcon } from '../ui/Icons';
 import Spinner from '../ui/Spinner';
@@ -16,6 +17,18 @@ import DnsRecordRow from './DnsRecordRow';
  */
 export default function RecordTable({ records, checkedAt, checking = false, onCheck, mode = 'onboarding' }) {
     const monitor = mode === 'monitor';
+    const needsAction = (record) => record.status === 'needs_fix' || record.status === 'missing';
+    const [openId, setOpenId] = useState(() => records.find(needsAction)?.id ?? null);
+
+    // One row open at a time, so the page never grows past the screen. When the open row stops
+    // needing attention (it passes), move to the next one that does.
+    const statuses = records.map((record) => `${record.id}:${record.status}`).join('|');
+    useEffect(() => {
+        setOpenId((current) => {
+            const open = records.find((record) => record.id === current);
+            return open && needsAction(open) ? current : (records.find(needsAction)?.id ?? null);
+        });
+    }, [statuses]);
     const total = records.length;
     const passing = records.filter((r) => r.status === 'passing').length;
     const done = passing === total;
@@ -41,7 +54,7 @@ export default function RecordTable({ records, checkedAt, checking = false, onCh
             >
                 <i style={{ width: `${(passing / total) * 100}%` }} />
             </div>
-            {records.map((record) => <DnsRecordRow key={record.id} record={record} mode={mode} />)}
+            {records.map((record) => <DnsRecordRow key={record.id} record={record} mode={mode} open={openId === record.id} onToggle={(isOpen) => setOpenId(isOpen ? record.id : (current) => (current === record.id ? null : current))} />)}
         </section>
     );
 }
