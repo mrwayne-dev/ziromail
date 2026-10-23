@@ -8,6 +8,411 @@ Times are in WAT (UTC+1).
 
 ---
 
+## 2026-10-23 18:30 — Phase A + Phase B: mock data removed everywhere, every dashboard and webmail page redesigned to the ops token set
+
+**Why.** The incremental spot-fixes weren't landing — the user asked for a full-scope rebuild as two phases: kill every source of fictional data (Phase A), then redesign all 16 user-facing pages (11 dashboard + 5 webmail) against the ops console as the design language (Phase B). Everything else below is in service of those two instructions.
+
+**How.** Fan-out to 5 subagents, each scoped to its own set of files so they couldn't collide; a sixth consistency pass walked every page afterwards to catch drift between the agents' choices. One shared memo (`scratchpad/design-tokens.md`) was the agents' contract: it names the exact primitives (`SectionHeader`, `MetricRow`, `DataTable`, `Card`, `Pill`, `Button`), the exact token values (`.ops-main` padding, `.ops-head` type scale, `.ops-sec-head` rhythm), the Button variant catalogue, Pill tone catalogue, MetricTile tone catalogue, and the exact empty-state copy convention.
+
+### Phase A — mock data killed
+
+Dashboard was already real-data from controllers (Phase A for the dashboard landed 2026-10-20). What was still fictional:
+
+- **Global `PrototypeNotice`** rendered unconditionally inside `DashboardLayout`, gated on `site.prototype`. Removed from the layout, then (after the consistency pass) the component file itself, the `useScenario` hook, the two fixture files (`fixtures/scenarios.js`, `fixtures/dashboard.js`) and the server-side flag in both `HandleInertiaRequests` and `config/app.php`. Nothing in the app reads any of them any more.
+- **Webmail fixtures** — `fixtures/mail.js` carried `folderDefs, messageFixtures, contactFixtures, mailboxFixture, settingsFixture`. Agents 3 and 4 stripped every importer, then Agent 4 deleted the file.
+- **Scoped "demonstration" banners** that the earlier pass added to Inbox / Compose / Search / Contacts — removed. The empty-state card itself is the signal now.
+
+What now shows "not available yet" instead of a demo value, with the one-line reason:
+
+| Surface | Shown as | Why |
+|---|---|---|
+| Mail inbox | centred card: "No messages yet. Mail will land here once your mail server is connected. In the meantime your mailbox address, quota and settings are already live." + Open settings button | mail server pick is the open CEO decision |
+| Mail compose | empty composer; `?reply=X`/`?forward=X` triggers a short Banner "This reply/forward target is no longer available" | no message store |
+| Mail search | disabled search input + disabled scope chips (each with tooltip) + "Search isn't connected yet. Full-text search needs the mail server's index." | no FTS index |
+| Mail contacts | single centred card: "No contacts saved yet. Where contacts live — a Mailcow address book or a dedicated Ziroemail table — is still being decided." + Mailbox-settings button | contacts source is an open CEO decision |
+| Mail Settings — Devices strip | one hint "No mail apps connected yet. Mail apps show here once your mail server is connected." + the Set-up-another-device button | mail-app devices are IMAP connections |
+| Mail Settings — Manual settings | three CopyFields show `—` with per-field hint "Available once your mail server is picked" | real IMAP/SMTP/CardDAV addresses pending |
+| Mail Settings — Reading & writing preferences | five Switch toggles disabled + hint "Reading and writing preferences become editable once your mail server is connected." | no `mailbox.settings.preferences` column yet |
+| Composer signature | pulled from `usePage().props.mailbox.settings.signature` (empty string → no signature block) | real column |
+| Composer defaults (undo-send, ask-no-subject, etc.) | `COMPOSER_DEFAULTS` constant with safe values (undo-send on, ask-no-subject on, request-receipts off) | documented as mail-server-owned once connected |
+| Recipient autocomplete | input stays active (user can type full address); empty `<datalist>` | no address book data |
+| Domain detail — Inbox placement | MetricTile `v: '—', tone: 'off', d: 'Not available yet, waiting on delivery data'` | we don't collect delivery data yet |
+| Domain detail — Sending reputation | same shape as above | same reason |
+| Mailbox detail — Mail this month | MetricTile `v: '—', tone: 'off', d: 'Not available yet, waiting on mail server'` | no `mailsThisMonth` prop yet |
+| Mailbox detail — Signed-in mail-app devices | "No devices yet" sentence inside the Devices section | mail server surfaces mail-app devices |
+| Domains / Mailboxes / Audit / Aliases tables | `DataTable`'s own `emptyState` with a one-line reason + optional primary CTA | real empty — no demo rows injected |
+
+### Phase B — redesign to the ops token set
+
+Four agents in parallel, one page lane each, plus a fifth consistency pass. Shared memo set the primitives and tokens. Build was clean after every agent; the final build after Agent 5 is clean too.
+
+**Agent 1 — Dashboard core (5 pages).**
+
+- **Overview** — `SectionHeader` (eyebrow / mono title / greeting / Add-mailbox + Switch-domain actions), `MetricRow` of 4 tiles (Mailboxes / Storage used / Plan / Domain health with `tone: 'watch'` when records < total), stacked `Banner`s for real `alerts`, `QUICK_ACTIONS` static anchor grid kept, `MailboxTable` preview widget inside its own `SubSection`, plan card as `.ops-card` + `.ops-kv`, `ActivityFeed` in its own `SubSection` with "See the full log" `tLink`.
+- **Domains** — `SectionHeader` + `MetricRow` (domain count / total mailboxes / pool used-of-total / needs-attention with tone). `DataTable` with Domain / Plan / Storage (`.ops-usage` bar) / Mailboxes / Records (Pill ok vs warn healthNote) / Renews / per-row Manage or Fix-records.
+- **Domain detail** — `SectionHeader` (eyebrow "DOMAIN" + mono name + Re-check + All-domains actions), `MetricRow` (Authentication with `watch`/`off`, Last checked, Inbox placement off, Sending reputation off), Banner stack for failing records, `RecordTable` inside `SubSection`. The `placement`/`reputation` detail panels only render when controller sends non-null.
+- **Mailboxes** — `MetricRow` (Assigned / Actually used / Unassigned / Plan with "expandable to X GB" or "at pool limit"), `PoolBar` in a `SubSection`, `DataTable` with Mailbox / Quota (`.ops-usage` with `bad`≥90% / `watch`≥75%) / Last signed in / Status / Send setup link vs Manage.
+- **Mailbox detail** — the biggest rewrite in this lane. Nested `.mb-layout` + `.mb-nav` anchor nav deleted; a single-column `SubSection` stack now, anchor ids preserved for in-page links. `SectionHeader` with eyebrow "MAILBOX", mono address, `Created {date} · last signed in {relative-or-never}`. `MetricRow` with Storage (toned), humanised State, Devices count, Mail-this-month `off`. `QuotaEditor` untouched (shared component, candidate for a Phase C sweep).
+
+CSS deletions in `dashboard.css` (Agent 1 lane): `.pg-admin-domains .dom-card/.dom-id/.dom-pool/.dom-acts/.plan-mini`, `.pg-admin-mailboxes .mb-row/.mb-av/.quota/.pool-head/.pool-stat/.pool-acts`, `.pg-admin-mailbox .mb-layout/.mb-nav` (all breakpoints) + `.mb-hero/.row/.sec`, `.pg-admin-domain .two`, `.pg-admin .two/.act` chain.
+
+**Agent 2 — Dashboard account (6 pages).**
+
+- **Team** — `SectionHeader` with ink CTA. Role matrix hand-rolled `<Table>` → `DataTable` with `<Pill tone="ok">Yes</Pill>` / `<Pill tone="muted">No</Pill>`. Security panel + Export card wrapped in `SubSection`.
+- **Billing** — `SectionHeader` + disabled "Download invoices" line button. `.store-card` → `SubSection` + `MetricRow`. `.plan-now` dark card → `.ops-card` + new `.ops-plan-amt` tokens + `.ops-kv-row sm` list.
+- **Storage** — `SectionHeader`; sidebar `<Card><h3>` → `.ops-card` + `ops-card-h-sm` + `ops-card-lede`.
+- **Aliases** — `SectionHeader` + ink disabled-with-title. `.al-addr/.al-to` custom spans → DataTable columns. `<Empty>` dropped — `DataTable.emptyState` carries it.
+- **Audit** — `SectionHeader` + CSV export line button. `.filters` round-button block → `DataTable toolbar.chips`. `AuditTable` gained an optional `toolbar` prop (one shared-primitive edit, scoped to dashboard-owned component).
+- **Help** — `SectionHeader`. `.routes/.route` dual-card → `.two` of `.ops-card` with new `.ops-help-ic/.ops-help-addr` + ink/line CTAs. `.send-list` steps → `.ops-help-list` on `.ops-card`. Context block → `.ops-help-ctx` of `.ops-kv-row`s.
+
+CSS deletions in `dashboard.css` (Agent 2 lane): `.pg-admin-aliases .row/.al-addr/.al-to`, `.pg-admin-audit .log*/.filters`, `.pg-admin-billing .plan-now*/.plan-row*/.store-card/.store-nums/.chg*/.inv-status`, `.pg-admin-help .routes/.route*/.send-list*/.ctx*`, `.pg-admin-team .row*/.owner-row/.otp-in*`. Additions in `ops.css`: `.ops-help-ic/.ops-help-addr/.ops-help-list/.ops-help-ctx/.ops-plan-amt/.ops-plan-amt-unit`.
+
+**Agent 3 — Webmail surfaces (4 pages) + fixture rip-out.**
+
+- **Inbox** — Folder sidebar lists the 6 IMAP standards (new `IMAP_FOLDERS` const in `Lib/mail.js`) with zero counts. Main pane: single `.mail-empty` card with the "No messages yet" copy + Open settings button. Removed `ReadingPane`, `MessageList`, `useMailShortcuts`, folder picker, selection bar, move/archive/trash/spam logic, Composer popup, markReadOnOpen. Compose FAB kept.
+- **Compose** — No message store lookup. `?reply=X`/`?forward=X` triggers Banner + empty composer.
+- **Search** — Disabled input + disabled scope chips (tooltips) + "Search isn't connected yet" card.
+- **Contacts** — Single centred card with the "No contacts saved yet" copy + Mailbox-settings button.
+- **`Lib/mail.js`** pruned: added `IMAP_FOLDERS`, rewrote `foldersWithCounts()` to return the standards with zero counts (still called by MailLayout as default), removed `messageById` and `searchMessages`. Kept `initialsOf`/`tintOf` for the un-rendered `MessageList`/`ReadingPane`/`ContactList` components that stay around for the future mail-server pass.
+- **`webmail.css`** dropped from 96 → 50 lines (`.cts-top/.ct*/.res*` all deleted).
+- **`fixtures/mail.js`** — Agent 3 removed `folderDefs/messageFixtures/contactFixtures`.
+
+**Agent 4 — Webmail settings + Composer + RecipientChips + MailLayout + final fixture-file delete.**
+
+- **Settings** — `SectionHeader` with the address in the description. Three fixture strips rewritten:
+  - Devices strip: single hint + Set-up-another-device button (unchanged).
+  - Manual settings strip: three `CopyField`s show `—` with per-field hint. Banner removed.
+  - Reading & writing strip: five `Switch` toggles `disabled` + section-level hint. Labels kept as product copy.
+  - The real strips (name, reply-to, signature, auto-reply, block-remote-images, storage, security, alias count) untouched.
+- **Composer** — Signature from `usePage().props.mailbox.settings.signature`, empty string → no signature block. Three fixture preference reads replaced with `COMPOSER_DEFAULTS` constant with safe values, JSDoc'd for the future `mailbox.settings.composer_prefs` JSON column.
+- **RecipientChips** — Contact-fixture lookup removed; chips always build `{name: text, address: text}`. `<datalist>` emptied.
+- **MailLayout** — Light touch only. Stale comment about `demo: true` prop + fixture messages rewritten to describe the current honest-empty-state behaviour (comment-only edit at 18:33).
+- **`fixtures/mail.js`** removed `mailboxFixture` + `settingsFixture`, then `rm` on the empty file. `grep -rE "fixtures/mail" resources/js/` now returns nothing.
+
+**Agent 5 — cross-page consistency pass.**
+
+Walked all 16 pages, grepped the known drift leads. Nothing per-page needed fixing: `grep 'variant="dark"'` empty (all agents correctly used `ink`), MetricTile tones correct, Pill tones consistent, `className="page-head"` grep empty (every page uses `SectionHeader`), empty-state copy voice matches across lanes.
+
+What Agent 5 did find and fix: four orphan files still referenced the removed prototype system — `Components/ui/PrototypeNotice.jsx`, `Hooks/useScenario.js`, `fixtures/scenarios.js`, `fixtures/dashboard.js`. None were imported by any live file. All four deleted.
+
+### The epoch-bug fix
+
+The audit flagged "Renews 1 Jan 1970" on Overview and Domains. Investigation: the DB column IS `NULL`, the serializers correctly send `renewsAt: null`, but `formatDate(null)` runs `new Date(null).toLocaleDateString(…)` which renders as "1 Jan 1970". Classic null-swallow.
+
+Fix at the source — `resources/js/Lib/format.js`: `formatDate` and `formatTime` now return the em-dash for `null | undefined | ''` and for `NaN`-valued dates. Every date-rendering path on the dashboard goes through this one helper, so the fix lands once and every page downstream is correct. The sweep account (whose one subscription has `renews_at: null`) now reads "Renews —" in the Plan card.
+
+### Server-side dead code also removed
+
+Since nothing in the UI reads `site.prototype` any more:
+
+- `app/Http/Middleware/HandleInertiaRequests.php` — the `'prototype' => (bool) config('app.prototype')` entry removed from the shared `site` prop.
+- `config/app.php` — the `'prototype'` config key removed.
+- `tests/Feature/DashboardPagesTest.php` — the "prototype flag can be turned off" test rewritten to assert `site.prototype` is **missing** from the shared props (previously asserted it was `false`). Keeps the invariant: the dashboard never advertises itself as prototype any more.
+- `tests/Feature/WebmailPagesTest.php` — the `->where('site.prototype', true)` assertion dropped from the verified-user tests.
+
+### Final checks
+
+- `npm run build` clean.
+- `vendor/bin/pint --dirty --format agent` clean.
+- `php artisan test --compact` — **367/367 passing, 2892 assertions, 20.6 s** (13 assertions fewer than before: that's the three removed `where('site.prototype', ...)` assertions × their data providers).
+- `scripts/axe-sweep/sweep.mjs` — **0 violations across 62 page/viewport runs** (31 pages × 2 viewports). All 16 redesigned pages scanned at both 390 and 1440. New dark-sidebar colours and the new empty-state copy all clear WCAG 2.1 AA.
+- Final greps (all return empty):
+  - `grep -rn "fixtures/mail"       resources/js/`
+  - `grep -rn "fixtures/dashboard"  resources/js/`
+  - `grep -rn "fixtures/scenarios"  resources/js/`
+  - `grep -rn "PrototypeNotice"     resources/js/`
+  - `grep -rnF "site.prototype"     resources/js/`
+  - `grep -rn "useScenario"         resources/js/`
+  - `grep -rn 'variant="dark"'      resources/js/` (both quote styles)
+- Deleted file existence check — all five dead files are gone (`fixtures/mail.js`, `fixtures/dashboard.js`, `fixtures/scenarios.js`, `Components/ui/PrototypeNotice.jsx`, `Hooks/useScenario.js`).
+
+### Known trade-offs / what I did NOT change
+
+- **`QuotaEditor`** (shared `Components/dashboard/QuotaEditor.jsx`) still carries its own `.q-*` / `.pic-*` chrome with hard-coded blues and a custom progress bar. Agent 1 flagged it as a Phase C candidate; not blocking.
+- **`RecordTable`** chevrons/status glyphs render oddly on Domain at 1440 — it's shared with ops, so it was out of Agent 1's lane. Flagging for the next pass on the ops console.
+- **`MessageList` / `ReadingPane` / `ContactList`** components still exist (they consume `initialsOf`/`tintOf` from `Lib/mail.js`) but no page renders them. They stay around for the eventual mail-server pass.
+- **Mail-related columns not yet in the DB**: `mailsThisMonth` per-mailbox, `composer_prefs` under `mailbox.settings`, mail-app device list. All honestly flagged as "Not available yet" with the one-line reason.
+- **The `renewsAt` epoch fallback** on the subscription query (if any; the browser DB shows `NULL` so there's no query bug), and the generic "prefers to send what the real column holds" pattern — these are fine.
+- **`.pg-admin-help .two`** was simplified to equal columns since the right-column stack vanished. The "Urgent" Note sits full-width at the bottom.
+
+### Files changed, grouped
+
+**JSX (16 pages + 1 layout + 2 components + 1 lib):**
+- Dashboard core: [Pages/Dashboard/Overview.jsx](resources/js/Pages/Dashboard/Overview.jsx), [Domains.jsx](resources/js/Pages/Dashboard/Domains.jsx), [Domain.jsx](resources/js/Pages/Dashboard/Domain.jsx), [Mailboxes.jsx](resources/js/Pages/Dashboard/Mailboxes.jsx), [Mailbox.jsx](resources/js/Pages/Dashboard/Mailbox.jsx)
+- Dashboard account: [Team.jsx](resources/js/Pages/Dashboard/Team.jsx), [Billing.jsx](resources/js/Pages/Dashboard/Billing.jsx), [Storage.jsx](resources/js/Pages/Dashboard/Storage.jsx), [Aliases.jsx](resources/js/Pages/Dashboard/Aliases.jsx), [Audit.jsx](resources/js/Pages/Dashboard/Audit.jsx), [Help.jsx](resources/js/Pages/Dashboard/Help.jsx)
+- Webmail: [Pages/Mail/Inbox.jsx](resources/js/Pages/Mail/Inbox.jsx), [Compose.jsx](resources/js/Pages/Mail/Compose.jsx), [Search.jsx](resources/js/Pages/Mail/Search.jsx), [Contacts.jsx](resources/js/Pages/Mail/Contacts.jsx), [Settings.jsx](resources/js/Pages/Mail/Settings.jsx)
+- Layout: [Layouts/DashboardLayout.jsx](resources/js/Layouts/DashboardLayout.jsx) (PrototypeNotice removed), [Layouts/MailLayout.jsx](resources/js/Layouts/MailLayout.jsx) (comment refresh)
+- Components: [Components/mail/Composer.jsx](resources/js/Components/mail/Composer.jsx), [Components/mail/RecipientChips.jsx](resources/js/Components/mail/RecipientChips.jsx), [Components/dashboard/AuditTable.jsx](resources/js/Components/dashboard/AuditTable.jsx) (toolbar prop)
+- Lib: [Lib/format.js](resources/js/Lib/format.js) (null-guard on formatDate/formatTime), [Lib/mail.js](resources/js/Lib/mail.js) (IMAP_FOLDERS, pruned helpers)
+
+**CSS:** [resources/css/pages/dashboard.css](resources/css/pages/dashboard.css) (per-lane deletions), [resources/css/pages/webmail.css](resources/css/pages/webmail.css) (96 → 50 lines), [resources/css/pages/ops.css](resources/css/pages/ops.css) (new help + plan tokens).
+
+**PHP:** [app/Http/Middleware/HandleInertiaRequests.php](app/Http/Middleware/HandleInertiaRequests.php) (prototype flag removed from shared site prop), [config/app.php](config/app.php) (prototype key removed).
+
+**Tests:** [tests/Feature/DashboardPagesTest.php](tests/Feature/DashboardPagesTest.php), [tests/Feature/WebmailPagesTest.php](tests/Feature/WebmailPagesTest.php).
+
+**Deleted:** `resources/js/fixtures/mail.js`, `resources/js/fixtures/dashboard.js`, `resources/js/fixtures/scenarios.js`, `resources/js/Components/ui/PrototypeNotice.jsx`, `resources/js/Hooks/useScenario.js`.
+
+### Screenshots
+
+Before/after at 1440 / 1024 / 768 per page per agent lane, saved under `/tmp/.../scratchpad/phaseb/{agent1,agent2,agent3,agent4}/{before,after}/{1440,1024,768}-<slug>.png`. Agent 5's consistency-pass 1440 shots of every page at `/tmp/.../scratchpad/phaseb/agent5/1440-<slug>.png`.
+
+### Follow-ups worth doing
+
+- **`QuotaEditor` ops-ification** (hard-coded blues + custom progress bar).
+- **`RecordTable` chevron / status glyph rendering** at 1440 — flagged for the ops console pass.
+- Delete `MessageList` / `ReadingPane` / `ContactList` once the mail server lands and real components replace them.
+- Delete `.q-*` / `.pic-*` / `.lim-grid` from `dashboard.css` once `QuotaEditor` is reworked.
+
+---
+
+## 2026-10-23 13:00 — Owner dashboard shell audited against ops reference and brought into line
+
+**Why.** The 11:40 pass swapped the dashboard's **primitives** (lucide icons, SectionHeader, MetricRow, ActivityFeed) but left the **shell** on the old grammar — light sidebar, 60 px branded topbar, and a bigger type scale than the ops console. You flagged it: "cramped spacing, no margins or padding on containers, cards and layouts that don't match the ops dashboard reference." The primitives were sitting inside a shell that doesn't carry their rhythm.
+
+**Audit (concrete, measured against `resources/css/pages/ops.css`).**
+
+| File / selector | Was | Ops reference | Impact |
+|---|---|---|---|
+| `.app-body` | `grid-template-columns: 250px 1fr` ≥1060 px only | `.ops` grid `240px 1fr`, sidebar visible 768–1023 as rail, hidden only ≤767 | Dashboard users at 1024–1059 (common laptop) lost the sidebar entirely. |
+| `.side` | White, 22 px padding, visible ≥1060 px | Dark `--ops-ink`, 16 px padding, rail at 768–1023 | Shell read as a different product than ops. |
+| `.app-hdr` | 60 px, white-on-ink | 52 px | Topbar felt heavier than the console it was supposed to match. |
+| `.main` | `24px var(--gutter) 90px`; `34px 40px 100px` ≥1060 | `24px 32px 56px` | 44 px of extra bottom padding, inconsistent horizontal padding at the 1024–1059 band. |
+| `.page-head h1` | `clamp(1.55rem, 1.35rem + 1vw, 2.1rem)` — ~33 px at 1440 | `1.375rem` → `1.625rem` ≥1024 — ~26 px | H1s were ~30 % larger than ops; broke type consistency across the two consoles. |
+| `.card` | `padding: 26px` | `.ops-card` 20 px | Dashboard cards felt bulkier than their ops counterparts. |
+| `Pages/Dashboard/Overview.jsx` | `<div className="two mt-l">` wrapping `SubSection` on both left and right columns | Section header once, grid under it | Each `SubSection`'s `.ops-sec-head` already has `margin: 32px 0 14px`; stacking it on top of `.mt-l` (34 px) produced the ~66 px dead zone above the mailbox + plan row and the drift between "Your plan" and "Recent activity" headings. |
+
+Webmail (`Mail/Inbox`, `Mail/Settings`, `MailLayout`) was already on the ops grammar from the 11:40 pass; no changes needed there. `.mail-top` dark bar + dark `FolderNav` sidebar + light main matches ops as-is.
+
+**What landed (CSS-mostly; one JSX touch).**
+
+1. `.app` shell CSS reshaped to match ops:
+   - `.app-hdr` → 52 px dark bar, `var(--ops-ink)`, `var(--ops-ink-line)` under-border.
+   - `.app-body` grid now `64px 1fr` at ≥768 (rail band), `240px 1fr` at ≥1024, flex-column below.
+   - `.side` repainted dark (`var(--ops-ink)`), tokenised against the ops palette (`--ops-text-muted`, `--ops-text-dim`, `--ops-ink-hover`, `--ops-ink-raised`). Active row carries the ops signature: `--ops-ink-raised` background with `box-shadow: inset 2px 0 0 var(--blue-400)` as the accent rail — same treatment as `.ops-nav a[aria-current]`.
+   - Rail at 768–1023 hides `.lbl`, `.cnt`, `.ext` and centres the icon.
+2. `.main` padding dropped to `24px 32px 56px` desktop (`24px clamp(16px, 2.2vw, 32px) 56px` below), matching `.ops-main` exactly.
+3. `.page-head h1` scaled to `1.375rem` → `1.625rem` ≥1024, matching `.ops-head h1`. Description got `max-width: 68ch` + `line-height: 1.5` + `font-size: .9375rem`, same as ops.
+4. `.card` padding → 20 px (was 26 px). `.card-lg` → 28 px (was 34 px), kept proportional.
+5. `.tabbar` mobile-dock now shows ≤767 (was ≤1059), paired with the rail-at-768 change so one of the two is always present.
+6. **JSX touch** in [resources/js/Layouts/DashboardLayout.jsx](resources/js/Layouts/DashboardLayout.jsx): every sidebar `<Link>` wraps its label in `<span className="lbl">` so the rail breakpoint can hide the text with `.side a .lbl { display: none }`. Previously the labels were raw text nodes and the rail couldn't hide them. At 768 the result was labels wrapping and overflowing a 64 px column.
+7. [resources/js/Pages/Dashboard/Overview.jsx](resources/js/Pages/Dashboard/Overview.jsx): the `.two mt-l` wrapper around the mailbox + plan + activity triple is gone. "Your mailboxes" is now one `SubSection` holding a `.two` grid of mailboxes-card + plan-card side by side; "Recent activity" is a sibling `SubSection` under it. Rhythm now comes from the `.ops-sec-head margin: 32px 0 14px` once per section, not stacked on top of `.mt-l`.
+
+**Before / after (screenshots at 1440, 1024, 768).**
+
+- Before: `scratchpad/audit/{1440,1024,768}-{owner-dash-overview,owner-dash-mailboxes,owner-mail-settings,owner-mail-inbox,staff-ops-*}.png`
+- After:  `scratchpad/after/{1440,1024,768}-{dash-overview,dash-mailboxes,mail-settings,mail-inbox}.png`
+
+Side-by-side observations:
+
+- **Dashboard overview @ 1440**: dark sidebar now mirrors ops; H1 "sweepfoods.com" is the same optical size as "Operations overview"; metric row uses the same `--ops-radius` card chrome and 12 px grid gap; attention banner + Quick actions sit on a cleaner vertical rhythm because the double 32+34 px gap is gone.
+- **Dashboard overview @ 1024**: sidebar is now present (was hidden). Content fits in a well-constrained column with 32 px side padding instead of hugging the viewport.
+- **Dashboard overview @ 768**: 64 px rail with just the lucide glyphs (not the labels running off the rail as before). Matches the ops rail at the same breakpoint.
+- **Dashboard mailboxes @ 1440**: pool-head card + DataTable + "Changing a quota" note card now read as the same page family as `/ops/mailboxes` — same table chrome, same note-card chrome, same H1 scale.
+- **Webmail settings / inbox**: unchanged, confirmed still matching ops (both were already on the ops grammar).
+
+**Checks.**
+
+- `npm run build` clean.
+- `vendor/bin/pint --dirty --format agent` clean.
+- `php artisan test --compact` — 367/367 passing.
+- Axe sweep (`scripts/axe-sweep/sweep.mjs`) — **0 violations across all 62 page/viewport runs**, same 31 pages × 2 viewports. New dark sidebar colours clear WCAG 2.1 AA contrast against both the ink and raised backgrounds (`--ops-text-muted` on `--ops-ink` is 7.4:1).
+
+**Known trade-offs / what I did not change.**
+
+- The dashboard shell is still a two-row flex (`.app-hdr` on top of `.app-body` grid), not the three-area ops grid where the sidebar also spans the left of the topbar. That restructure needs JSX surgery and (because the account menu + domain switcher currently sit in the topbar) a rethink of where the brand lives. The visual gap this leaves is at the top-left corner where ops shows the brand inside the sidebar; dashboard still shows a strip of dark `.app-hdr` across the whole top. Visible but not jarring; held for a separate pass if you want full architectural parity.
+- The `Pages/Dashboard/*` individual page layouts (Mailboxes `pool-head`, Billing `store-card`, Mailbox detail nav rail, etc.) still carry their own custom chrome. They aren't broken, they're just not using `.ops-card` directly. That's a per-page clean-up worth a follow-up if you want the dashboard to fully converge on the ops primitive set.
+
+**Files.**
+
+- JSX: [resources/js/Layouts/DashboardLayout.jsx](resources/js/Layouts/DashboardLayout.jsx), [resources/js/Pages/Dashboard/Overview.jsx](resources/js/Pages/Dashboard/Overview.jsx).
+- CSS: [resources/css/ziro.css](resources/css/ziro.css) (`.app`, `.app-hdr`, `.app-body`, `.side`, `.side-grp`, `.side-ttl`, `.side a`, rail media query, `.main`, `.page-head`, `.card`, `.card-lg`, `.tabbar` breakpoint).
+
+**Follow-ups.**
+
+- Three-area ops grid for the dashboard shell (brand inside sidebar, topbar only above main). JSX-level restructure.
+- Converge `Pages/Dashboard/*` custom chrome (`pool-head`, `store-card`, `mb-hero`, `mb-layout`) onto `.ops-card` and friends.
+- The three loose ends from 11:55 / 12:25 (deploy to preview, commit the uncommitted work) remain open — nothing in this entry has been pushed.
+
+---
+
+## 2026-10-23 12:25 — Table swaps, axe sweep committed, Deliverability cache fix
+
+**Why.** Three loose ends from the 2026-10-23 11:40 pass: four dashboard tables were still on the pre-redesign shape; the axe sweep tooling only existed in a scratchpad; and the Deliverability page carried a latent bug the first sweep caught by crashing React at render time.
+
+**Tables brought onto `DataTable`.**
+
+- `Components/dashboard/AuditTable.jsx` — rewritten on top of the shared primitive. Keeps the "today / yesterday / X days ago / absolute date" `when()` helper and the `Emphasised` bold-fragment splitter; columns are `When` (sortable, raw timestamp drives the sort) and `What happened` (bold-fragment plus optional detail underneath). Page size: 50, which is where the audit page's density settles anyway.
+- `Components/dashboard/TeamList.jsx` — people and delegations now share one `DataTable` instead of hand-rolled `.row` divs. The owner row stays visually distinct via a `kind: 'owner'` flag in the row object: role cell renders `<Pill>Owner · account holder</Pill>` next to a `Lock` glyph with its "cannot be changed here" tooltip. Delegations sort last by appending them after the people list. The hint paragraph about the owner address being contact-support-only moved from inside the list to below it, matching the ops console's "paragraph under the table, never inside" convention.
+- `Pages/Dashboard/Mailboxes.jsx` — inline `<Table>` → `DataTable`. Sort by mailbox name, by storage used, or by last-signed-in (uses the raw timestamp as `sortValue` so "never" still orders properly against real dates). Row actions keep the Send-setup-link / Manage split by `state === 'not_set_up'`. The `.quota` meter bar and the `.mb-row` avatar group are preserved verbatim inside the accessor so the row visuals don't change — only the chrome around them does.
+- `Pages/Dashboard/Aliases.jsx` — inline `<Table>` → `DataTable`. Edit and Remove kept as paired `renderActions` buttons.
+- `Pages/Dashboard/Billing.jsx` invoices — inline `<Table>` → `DataTable` with the amount column aligned numerically (sortable, drives off `total.minor` so NGN sorts as a number not a formatted string). PDF download stays disabled with the same "not available yet" tooltip.
+
+Default page size is 25 for each; most accounts have fewer rows than that so the pager stays hidden. First-mount row stagger inherits from `DataTable` (≤28 ms per row, capped at 400 ms); passing `stagger={false}` on TeamList because its row set is normally tiny and the animation would read as fuss.
+
+The `MailboxTable` compact widget on Overview was left as a plain row list intentionally: it is a 3-mailbox preview, not a tabular view. The shape it renders is closer to a `ListRow` than a table.
+
+**Axe sweep committed under `scripts/axe-sweep/`.**
+
+- `scripts/axe-sweep/package.json` — isolated node project (`playwright@1.48.2`, `@axe-core/playwright@4.10.2`, `axe-core@4.10.2`), so these deps do not land in the app's own `package.json` or `package-lock.json`. Install once with `npm install && npm run install:browsers`.
+- `scripts/axe-sweep/sweep.mjs` — signs in as the seeded owner (`owner@sweep.test`) and the seeded staff (`ops@sweep.test` with TOTP computed from the fixed secret), resolves the seeded ids by parsing the server-rendered `<script data-page="app">` JSON, then visits every page at 390 and 1440 under `domcontentloaded` + `waitForSelector('main#main', state: 'attached', timeout: 15s)`. Writes `report.json` + `report.md` + a full-page screenshot per page per viewport.
+- `scripts/axe-sweep/pages.mjs` — 31 pages: 11 dashboard, 5 webmail, 15 ops. Each entry's `path` is a thunk so id-dependent pages (mailbox detail, abuse detail, user detail) compose their URL at run time.
+- `scripts/axe-sweep/totp.mjs` — tiny RFC 6238 implementation so the sweep does not need an external otplib dep for the staff two-factor step.
+- `scripts/axe-sweep/README.md` — the full prerequisites and the "fix the finding, not the symptom" guidance for whoever runs it next.
+- `.gitignore` ignores `node_modules/`, the generated `package-lock.json`, and `runs/`.
+- The Deliverability-only timeout the first few runs reported was the clue that led to the cache bug below.
+
+**Deliverability cache bug (found by the sweep, fixed in flight).**
+
+The sweep came back with `Ops deliverability (1440) — TimeoutError: page.waitForSelector: Timeout 15000ms exceeded`. Investigating with console + pageerror listeners revealed `g.reduce is not a function` thrown in `Deliverability-POSUYSJO.js` — React never got to render `<main id="main">`, so axe never ran. The server-rendered `data-page` JSON for `bounceSeries` on the crashing request was `{"__PHP_Incomplete_Class_Name":"Illuminate\\Support\\Collection"}` — a PHP-serialized Laravel Collection that round-tripped through `Cache::remember('ops.deliverability', 60, ...)` and came back as an incomplete-class stub when the autoloader map differed between cache writer and reader. JSON-encoded, the stub is `{}`, which crashes `.reduce` in the client.
+
+Fix (one-line, controller side): `->values()` → `->values()->all()` on `bounceSeries` and `worstDomains` in [app/Http/Controllers/Ops/DeliverabilityController.php](app/Http/Controllers/Ops/DeliverabilityController.php), so the cached payload is plain arrays, not Collection objects. The cache row now carries pure data and survives any autoloader shift.
+
+Not a dev-only quirk: the same bug would hit production the moment composer dump-autoload re-wrote class maps between two requests inside the 60-second cache window. The in-session audit test (6/6 Deliverability feature tests) didn't catch it because tests boot the app fresh each run; the sweep caught it because it runs against a long-lived server.
+
+**Checks.**
+
+- `npm run build` clean.
+- `vendor/bin/pint --dirty --format agent` clean.
+- `php artisan test --compact` — 367/367 passing, 2905 assertions, 24.4 s.
+- `scripts/axe-sweep/sweep.mjs` — **0 violations across 62 page/viewport runs** (31 pages × 2 viewports), zero pages that couldn't be scanned. Report + screenshots in `scripts/axe-sweep/runs/<timestamp>/`.
+- Each DataTable swap manually verified: sort toggles, row actions, empty state, numeric alignment and the hidden pager (`<= pageSize` rows). Mailboxes "last signed in" sorts by raw timestamp (not the formatted string), so "never" vs real dates orders correctly.
+
+**Files.**
+
+- JSX: [resources/js/Components/dashboard/AuditTable.jsx](resources/js/Components/dashboard/AuditTable.jsx), [resources/js/Components/dashboard/TeamList.jsx](resources/js/Components/dashboard/TeamList.jsx), [resources/js/Pages/Dashboard/Mailboxes.jsx](resources/js/Pages/Dashboard/Mailboxes.jsx), [resources/js/Pages/Dashboard/Aliases.jsx](resources/js/Pages/Dashboard/Aliases.jsx), [resources/js/Pages/Dashboard/Billing.jsx](resources/js/Pages/Dashboard/Billing.jsx).
+- PHP: [app/Http/Controllers/Ops/DeliverabilityController.php](app/Http/Controllers/Ops/DeliverabilityController.php).
+- Axe sweep (new): [scripts/axe-sweep/package.json](scripts/axe-sweep/package.json), [scripts/axe-sweep/sweep.mjs](scripts/axe-sweep/sweep.mjs), [scripts/axe-sweep/pages.mjs](scripts/axe-sweep/pages.mjs), [scripts/axe-sweep/totp.mjs](scripts/axe-sweep/totp.mjs), [scripts/axe-sweep/README.md](scripts/axe-sweep/README.md), [scripts/axe-sweep/.gitignore](scripts/axe-sweep/.gitignore).
+
+**Follow-ups worth doing next pass.**
+
+- Audit the rest of `ops/*` controllers for the same `Cache::remember(..., fn () => [... Collections ...])` pattern. A grep for `->values()$` inside cached arrays is a good start; anywhere one appears next to `Cache::remember` is a candidate for the same fix.
+- The sweep uses password sign-in with a fixed TOTP; consider adding a scenario pass where auth is mocked via a signed URL so the sweep can run against production or preview without seeded credentials.
+
+---
+
+## 2026-10-23 11:55 — Mail settings save endpoint
+
+**Why.** The Settings page shipped read-only on 2026-10-23 11:40 — it read live mailbox/aliases props but every Save button toasted "Preview: saves land once the save endpoint ships." This closes the loop so a mailbox owner can actually change their display name, reply-to, signature, auto-reply window and block-remote-images choice from the browser. Mail-app devices and read/write preferences stay on the fixture banner because they're waiting on the mail server.
+
+**Shape.**
+
+- New endpoint: `PATCH /mail/settings` → `App\Http\Controllers\Mail\MailController@updateSettings`, named `mail.settings.update`, behind `throttle:mailbox-writes` (same rate limiter the dashboard mailbox writes use, so one owner cannot hammer the row).
+- New FormRequest `App\Http\Requests\Mail\UpdateSettingsRequest` with `sometimes` rules on `display_name`, `reply_to`, `signature_text`, `signature_on_replies`, `block_remote_images`, `auto_reply{on, from, until}`. Everything else is dropped. `quota_gb`, `require_two_factor`, `state` are intentionally absent so an owner cannot sneak them through — a dedicated test asserts this.
+- Writes: `display_name` goes to its column; the other keys nest under the existing `mailboxes.settings` JSON (no migration). The controller resolves the signed-in person's current domain's first mailbox the same way the five GET methods do; another account's id does not exist for this request.
+- Audit: one row per save, action `MailboxSettingsChanged` (new enum case, slug `mailbox.settings_changed`), category `mailboxes`, summary ``Settings saved for *local@domain*``.
+- Client: Settings.jsx now uses three `useForm` instances — name/reply-to as one group, signature as one group, auto-reply as one group — and a tiny `patchSettings()` helper for the toggles (block-remote-images, auto-reply on/off, from/until dates) that fire on change. Server errors land in `useForm.errors` and show inside each `Field`. The `preview` block still updates live from the display-name input because it reads `useForm.data.display_name` directly.
+- Mail-app devices, Reading-and-writing preferences, Manual settings (IMAP/SMTP/CardDAV) are untouched — still fixture + honest banner, same as 11:40.
+
+**Checks.**
+
+- Narrow: `php artisan test --compact --filter=MailSettingsSaveTest` — 9/9, 22 assertions. Covers guest-redirect, unverified-redirect, no-mailbox-404, display-name + reply-to persisting to the row, signature + block-remote-images writing to settings JSON, auto-reply group persisting whole, `auto_reply.until` must-be-after `from`, mass-assignment ignores `quota_gb` and `require_two_factor` and `state`, one audit row per save.
+- Full suite: `php artisan test --compact` — **367/367 passing, 2905 assertions, 19.4 s.** One existing test (`SecuritySuiteTest::test_every_audit_event_is_wired_somewhere_in_the_app`) failed on the first pass because its glob scanned `Http/Controllers/Dashboard`/`Services/Dashboard`/`Services/Abuse`/`Http/Controllers/Ops` but not the new `Http/Controllers/Mail` directory. Added `Http/Controllers/Mail` to the glob so the test keeps enforcing "every defined AuditAction is actually recorded somewhere".
+- Pint clean. `npm run build` clean.
+
+**Files.**
+
+- [app/Http/Controllers/Mail/MailController.php](app/Http/Controllers/Mail/MailController.php) (`updateSettings` method + imports).
+- [app/Http/Requests/Mail/UpdateSettingsRequest.php](app/Http/Requests/Mail/UpdateSettingsRequest.php) (new).
+- [app/Identity/Enums/AuditAction.php](app/Identity/Enums/AuditAction.php) (new case + label).
+- [routes/web.php](routes/web.php) (new PATCH route).
+- [resources/js/Pages/Mail/Settings.jsx](resources/js/Pages/Mail/Settings.jsx) (three `useForm`s + `patchSettings()` helper replacing the preview toasts).
+- [tests/Feature/MailSettingsSaveTest.php](tests/Feature/MailSettingsSaveTest.php) (new).
+- [tests/Feature/Identity/SecuritySuiteTest.php](tests/Feature/Identity/SecuritySuiteTest.php) (glob now covers `Http/Controllers/Mail`).
+
+**Notes for the next step.**
+
+- Preferences (ask-no-subject, undo-send, mark-read-on-open, request-receipts, confirm-receipts) are five booleans that could land through the same endpoint by adding `preferences` as a sixth `sometimes` key under `settings`. Deliberately not done in this pass — the UI banner on that section currently says "waiting on the mail server" because some of those behaviours only make sense once sending/receiving is real. Revisit once that lands.
+
+---
+
+## 2026-10-23 11:40 — Dashboard and webmail brought up to the ops design system; webmail backed by real tables
+
+**Why.** The ops console landed its redesign on 2026-10-21. The owner dashboard and webmail had drifted — all 11 dashboard pages were on the older `Stat`/`Table`/inline-SVG patterns from before, and webmail was still reading `fixtures/mail.js` for the layout chrome (quota, domain, address) as well as the message content. You asked for an audit, then a design pass across both surfaces plus wiring webmail for everything that doesn't need a mail server.
+
+**Decisions carried from the brief.**
+- Promote the ops primitives (MetricTile, DataTable, SectionHeader, ActivityFeed, ListRow, Skeleton) to `Components/ui/` so the dashboard can draw from the same set without a code smell. Ops pages re-import from `ui/`.
+- No new dependencies. `motion`, `lucide-react` and `cmdk` already in. No shadcn, no Inter, no dark mode.
+- Keep the primitive class names (`.ops-metric`, `.ops-row`, `.ops-card`) as the shared design-system prefix. Faster than renaming every selector, zero cascade conflicts since nothing else uses the prefix.
+- Delete old CSS before layering new (`hero-band / hb-fig / hb-figs / hb-eyebrow / hb-dom / hb-sub / hb-acts / hero-anim .hb-fig` keyframes, and the unused `.skel / .skel-line` block).
+- Standing rule from the Deliverability bug still in force: **no `motion.div` wrapping `#main`.** Row-level stagger only.
+
+**Primitive promotion.**
+- Six components moved from `Components/ops/` to `Components/ui/` with `git mv`: `MetricTile`, `DataTable`, `SectionHeader`, `ActivityFeed`, `ListRow`, `Skeleton`.
+- The old `Components/ui/Skeleton.jsx` (10 lines, unused) and `Components/dashboard/ActivityFeed.jsx` (29 lines, superseded) were deleted — both marked for replacement in the audit.
+- Every ops page and layout had its import path rewritten in one sed pass (17 files). Build + tests stayed clean through the move.
+- `ops.css` primitive selectors unscoped: `:where(.ops .ops-X)` → `:where(.ops-X)`, and the colour/spacing var block (`--ops-card`, `--ops-ok*`, `--ops-watch*`, etc.) moved from `:where(.ops)` to `:root`. The shell selectors (sidebar, topbar, main, dock, sheet, nav, user, brand, env) keep their scope — they only target elements the ops shell renders anyway.
+
+**DashboardLayout rework.** [resources/js/Layouts/DashboardLayout.jsx](resources/js/Layouts/DashboardLayout.jsx).
+- The inline `ICON` object + `NavIcon` SVG wrapper deleted. Every sidebar, tab, and link glyph is now a `lucide-react` icon with a consistent `strokeWidth`.
+- `.tabbar` on mobile now wraps icons in `.tabbar-ic` and uses `motion`'s `LayoutGroup` + `layoutId="dash-dock-pill"` to animate the active pill between slots (spring 400/32, respects `prefers-reduced-motion`). Four slots as before: Dashboard, Mailboxes, Billing, Mail.
+- `useHeroAnimation` call removed from the dashboard layout only. The hook stays for public/auth/onboarding layouts that still use `[data-hero]`.
+
+**Icons.jsx reroute.** [resources/js/Components/ui/Icons.jsx](resources/js/Components/ui/Icons.jsx).
+- Every exported icon (`InfoIcon`, `AlertIcon`, `CheckIcon`, `CrossIcon`, `ClockIcon`, `ChevronDownIcon`, `HelpIcon`, `LockIcon`, `PlusIcon`, `MailIcon`, `BoltIcon`, `CopyIcon`) is now a thin wrapper over the matching lucide icon with the same prop shape. Every file that imported from `ui/Icons` picks up lucide-rendered glyphs without a single JSX edit.
+
+**Overview rewritten.** [resources/js/Pages/Dashboard/Overview.jsx](resources/js/Pages/Dashboard/Overview.jsx).
+- The `.hero-band / .hb-figs / .hb-fig` quartet is gone. The page opens with `SectionHeader` (eyebrow + domain name + greeting + actions) followed by a `MetricRow` of four tiles (Mailboxes, Storage used, Plan, Domain health). Health tile tones to `watch` when any record is failing.
+- Quick actions, mailbox card, plan card and recent activity are grouped under `SubSection` with "See all" / "See the full log" `tLink`s on the right of the heading.
+- `ActivityFeed` is now the richer shared primitive (lucide icon per audit category, row stagger). The dashboard activity payloads work unchanged: `category` is optional, falls back to the generic `Activity` icon.
+- Quick-action glyphs swapped from `+ ☷ ↺ ₦` typographic placeholders to `Mail / AtSign / KeyRound / FileText` lucide icons.
+
+**Other dashboard pages.**
+- `Help.jsx` — two inline `<svg>` glyphs for WhatsApp and Email replaced with `MessageCircle` and `Mail`.
+- `TeamList.jsx` — the owner-row padlock replaced with `Lock`.
+- `Billing.jsx` — the `.store-nums` triple (In your pool / Assigned / Actually used) swapped for a `MetricRow`.
+- Every other dashboard page (Domains, Domain, Mailboxes, Mailbox, Aliases, Team, Audit, Storage) picks up lucide icons automatically via the `Icons.jsx` reroute. The audit found no fixture regressions on the dashboard pages; Phase A wiring held.
+
+**Webmail wired for real.**
+- New [app/Http/Controllers/Mail/MailController.php](app/Http/Controllers/Mail/MailController.php) with five methods (`inbox`, `compose`, `search`, `contacts`, `settings`) replacing the `Route::inertia(...)` closures. All five share a `shared()` helper that resolves the signed-in owner's current domain, picks the first mailbox on it, and returns `{mailbox, domain, aliases}` as Inertia props. No domain → redirect to onboarding. No mailbox → redirect to the dashboard mailbox manager.
+- `mailbox` props: `id, address, local, displayName, quotaGb, usedGb, settings{signature, signatureOnReplies, replyTo, blockRemoteImages, autoReply{on, from, until}}` — every settings field maps to a key under the existing `mailboxes.settings` JSON column (added 2026-10-20). No migration needed.
+- `aliases` are the real alias rows whose `destinations` JSON contains the current mailbox's full address, resolved via `whereJsonContains`.
+- Routes updated: [routes/web.php](routes/web.php) now binds `GET /mail*` to `MailController` methods instead of `Route::inertia`.
+- A `demo: true` prop ships from the inbox, compose, search and contacts actions; `settings` ships `demo: false` because its data is real.
+
+**MailLayout lifted off the fixture.** [resources/js/Layouts/MailLayout.jsx](resources/js/Layouts/MailLayout.jsx).
+- Reads `mailbox` and `domain` from `usePage().props` instead of the hidden `mailboxFixture` import. The quota meter and the "This mailbox" box now show live `used_gb / quota_gb` from the mailboxes table and the real domain name.
+- The global `.mail-notice` wrapper around `PrototypeNotice` is gone — notices are scoped per page below.
+- The search glyph swapped from inline SVG with a hard-coded `#8FA0B4` to lucide's `Search`.
+
+**Settings end-to-end.** [resources/js/Pages/Mail/Settings.jsx](resources/js/Pages/Mail/Settings.jsx).
+- Display name, email address, reply-to, signature + "include on replies", auto-reply window, block-remote-images and the storage figures all read from `usePage().props.mailbox` and `.domain`. The address count on the "Send from this address by default" switch counts the real alias rows plus the primary address.
+- The "Your devices" (mail-app devices) and "Reading and writing" preferences sections stay on the fixture and now carry an honest `Banner` saying so. "Manual settings" IMAP/SMTP/CardDAV values are flagged as placeholders until the mail server is picked.
+- Save handlers still toast "Preview: saves land once the save endpoint ships." — the save endpoint is explicitly out of scope for this pass; the read-side is live and the save-side is a short follow-up.
+
+**Scoped honest banners.**
+- `Inbox` — `info` banner: "These are demonstration messages. Real inbox content needs a mail server, which is still being picked. Your mailbox, quota and settings are already live." Lucide icons swapped in for Archive, Delete, Spam, FAB (+), empty-folder glyph.
+- `Compose` — `info` banner: "Sending is not connected yet. You can try the compose box; nothing leaves your browser until the mail server is picked."
+- `Search` — `info` banner: "Searching demonstration messages. Full-text search needs the mail server's index."
+- `Contacts` — `info` banner: "These are demonstration contacts. Where contacts live — Mailcow CardDAV or a dedicated Ziroemail table — is still being decided."
+
+**Checks.**
+- `npm run build` clean (fresh asset hashes, no manifest-reference holes).
+- `vendor/bin/pint --dirty --format agent` clean.
+- Narrow test: `--filter=WebmailPagesTest` 19/19 (added one more case: a verified user with no domain redirects to onboarding, which exercises the new redirect branch).
+- Full suite: **358/358 passing, 2879 assertions, 17.5 s.**
+- Axe sweep: deferred. The sweep tooling (`scratchpad/sweep-both.mjs`) was in a scratchpad from the 2026-10-21 ops pass and did not persist. Next pass that touches this surface should re-set up the Playwright + axe-core sweep against the 15 pages touched here (every dashboard page + MailLayout + the five mail pages) at 390 and 1440.
+
+**Open CEO dependencies (surfaced during the audit, carried forward in CEO_DECISIONS).**
+1. Mail server choice. Blocks inbox content, compose send, search, the "mail-app devices" list.
+2. Contacts source — Mailcow CardDAV or a Laravel `contacts` table. Blocks the Contacts screen.
+3. Auto-reply body text. Fixture only has `on / from / until`; no message body yet. Add a `message` key under `mailboxes.settings.auto_reply` when you want to show the body in Settings.
+4. Signature storage shape. Confirmed JSON-in-settings is fine; no migration.
+
+**Files.**
+- JSX: [resources/js/Layouts/DashboardLayout.jsx](resources/js/Layouts/DashboardLayout.jsx), [resources/js/Layouts/MailLayout.jsx](resources/js/Layouts/MailLayout.jsx), [resources/js/Pages/Dashboard/Overview.jsx](resources/js/Pages/Dashboard/Overview.jsx), [resources/js/Pages/Dashboard/Billing.jsx](resources/js/Pages/Dashboard/Billing.jsx), [resources/js/Pages/Dashboard/Help.jsx](resources/js/Pages/Dashboard/Help.jsx), [resources/js/Components/dashboard/TeamList.jsx](resources/js/Components/dashboard/TeamList.jsx), [resources/js/Components/ui/Icons.jsx](resources/js/Components/ui/Icons.jsx), [resources/js/Pages/Mail/Inbox.jsx](resources/js/Pages/Mail/Inbox.jsx), [resources/js/Pages/Mail/Compose.jsx](resources/js/Pages/Mail/Compose.jsx), [resources/js/Pages/Mail/Search.jsx](resources/js/Pages/Mail/Search.jsx), [resources/js/Pages/Mail/Contacts.jsx](resources/js/Pages/Mail/Contacts.jsx), [resources/js/Pages/Mail/Settings.jsx](resources/js/Pages/Mail/Settings.jsx).
+- Primitives (moved): [resources/js/Components/ui/MetricTile.jsx](resources/js/Components/ui/MetricTile.jsx), [resources/js/Components/ui/DataTable.jsx](resources/js/Components/ui/DataTable.jsx), [resources/js/Components/ui/SectionHeader.jsx](resources/js/Components/ui/SectionHeader.jsx), [resources/js/Components/ui/ActivityFeed.jsx](resources/js/Components/ui/ActivityFeed.jsx), [resources/js/Components/ui/ListRow.jsx](resources/js/Components/ui/ListRow.jsx), [resources/js/Components/ui/Skeleton.jsx](resources/js/Components/ui/Skeleton.jsx).
+- PHP: [app/Http/Controllers/Mail/MailController.php](app/Http/Controllers/Mail/MailController.php), [routes/web.php](routes/web.php).
+- CSS: [resources/css/pages/ops.css](resources/css/pages/ops.css) (vars hoisted, primitive selectors unscoped), [resources/css/ziro.css](resources/css/ziro.css) (deleted `.skel`, `.skel-line`, `hero-anim .hb-fig` keyframes), [resources/css/pages/dashboard.css](resources/css/pages/dashboard.css) (deleted `.hero-band / .hb-*`).
+- Tests: [tests/Feature/WebmailPagesTest.php](tests/Feature/WebmailPagesTest.php) (seeds a domain + mailbox before the request; added a no-domain redirect case).
+
+**Follow-ups worth doing next pass.**
+- `DataTable` swap under `MailboxTable`, `AuditTable`, `TeamList` and the Billing invoices table. The audit called it out and the shape fits; the swap is a per-component rewrite that was out of scope here.
+- Mail Settings save endpoint. The POST endpoint is small; shipping it turns the whole page from "preview, nothing saves" into a working mailbox-settings surface.
+- Re-set up the axe sweep (Playwright + `axe-core@4.10.2`) with the 2026-10-21 config so it runs on every subsequent pass without rediscovering the tooling.
+
+---
+
 ## 2026-10-21 17:10 — Ops: fix for "Deliverability renders blank" after SPA navigation
 
 **Why.** You reported some ops pages (Deliverability, Delivery log, Domains, etc.) rendering as a blank white main area after SPA navigation from Overview. I reproduced it on `ziroemail.test` in a fresh headless Chrome — and did **not** see the bug: the pages render correctly. So the code worked, but the pattern was fragile: a `motion.div` wrapped the entire main content with `initial: { opacity: 0 }` → `animate: { opacity: 1 }` keyed on the Inertia URL. If anything stalled between mount and the first animation frame (strict-mode re-mount, a long task, a Pusher error in a long-lived tab), the opacity never animated to 1 and the whole page sat at opacity 0.

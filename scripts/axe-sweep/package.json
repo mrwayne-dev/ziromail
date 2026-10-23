@@ -1,0 +1,16 @@
+{
+    "name": "ziroemail-axe-sweep",
+    "private": true,
+    "version": "0.1.0",
+    "description": "Playwright + axe-core sweep for every dashboard, webmail and ops page. Lives in its own folder so its deps do not land in the application lockfile.",
+    "type": "module",
+    "scripts": {
+        "sweep": "node sweep.mjs",
+        "install:browsers": "playwright install chromium"
+    },
+    "dependencies": {
+        "@axe-core/playwright": "4.10.2",
+        "axe-core": "4.10.2",
+        "playwright": "1.48.2"
+    }
+}
