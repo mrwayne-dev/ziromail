@@ -1,5 +1,4 @@
 import { useId, useState } from 'react';
-import { contactFixtures } from '../../fixtures/mail';
 
 const EMAIL = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]{2,}$/;
 export const isEmail = (value) => EMAIL.test(value);
@@ -7,7 +6,9 @@ export const isEmail = (value) => EMAIL.test(value);
 /*
  * Recipients as chips. Typing an address and pressing Enter, comma, semicolon or
  * leaving the field turns it into a chip; an address that is not an email stays as
- * a flagged chip so it cannot be sent by accident. Contacts are offered as you type.
+ * a flagged chip so it cannot be sent by accident. The address-book autocomplete
+ * will show here once the contacts store is connected — until then, the input
+ * stays active and the user types a full address themselves.
  */
 export default function RecipientChips({ id, label, value, onChange, placeholder }) {
     const listId = useId();
@@ -16,9 +17,7 @@ export default function RecipientChips({ id, label, value, onChange, placeholder
     function commit(raw) {
         const text = raw.trim().replace(/[;,]$/, '').trim();
         if (!text) return;
-        const known = contactFixtures.find((contact) => contact.address === text.toLowerCase() || contact.name.toLowerCase() === text.toLowerCase());
-        const chip = known ? { name: known.name, address: known.address } : { name: text, address: text };
-        onChange([...value, chip]);
+        onChange([...value, { name: text, address: text }]);
         setDraft('');
     }
 
@@ -53,9 +52,8 @@ export default function RecipientChips({ id, label, value, onChange, placeholder
                 onKeyDown={onKeyDown}
                 onBlur={() => commit(draft)}
             />
-            <datalist id={listId}>
-                {contactFixtures.map((contact) => <option key={contact.id} value={contact.address}>{contact.name}</option>)}
-            </datalist>
+            {/* No suggestions until the address book is connected. */}
+            <datalist id={listId} />
         </span>
     );
 }

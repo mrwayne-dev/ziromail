@@ -1,11 +1,22 @@
-import { folderDefs, messageFixtures } from '../fixtures/mail';
+/*
+ * Shared mail helpers. The folder set is the IMAP standard list (no counts
+ * until a mail store is connected). Avatars are initials + a stable tint.
+ */
 
-// Folder badges come from the messages, never typed in, so a badge cannot disagree with its list.
-export function foldersWithCounts(messages = messageFixtures) {
-    return folderDefs.map((folder) => {
-        const inFolder = messages.filter((message) => message.folder === folder.id);
-        return { ...folder, total: inFolder.length, unread: inFolder.filter((message) => message.unread).length };
-    });
+export const IMAP_FOLDERS = [
+    { id: 'inbox', name: 'Inbox', kind: 'inbox' },
+    { id: 'sent', name: 'Sent', kind: 'sent' },
+    { id: 'drafts', name: 'Drafts', kind: 'drafts' },
+    { id: 'archive', name: 'Archive', kind: 'archive' },
+    { id: 'spam', name: 'Spam', kind: 'spam' },
+    { id: 'trash', name: 'Trash', kind: 'trash' },
+];
+
+// Default folder list with zero counts, so the folder nav renders before any
+// mail store is attached. Pages that have message rows can pass their own list
+// (same shape) with real totals and unread counts.
+export function foldersWithCounts(_messages = []) {
+    return IMAP_FOLDERS.map((folder) => ({ ...folder, total: 0, unread: 0 }));
 }
 
 export function initialsOf(name) {
@@ -18,29 +29,4 @@ export function tintOf(address) {
     let sum = 0;
     for (const char of address) sum += char.charCodeAt(0);
     return tints[sum % tints.length];
-}
-
-export function messageById(messages, uid) {
-    return messages.find((message) => message.uid === uid) ?? null;
-}
-
-const MATCH = (message, term) => [message.subject, message.preview, message.from.name, message.from.address, ...message.body.map((block) => block.text)].join(' ').toLowerCase().includes(term);
-
-// "from:chidi" and "has:attachment" narrow the search; everything else is a word to find.
-export function searchMessages(messages, query, scope = 'everywhere') {
-    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-    const from = terms.find((term) => term.startsWith('from:'))?.slice(5);
-    const hasAttachment = terms.includes('has:attachment');
-    const words = terms.filter((term) => !term.startsWith('from:') && term !== 'has:attachment');
-
-    return messages.filter((message) => {
-        if (message.folder === 'trash' || message.folder === 'spam') return false;
-        if (scope === 'inbox' && message.folder !== 'inbox') return false;
-        if (scope === 'sent' && message.folder !== 'sent') return false;
-        if (scope === 'attachment' && !message.hasAttachment) return false;
-        if (scope === 'year' && new Date(message.receivedAt).getFullYear() !== 2026) return false;
-        if (from && !`${message.from.name} ${message.from.address}`.toLowerCase().includes(from)) return false;
-        if (hasAttachment && !message.hasAttachment) return false;
-        return words.every((word) => MATCH(message, word));
-    });
 }

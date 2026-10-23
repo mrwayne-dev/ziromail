@@ -46,7 +46,6 @@ class HandleInertiaRequests extends Middleware
             'site' => [
                 'name' => 'Ziroemail',
                 'url' => rtrim(config('app.url'), '/'),
-                'prototype' => (bool) config('app.prototype'),
             ],
             // Exactly these keys and nothing else: a secret, token or recovery code never reaches a prop.
             'auth' => [

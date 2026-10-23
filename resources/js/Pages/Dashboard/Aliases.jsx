@@ -2,10 +2,10 @@ import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AddressDialog from '../../Components/dashboard/AddressDialog';
 import Button from '../../Components/ui/Button';
-import Empty from '../../Components/ui/Empty';
+import DataTable from '../../Components/ui/DataTable';
 import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
-import Table from '../../Components/ui/Table';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import { useToast } from '../../Components/ui/Toast';
 import useDisclosure from '../../Hooks/useDisclosure';
 import DashboardLayout from '../../Layouts/DashboardLayout';
@@ -27,40 +27,37 @@ export default function Aliases() {
         });
     }
 
+    const noMailboxes = mailboxes.length === 0;
+
     return (
         <DashboardLayout page="admin-aliases" title="Extra addresses" description="Addresses that deliver into an existing mailbox.">
-            <div className="page-head">
-                <div>
-                    <h1>Extra addresses</h1>
-                    <p>Addresses on <span className="mono">{domain.name}</span> that deliver into an existing mailbox. They use no storage of their own and are not charged.</p>
-                </div>
-                <Button onClick={() => openFor(null)} disabled={mailboxes.length === 0}>Add an address</Button>
-            </div>
+            <SectionHeader
+                title="Extra addresses"
+                description={<>Addresses on <span className="mono">{domain.name}</span> that deliver into an existing mailbox. They use no storage of their own and are not charged.</>}
+                actions={<Button variant="ink" size="sm" onClick={() => openFor(null)} disabled={noMailboxes} title={noMailboxes ? 'Add a mailbox before you can add an alias' : undefined}>Add an address</Button>}
+            />
 
-            {aliases.length === 0 ? (
-                <Empty icon="@" title="No extra addresses yet" action={<Button onClick={() => openFor(null)} disabled={mailboxes.length === 0}>Add an address</Button>}>
-                    Add info@ or orders@ and choose which mailbox receives it.
-                </Empty>
-            ) : (
-                <Table
-                    caption="Extra addresses and where each delivers"
-                    head={<tr><th scope="col">Address</th><th scope="col">Delivers to</th><th scope="col">Type</th><th scope="col"><span className="sr-only">Actions</span></th></tr>}
-                >
-                    {aliases.map((alias) => (
-                        <tr key={alias.id}>
-                            <td className="al-addr">{alias.address}</td>
-                            <td><span className="al-to">{alias.destinations.map(short).join(' and ')}</span></td>
-                            <td>{alias.type === 'forward' ? <Pill tone="info">Forwards to {alias.destinations.length}</Pill> : <Pill tone="muted">Alias</Pill>}</td>
-                            <td className="cell-end">
-                                <span className="act-btns">
-                                    <Button variant="line" size="sm" aria-label={`Edit ${alias.address}`} onClick={() => openFor(alias)}>Edit</Button>
-                                    <Button variant="quiet" size="sm" aria-label={`Remove ${alias.address}`} onClick={() => remove(alias)}>Remove</Button>
-                                </span>
-                            </td>
-                        </tr>
-                    ))}
-                </Table>
-            )}
+            <DataTable
+                columns={[
+                    { id: 'address', header: 'Address', mono: true, sortable: true, sortValue: (row) => row.address, accessor: (row) => row.address },
+                    { id: 'to', header: 'Delivers to', accessor: (row) => <span className="mono">{row.destinations.map(short).join(' and ')}</span> },
+                    { id: 'type', header: 'Type', accessor: (row) => row.type === 'forward' ? <Pill tone="info">Forwards to {row.destinations.length}</Pill> : <Pill tone="muted">Alias</Pill> },
+                ]}
+                rows={aliases}
+                rowKey={(row) => row.id}
+                renderActions={(row) => (
+                    <>
+                        <Button variant="line" size="sm" aria-label={`Edit ${row.address}`} onClick={() => openFor(row)}>Edit</Button>
+                        {' '}
+                        <Button variant="quiet" size="sm" aria-label={`Remove ${row.address}`} onClick={() => remove(row)}>Remove</Button>
+                    </>
+                )}
+                emptyState={{
+                    title: 'No extra addresses yet',
+                    body: 'Add info@ or orders@ and choose which mailbox receives it.',
+                    action: <Button variant="ink" size="sm" onClick={() => openFor(null)} disabled={noMailboxes}>Add an address</Button>,
+                }}
+            />
 
             <div className="grid g2 mt-l">
                 <Note title="Alias or forwarding?">

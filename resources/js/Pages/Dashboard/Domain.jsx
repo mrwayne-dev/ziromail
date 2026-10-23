@@ -1,12 +1,12 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import { useState } from 'react';
 import RecordTable from '../../Components/domain/RecordTable';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
 import { AlertIcon } from '../../Components/ui/Icons';
-import Pill from '../../Components/ui/Pill';
+import { MetricRow } from '../../Components/ui/MetricTile';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import { useToast } from '../../Components/ui/Toast';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import { formatRelative } from '../../Lib/format';
@@ -44,18 +44,32 @@ export default function Domain() {
         });
     }
 
+    const authTone = records.length === 0 ? 'off' : failing.length === 0 ? undefined : 'watch';
+    const authDescription = records.length === 0
+        ? 'DNS checks are not connected yet'
+        : failing.length === 0 ? 'all records passing' : `${failing.length} to fix`;
+
     return (
         <DashboardLayout page="admin-domain" title={domain.name} description="Authentication and delivery health for this domain.">
-            <div className="page-head">
-                <div>
-                    <h1 className="mono domain-title">{domain.name}</h1>
-                    <p>Authentication and delivery health for your domain.</p>
-                </div>
-                <Button variant="line" busy={checking} onClick={check}>Re-check now</Button>
-            </div>
+            <SectionHeader
+                eyebrow="DOMAIN"
+                title={<span className="mono">{domain.name}</span>}
+                description="Authentication and delivery health for your domain."
+                actions={<>
+                    <Button variant="line" size="sm" busy={checking} onClick={check}>Re-check now</Button>
+                    <Button variant="line" size="sm" href={route('dashboard.domains')}>All domains</Button>
+                </>}
+            />
+
+            <MetricRow label="Domain figures" items={[
+                { k: 'Authentication', v: `${passing} / ${records.length || 0}`, tone: authTone, d: authDescription },
+                { k: 'Last checked', v: checkedIso ? checkedAt : '—', tone: checkedIso ? undefined : 'off', d: checkedIso ? 'automatic every few hours' : 'not yet checked' },
+                { k: 'Inbox placement', v: '—', tone: 'off', d: placement ? 'Loading placement data' : 'Not available yet, waiting on delivery data' },
+                { k: 'Sending reputation', v: '—', tone: 'off', d: reputation ? 'Loading reputation data' : 'Not available yet, waiting on delivery data' },
+            ]} />
 
             {failing.length > 0 && (
-                <div className="stack mb">
+                <div className="stack mt-24">
                     {failing.map((record) => (
                         <Banner key={record.id} tone="bad" icon={<AlertIcon />} title={record.status === 'missing' ? `${record.type} has never been added for this domain` : `${record.type} no longer matches`}>
                             <p>
@@ -68,21 +82,18 @@ export default function Domain() {
                 </div>
             )}
 
-            <div className="two">
-                <div>
-                    <section className="dom-records">
-                        <div className="dom-records-head between">
-                            <h2 className="heading-sm">Authentication records</h2>
-                            <Pill tone={failing.length === 0 ? 'ok' : 'warn'}>{passing} of {records.length} passing</Pill>
-                        </div>
-                        <RecordTable records={records} checkedAt={checkedAt} checking={checking} onCheck={check} mode="monitor" />
-                    </section>
+            <SubSection id="rec-h" title="Authentication records" description="DKIM, SPF, DMARC and MX for this domain. We re-check automatically; use the button above to force a check.">
+                <section className="ops-card">
+                    <RecordTable records={records} checkedAt={checkedAt} checking={checking} onCheck={check} mode="monitor" />
+                </section>
+            </SubSection>
 
-                    <h2 className="heading-sm spaced">Inbox placement</h2>
+            <SubSection id="pl-h" title="Inbox placement" description="Where test messages land at Gmail, Outlook and Yahoo over the last 20 days.">
+                <section className="ops-card">
                     {placement ? (
                         <>
-                            <p className="sm mut mt-s">We send test messages to seeded accounts and record where they land. This is evidence, not a promise.</p>
-                            <div className="place mt">
+                            <p className="ops-sm ops-mut mt-6">We send test messages to seeded accounts and record where they land. This is evidence, not a promise.</p>
+                            <div className="place mt-14">
                                 {[['gmail', 'Gmail'], ['outlook', 'Outlook'], ['yahoo', 'Yahoo']].map(([key, label]) => (
                                     <div className="place-i" key={key}>
                                         <b>{placement[key]}</b>
@@ -93,32 +104,33 @@ export default function Domain() {
                             </div>
                         </>
                     ) : (
-                        <p className="sm mut mt-s">Not enough data yet. Placement results appear here once this domain has sent mail.</p>
+                        <p className="ops-sm ops-mut m-0">Not available yet, waiting on delivery data. Placement results appear here once this domain has sent mail through the connected server.</p>
                     )}
-                </div>
+                </section>
+            </SubSection>
 
-                <div className="stack">
-                    <Card>
-                        <h3 className="heading-sm">Sending reputation</h3>
-                        {reputation ? (
-                            <>
-                                <div className="between mt rep-row"><span className="mut">Bounce rate</span><b className="num">{reputation.bounceRate}</b></div>
-                                <div className="between rep-row"><span className="mut">Complaint rate</span><b className="num">{reputation.complaintRate}</b></div>
-                                <p className="hint">{reputation.note}</p>
-                            </>
-                        ) : (
-                            <p className="sm mut mt-s">Not enough data yet. Bounce and complaint rates appear once this domain has sent mail.</p>
-                        )}
-                    </Card>
+            <SubSection id="rep-h" title="Sending reputation" description="Bounce and complaint rates reported by receivers.">
+                <section className="ops-card">
+                    {reputation ? (
+                        <dl className="ops-kv">
+                            <div><dt>Bounce rate</dt><dd className="ops-tnum">{reputation.bounceRate}</dd></div>
+                            <div><dt>Complaint rate</dt><dd className="ops-tnum">{reputation.complaintRate}</dd></div>
+                            {reputation.note && <div><dt>Note</dt><dd>{reputation.note}</dd></div>}
+                        </dl>
+                    ) : (
+                        <p className="ops-sm ops-mut m-0">Not available yet, waiting on delivery data. Bounce and complaint rates appear once this domain has sent mail through the connected server.</p>
+                    )}
+                </section>
+            </SubSection>
 
-                    <Card>
-                        <h3 className="heading-sm">Not confident doing this?</h3>
-                        <p className="sm mut mt-s">Send us a screenshot of your DNS page and we will tell you exactly which field to change, and re-check until it passes.</p>
-                        <Button variant="line" full className="mt" href={route('contact')}>Message us</Button>
-                    </Card>
-                    <p className="sm mut"><Link className="back-link" href={route('dashboard.domains')}>&larr; All domains</Link></p>
-                </div>
-            </div>
+            <SubSection id="help-h" title="Not confident doing this?">
+                <section className="ops-card">
+                    <p className="ops-sm ops-mut m-0">Send us a screenshot of your DNS page and we will tell you exactly which field to change, and re-check until it passes.</p>
+                    <div className="ops-actions">
+                        <Button variant="line" size="sm" href={route('contact')}>Message us</Button>
+                    </div>
+                </section>
+            </SubSection>
         </DashboardLayout>
     );
 }

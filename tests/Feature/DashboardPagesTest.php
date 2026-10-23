@@ -66,12 +66,13 @@ class DashboardPagesTest extends TestCase
             ->has('account.domains', 2));
     }
 
-    public function test_the_prototype_flag_can_be_turned_off(): void
+    public function test_the_shared_site_prop_no_longer_carries_a_prototype_flag(): void
     {
-        config(['app.prototype' => false]);
         $this->seed(DemoSeeder::class);
         $this->actingAs(User::query()->where('email', 'owner@adaobifoods.test')->firstOrFail());
 
-        $this->get('/dashboard')->assertInertia(fn (Assert $page) => $page->where('site.prototype', false));
+        // The old "preview / demonstration data" banner is gone; nothing on the dashboard renders demo data
+        // any more, so there is no flag for the UI to gate on. See docs/BUILD_LOG.md 2026-10-23 (Phase A).
+        $this->get('/dashboard')->assertInertia(fn (Assert $page) => $page->missing('site.prototype'));
     }
 }

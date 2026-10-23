@@ -4,11 +4,12 @@ import PlanChangePreview from '../../Components/dashboard/PlanChangePreview';
 import PlanPicker from '../../Components/domain/PlanPicker';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
+import DataTable from '../../Components/ui/DataTable';
 import { AlertIcon } from '../../Components/ui/Icons';
+import { MetricRow } from '../../Components/ui/MetricTile';
 import Note from '../../Components/ui/Note';
 import Pill from '../../Components/ui/Pill';
-import Table from '../../Components/ui/Table';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import { useToast } from '../../Components/ui/Toast';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import { planChangePreview } from '../../Lib/billing';
@@ -43,15 +44,19 @@ export default function Billing() {
         setTarget(plan.code);
     }
 
+    const storageTiles = [
+        { k: 'In your pool',  v: formatGb(storage.poolGb) },
+        { k: 'Assigned',      v: formatGb(storage.assignedGb) },
+        { k: 'Actually used', v: formatGb(storage.usedGb) },
+    ];
+
     return (
         <DashboardLayout page="admin-billing" title="Plan & storage" description="Your plan, storage and invoices.">
-            <div className="page-head">
-                <div>
-                    <h1>Plan &amp; storage</h1>
-                    <p>One plan covering <span className="mono">{domain.name}</span>.</p>
-                </div>
-                <Button variant="line" disabled title="Invoice downloads are not connected yet">Download invoices</Button>
-            </div>
+            <SectionHeader
+                title="Plan & storage"
+                description={<>One plan covering <span className="mono">{domain.name}</span>.</>}
+                actions={<Button variant="line" size="sm" disabled title="Invoice downloads are not connected yet">Download invoices</Button>}
+            />
 
             {banner && (
                 <Banner tone={banner[0]} live icon={<AlertIcon />} title={banner[1]} className="mb">
@@ -61,76 +66,75 @@ export default function Billing() {
 
             <div className="two">
                 <div>
-                    <section className="store-card" aria-labelledby="st-h">
-                        <div className="between pool-top">
-                            <h2 className="heading-sm" id="st-h">Storage</h2>
-                            {storage.ceilingGb && <Pill tone="info">Expandable to {storage.ceilingGb} GB</Pill>}
-                        </div>
-                        <div className="store-nums mt">
-                            <div><span className="k">In your pool</span><span className="v">{formatGb(storage.poolGb)}</span></div>
-                            <div><span className="k">Assigned</span><span className="v">{formatGb(storage.assignedGb)}</span></div>
-                            <div><span className="k">Actually used</span><span className="v">{formatGb(storage.usedGb)}</span></div>
-                        </div>
-                        {storage.ceilingGb && (
-                            <div className="ceiling">
-                                <div className="track" role="img" aria-label={`${formatGb(storage.poolGb)} pool: ${storage.planGb} GB from the ${plan.name} plan plus ${storage.boughtGb} GB bought, out of a ${storage.ceilingGb} GB ceiling`}>
-                                    <span className="fill" style={{ width: `${storage.planGb * ceilingPct}%` }} />
-                                    <span className="extra" style={{ width: `${storage.boughtGb * ceilingPct}%` }} />
-                                </div>
-                                <div className="marks"><span>{storage.planGb} GB plan &middot; {storage.boughtGb} GB bought</span><span>{storage.ceilingGb} GB ceiling</span></div>
-                            </div>
-                        )}
-                        {can.buyStorage && (
-                            <div className="blocks">
-                                <div className="blocks-copy">
-                                    <b>Need more room?</b>
-                                    <span className="sm mut">{formatPrice(plan.extraStorage.price.NGN.yearly, 'NGN')} for each {storage.extra.blockGb} GB a year, renewing with the plan. Added to the pool immediately.</span>
-                                </div>
-                                <Button href={withDomain('dashboard.storage')}>Add {storage.extra.blockGb} GB</Button>
-                            </div>
-                        )}
-                    </section>
-
-                    <h2 className="heading-sm spaced">Invoices</h2>
-                    <Table
-                        caption="Invoice history"
-                        className="mt"
-                        head={<tr><th scope="col">Date</th><th scope="col">What for</th><th scope="col" className="r">Amount</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Download</span></th></tr>}
+                    <SubSection
+                        id="st-h"
+                        title="Storage"
+                        actions={storage.ceilingGb ? <Pill tone="info">Expandable to {storage.ceilingGb} GB</Pill> : null}
                     >
-                        {invoices.map((invoice) => (
-                            <tr key={invoice.id}>
-                                <td className="num">{formatDate(invoice.issuedAt)}</td>
-                                <td>{invoice.description}</td>
-                                <td className="r num">{formatPrice(invoice.total.minor, invoice.total.currency)}</td>
-                                <td><span className="inv-status"><Pill tone={invoice.status === 'paid' ? 'ok' : 'warn'}>{invoice.status === 'paid' ? 'Paid' : invoice.status}</Pill></span></td>
-                                <td className="r"><Button variant="line" size="sm" disabled title="PDF invoices are not connected yet" aria-label={`PDF for ${invoice.number} (not available yet)`}>PDF</Button></td>
-                            </tr>
-                        ))}
-                    </Table>
-                    <p className="hint">Amounts include VAT at 7.5%. Invoices are kept for as long as Nigerian tax law requires.</p>
+                        <MetricRow items={storageTiles} label="Storage figures" />
+                        {storage.ceilingGb && (
+                            <section className="ops-card mt">
+                                <div className="ceiling">
+                                    <div className="track" role="img" aria-label={`${formatGb(storage.poolGb)} pool: ${storage.planGb} GB from the ${plan.name} plan plus ${storage.boughtGb} GB bought, out of a ${storage.ceilingGb} GB ceiling`}>
+                                        <span className="fill" style={{ width: `${storage.planGb * ceilingPct}%` }} />
+                                        <span className="extra" style={{ width: `${storage.boughtGb * ceilingPct}%` }} />
+                                    </div>
+                                    <div className="marks"><span>{storage.planGb} GB plan &middot; {storage.boughtGb} GB bought</span><span>{storage.ceilingGb} GB ceiling</span></div>
+                                </div>
+                                {can.buyStorage && (
+                                    <div className="blocks">
+                                        <div className="blocks-copy">
+                                            <b>Need more room?</b>
+                                            <span className="sm mut">{formatPrice(plan.extraStorage.price.NGN.yearly, 'NGN')} for each {storage.extra.blockGb} GB a year, renewing with the plan. Added to the pool immediately.</span>
+                                        </div>
+                                        <Button variant="ink" size="sm" href={withDomain('dashboard.storage')}>Add {storage.extra.blockGb} GB</Button>
+                                    </div>
+                                )}
+                            </section>
+                        )}
+                    </SubSection>
+
+                    <SubSection id="inv-h" title="Invoices">
+                        <DataTable
+                            columns={[
+                                { id: 'date', header: 'Date', nowrap: true, sortable: true, sortValue: (row) => row.issuedAt, accessor: (row) => formatDate(row.issuedAt) },
+                                { id: 'what', header: 'What for', accessor: (row) => row.description },
+                                { id: 'amount', header: 'Amount', align: 'num', sortable: true, sortValue: (row) => row.total.minor, accessor: (row) => formatPrice(row.total.minor, row.total.currency) },
+                                { id: 'status', header: 'Status', accessor: (row) => <Pill tone={row.status === 'paid' ? 'ok' : 'warn'}>{row.status === 'paid' ? 'Paid' : row.status}</Pill> },
+                            ]}
+                            rows={invoices}
+                            rowKey={(row) => row.id}
+                            renderActions={(row) => <Button variant="line" size="sm" disabled title="PDF invoices are not connected yet" aria-label={`PDF for ${row.number} (not available yet)`}>PDF</Button>}
+                            emptyState={{ title: 'No invoices yet', body: 'Invoices appear here after the first payment.' }}
+                        />
+                        <p className="hint">Amounts include VAT at 7.5%. Invoices are kept for as long as Nigerian tax law requires.</p>
+                    </SubSection>
                 </div>
 
                 <div className="stack">
-                    <section className="plan-now" aria-labelledby="plan-h">
-                        <h2 id="plan-h">Your plan</h2>
-                        <div className="amt"><b>{formatPrice(total, 'NGN')}</b><span>/ {subscription.term === 'annual' ? 'year' : 'month'}</span></div>
-                        <p className="sm plan-sub">{formatPrice(net, 'NGN')} plus VAT</p>
-                        <div className="plan-rows">
-                            <div className="plan-row"><span>Plan</span><b>{plan.name}</b></div>
-                            <div className="plan-row"><span>Domain</span><b className="mono small-mono">{domain.name}</b></div>
-                            <div className="plan-row"><span>Renews</span><b>{subscription.renewsAt ? formatDate(subscription.renewsAt) : 'Not set'}</b></div>
-                            <div className="plan-row"><span>Paid by</span><b>{PAID_BY[paymentMethod.channel] ?? 'Not paid yet'}</b></div>
-                        </div>
+                    <section className="ops-card" aria-labelledby="plan-h">
+                        <h2 className="ops-card-h" id="plan-h">Your plan</h2>
+                        <p className="ops-plan-amt">
+                            <b>{formatPrice(total, 'NGN')}</b>
+                            <span className="ops-plan-amt-unit">/ {subscription.term === 'annual' ? 'year' : 'month'}</span>
+                        </p>
+                        <p className="ops-sm ops-mut">{formatPrice(net, 'NGN')} plus VAT</p>
+                        <dl className="mt-14">
+                            <div className="ops-kv-row sm"><dt>Plan</dt><dd className="right">{plan.name}</dd></div>
+                            <div className="ops-kv-row sm"><dt>Domain</dt><dd className="right mono small-mono">{domain.name}</dd></div>
+                            <div className="ops-kv-row sm"><dt>Renews</dt><dd className="right">{subscription.renewsAt ? formatDate(subscription.renewsAt) : 'Not set'}</dd></div>
+                            <div className="ops-kv-row sm"><dt>Paid by</dt><dd className="right">{PAID_BY[paymentMethod.channel] ?? 'Not paid yet'}</dd></div>
+                        </dl>
                         <div className="btn-row no-grow mt">
-                            {can.changePlan && <Button variant="white" size="sm" onClick={() => setChanging(true)}>Change plan</Button>}
+                            {can.changePlan && <Button size="sm" onClick={() => setChanging(true)}>Change plan</Button>}
                             <Button variant="line" size="sm" disabled title="Payment methods are not connected yet">Payment method</Button>
                         </div>
                     </section>
 
                     {changing ? (
-                        <section className="chg" aria-labelledby="chg-h">
-                            <h3 className="heading-sm" id="chg-h">Change plan</h3>
-                            <p className="sm mut mt-s">You are on <b>{plan.name}</b>, {plan.poolGb} GB for {formatPrice(plan.price.NGN.yearly, 'NGN')} a year.</p>
+                        <section className="ops-card" aria-labelledby="chg-h">
+                            <h3 className="ops-card-h-sm" id="chg-h">Change plan</h3>
+                            <p className="ops-sm ops-mut mt-6">You are on <b>{plan.name}</b>, {plan.poolGb} GB for {formatPrice(plan.price.NGN.yearly, 'NGN')} a year.</p>
                             <PlanPicker variant="select" value={target} onChange={setTarget} currentCode={plan.code} plans={plans} />
                             <PlanChangePreview preview={preview} onConfirm={confirm} />
                             <Button variant="quiet" size="sm" full className="mt-s" onClick={() => { setChanging(false); setTarget(plan.code); }}>Cancel</Button>
@@ -143,10 +147,10 @@ export default function Billing() {
                         )
                     )}
 
-                    <Card>
-                        <h3 className="heading-sm">Need a VAT invoice in the company name?</h3>
-                        <p className="sm mut mt-s">Every invoice should carry your registered business name and our VAT details. If something needs correcting, <a href={route('contact')}>tell us</a> and we will reissue it.</p>
-                    </Card>
+                    <section className="ops-card">
+                        <h3 className="ops-card-h-sm">Need a VAT invoice in the company name?</h3>
+                        <p className="ops-card-lede">Every invoice should carry your registered business name and our VAT details. If something needs correcting, <a href={route('contact')}>tell us</a> and we will reissue it.</p>
+                    </section>
                 </div>
             </div>
         </DashboardLayout>

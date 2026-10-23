@@ -2,8 +2,8 @@ import { router, usePage } from '@inertiajs/react';
 import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import AuditTable from '../../Components/dashboard/AuditTable';
 import Button from '../../Components/ui/Button';
-import Empty from '../../Components/ui/Empty';
 import Note from '../../Components/ui/Note';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import { route } from '../../Lib/route';
 
@@ -17,27 +17,25 @@ export default function Audit() {
     const exportUrl = filter === 'all' ? route('dashboard.audit.export') : `${route('dashboard.audit.export')}?filter=${filter}`;
     const choose = (key) => router.get(route('dashboard.audit'), key === 'all' ? {} : { filter: key }, { preserveScroll: true, preserveState: true });
 
+    const chips = CATEGORIES.map(([key, label]) => ({
+        value: key,
+        label,
+        pressed: filter === key,
+        onClick: () => choose(key),
+    }));
+
     return (
         <DashboardLayout page="admin-audit" title="Activity log" description="Everything that changed on this account, and who changed it.">
-            <div className="page-head">
-                <div>
-                    <h1>Activity log</h1>
-                    <p>Everything that changed on this account, and who changed it.</p>
-                </div>
-                <a className="btn btn-line" href={exportUrl} download>Export as CSV</a>
-            </div>
+            <SectionHeader
+                title="Activity log"
+                description="Everything that changed on this account, and who changed it."
+                actions={<Button variant="line" size="sm" href={exportUrl} download>Export as CSV</Button>}
+            />
 
-            <div className="filters" role="group" aria-label="Filter the log">
-                {CATEGORIES.map(([key, label]) => (
-                    <button type="button" key={key} aria-pressed={filter === key} onClick={() => choose(key)}>{label}</button>
-                ))}
-            </div>
-
-            {entries.length === 0 ? (
-                <Empty icon="✓" title="Nothing here yet">No changes in this category.</Empty>
-            ) : (
-                <AuditTable entries={entries} />
-            )}
+            <AuditTable
+                entries={entries}
+                toolbar={{ caption: 'Activity log', chips }}
+            />
 
             <Note title="What is recorded, and for how long" className="mt-l">
                 <p>

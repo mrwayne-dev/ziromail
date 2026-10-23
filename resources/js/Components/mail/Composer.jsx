@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { mailboxFixture, settingsFixture } from '../../fixtures/mail';
 import { route } from '../../Lib/route';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import Banner from '../ui/Banner';
 import Button from '../ui/Button';
 import { useToast } from '../ui/Toast';
@@ -10,6 +9,18 @@ import RecipientChips, { isEmail } from './RecipientChips';
 const MAX_ATTACH_MB = 25;
 const UNDO_SECONDS = 10;
 const stroke = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' };
+
+/*
+ * Composer-side preferences (undo-send, ask-no-subject, request-receipts default).
+ * These behaviours live on the mailbox and will come back through props once the
+ * mail server is connected; for now the composer picks the safe defaults so a
+ * message never slips out without the user meaning it to.
+ */
+const COMPOSER_DEFAULTS = {
+    askNoSubject: true,
+    undoSend: true,
+    requestReceipts: false,
+};
 
 const asParagraphs = (text) => text.split(/\n{2,}/).map((chunk) => chunk.trim()).filter(Boolean);
 
@@ -24,6 +35,8 @@ const asParagraphs = (text) => text.split(/\n{2,}/).map((chunk) => chunk.trim())
 export default function Composer({ variant = 'page', to = [], subject: initialSubject = '', onClose, onSent, fullHref }) {
     const id = useId();
     const { toast, dismiss } = useToast();
+    const { mailbox } = usePage().props;
+    const signatureText = mailbox?.settings?.signature ?? '';
     const bodyRef = useRef(null);
     const [recipients, setRecipients] = useState(to);
     const [cc, setCc] = useState([]);
@@ -31,7 +44,7 @@ export default function Composer({ variant = 'page', to = [], subject: initialSu
     const [subject, setSubject] = useState(initialSubject);
     const [plain, setPlain] = useState('');
     const [files, setFiles] = useState([]);
-    const [receipt, setReceipt] = useState(settingsFixture.preferences.requestReceipts);
+    const [receipt, setReceipt] = useState(COMPOSER_DEFAULTS.requestReceipts);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
     const [sent, setSent] = useState(false);
@@ -72,14 +85,14 @@ export default function Composer({ variant = 'page', to = [], subject: initialSu
         const all = [...recipients, ...cc];
         if (all.length === 0) return setError('Add at least one recipient.');
         if (all.some((chip) => !isEmail(chip.address))) return setError('One of the recipients is not a valid email address.');
-        if (!subject.trim() && settingsFixture.preferences.askNoSubject && !window.confirm('Send without a subject?')) return setError('');
+        if (!subject.trim() && COMPOSER_DEFAULTS.askNoSubject && !window.confirm('Send without a subject?')) return setError('');
         setError('');
 
         const body = variant === 'inline' ? plain : (bodyRef.current?.innerText ?? '');
         const message = { to: recipients, cc, subject: subject.trim() || '(no subject)', body: asParagraphs(body), attachments: files, receipt };
         const finish = () => { setSent(true); onSent?.(message); };
 
-        if (!settingsFixture.preferences.undoSend) return finish();
+        if (!COMPOSER_DEFAULTS.undoSend) return finish();
         let undone = false;
         const toastId = toast({
             tone: 'ok',
@@ -159,7 +172,9 @@ export default function Composer({ variant = 'page', to = [], subject: initialSu
                 <div className="cp-body" ref={bodyRef} contentEditable suppressContentEditableWarning role="textbox" aria-multiline="true" aria-label="Message body">
                     <p><br /></p>
                 </div>
-                <div className="sig">{mailboxFixture.signature.split('\n').map((line, i) => <span key={line + i}>{line}<br /></span>)}</div>
+                {signatureText && (
+                    <div className="sig">{signatureText.split('\n').map((line, i) => <span key={line + i}>{line}<br /></span>)}</div>
+                )}
 
                 {files.length > 0 && (
                     <div className="cp-attach">

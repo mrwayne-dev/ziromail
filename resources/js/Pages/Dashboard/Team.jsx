@@ -5,10 +5,10 @@ import ExportCard from '../../Components/dashboard/ExportCard';
 import TeamList from '../../Components/dashboard/TeamList';
 import SecurityPanel from '../../Components/domain/SecurityPanel';
 import Button from '../../Components/ui/Button';
-import Card from '../../Components/ui/Card';
+import DataTable from '../../Components/ui/DataTable';
 import Modal from '../../Components/ui/Modal';
 import Note from '../../Components/ui/Note';
-import Table from '../../Components/ui/Table';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import { useToast } from '../../Components/ui/Toast';
 import useConfirmPassword from '../../Hooks/useConfirmPassword';
 import useDisclosure from '../../Hooks/useDisclosure';
@@ -16,6 +16,9 @@ import DashboardLayout from '../../Layouts/DashboardLayout';
 import { webEndpoints } from '../../Lib/identityEndpoints';
 import { route } from '../../Lib/route';
 import { ROLE_MATRIX } from '../../Lib/permissions';
+
+const ROLES = ['owner', 'admin', 'user'];
+const ROLE_HEAD = { owner: 'Owner', admin: 'Administrator', user: 'User' };
 
 export default function Team() {
     const { domain, people, delegations, canManageAccess, canExport } = usePage().props;
@@ -45,45 +48,45 @@ export default function Team() {
         }));
     }
 
+    const matrixColumns = [
+        { id: 'can', header: 'Can', accessor: (row) => row.label },
+        ...ROLES.map((role) => ({
+            id: role,
+            header: ROLE_HEAD[role],
+            align: 'num',
+            accessor: (row) => row[role]
+                ? <span className="pill pill-ok" aria-label="Yes">Yes</span>
+                : <span className="pill pill-mut" aria-label="No">No</span>,
+        })),
+    ];
+
     return (
         <DashboardLayout page="admin-team" title="Team & access" description="Who can administer your domains, and what each of them can do.">
-            <div className="page-head">
-                <div>
-                    <h1>Team &amp; access</h1>
-                    <p>Who can administer <span className="mono">{domain?.name ?? 'your domain'}</span>, and what each of them can do.</p>
-                </div>
-                {canManageAccess && <Button onClick={() => setAdding(true)}>Add an administrator</Button>}
-            </div>
+            <SectionHeader
+                title="Team & access"
+                description={<>Who can administer <span className="mono">{domain?.name ?? 'your domain'}</span>, and what each of them can do.</>}
+                actions={canManageAccess ? <Button variant="ink" size="sm" onClick={() => setAdding(true)}>Add an administrator</Button> : null}
+            />
 
-            <Card as="section" aria-labelledby="people-h">
-                <h2 className="heading-sm" id="people-h">People with access</h2>
+            <SubSection id="people-h" title="People with access">
                 <TeamList
                     people={people}
                     delegations={delegations}
                     onChange={canManageAccess ? removeMember : undefined}
                     onWithdraw={canManageAccess ? askWithdraw : undefined}
                 />
-            </Card>
+            </SubSection>
 
             {adding && <AddAdminPanel onCancel={() => setAdding(false)} />}
 
-            <h2 className="heading-sm spaced">What each role can do</h2>
-            <Table
-                caption="Permissions by role"
-                className="mt"
-                head={<tr><th scope="col">Can</th><th scope="col" className="cell-mid">Owner</th><th scope="col" className="cell-mid">Administrator</th><th scope="col" className="cell-mid">User</th></tr>}
-            >
-                {ROLE_MATRIX.map((row) => (
-                    <tr key={row.label}>
-                        <th scope="row">{row.label}</th>
-                        {['owner', 'admin', 'user'].map((role) => (
-                            <td key={role} className={row[role] ? 'y' : 'n'}>
-                                {row[role] ? <><span aria-hidden="true">{'✓'}</span><span className="sr-only">Yes</span></> : <><span aria-hidden="true">{'–'}</span><span className="sr-only">No</span></>}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-            </Table>
+            <SubSection id="roles-h" title="What each role can do">
+                <DataTable
+                    columns={matrixColumns}
+                    rows={ROLE_MATRIX}
+                    rowKey={(row) => row.label}
+                    emptyState={{ title: 'No roles yet' }}
+                />
+            </SubSection>
 
             <Note title="Why delegated access can always be withdrawn" className="mt-l">
                 <p>
@@ -91,10 +94,9 @@ export default function Team() {
                 </p>
             </Note>
 
-            <div className="mt-l">
-                <p className="sm mut">This is the account you are signed in with. These settings are live.</p>
-                <div className="mt"><SecurityPanel /></div>
-            </div>
+            <SubSection id="sec-h" title="Your security" description="This is the account you are signed in with. These settings are live.">
+                <SecurityPanel />
+            </SubSection>
 
             {canExport && <ExportCard />}
 
