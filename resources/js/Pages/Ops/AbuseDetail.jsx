@@ -1,7 +1,7 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import SeriesChart from '../../Components/ops/SeriesChart';
 import Button from '../../Components/ui/Button';
 import Note from '../../Components/ui/Note';

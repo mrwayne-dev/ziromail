@@ -1,8 +1,8 @@
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import useOpsLoading from '../../Hooks/useOpsLoading';
-import DataTable from '../../Components/ops/DataTable';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import DataTable from '../../Components/ui/DataTable';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import Button from '../../Components/ui/Button';
 import Note from '../../Components/ui/Note';
 import OpsLayout from '../../Layouts/OpsLayout';

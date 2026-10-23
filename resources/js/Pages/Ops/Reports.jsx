@@ -1,7 +1,7 @@
 import { usePage } from '@inertiajs/react';
-import DataTable from '../../Components/ops/DataTable';
-import { MetricRow } from '../../Components/ops/MetricTile';
-import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
+import DataTable from '../../Components/ui/DataTable';
+import { MetricRow } from '../../Components/ui/MetricTile';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import SeriesChart from '../../Components/ops/SeriesChart';
 import Note from '../../Components/ui/Note';
 import OpsLayout from '../../Layouts/OpsLayout';

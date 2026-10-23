@@ -1,8 +1,8 @@
 import { usePage } from '@inertiajs/react';
-import ActivityFeed from '../../Components/dashboard/ActivityFeed';
-import DataTable from '../../Components/ops/DataTable';
+import ActivityFeed from '../../Components/ui/ActivityFeed';
+import DataTable from '../../Components/ui/DataTable';
 import RecordStrip from '../../Components/ops/RecordStrip';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import Note from '../../Components/ui/Note';
 import OpsLayout from '../../Layouts/OpsLayout';
 import { formatDate, formatGb, formatRelative } from '../../Lib/format';

@@ -1,9 +1,9 @@
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import useOpsLoading from '../../Hooks/useOpsLoading';
-import DataTable from '../../Components/ops/DataTable';
+import DataTable from '../../Components/ui/DataTable';
 import RecordStrip from '../../Components/ops/RecordStrip';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import OpsLayout from '../../Layouts/OpsLayout';
 import { formatDate } from '../../Lib/format';
 import { route } from '../../Lib/route';

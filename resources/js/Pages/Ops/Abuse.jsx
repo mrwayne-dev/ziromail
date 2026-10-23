@@ -1,9 +1,9 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { motion, useReducedMotion } from 'motion/react';
 import { useState } from 'react';
-import DataTable from '../../Components/ops/DataTable';
+import DataTable from '../../Components/ui/DataTable';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
-import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
 import { AlertIcon } from '../../Components/ui/Icons';

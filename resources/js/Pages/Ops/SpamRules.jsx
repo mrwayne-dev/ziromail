@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import Note from '../../Components/ui/Note';
 import OpsLayout from '../../Layouts/OpsLayout';
 import { route } from '../../Lib/route';

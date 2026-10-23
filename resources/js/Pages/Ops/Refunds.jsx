@@ -1,9 +1,9 @@
 import { usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import DataTable from '../../Components/ops/DataTable';
-import { MetricRow } from '../../Components/ops/MetricTile';
+import DataTable from '../../Components/ui/DataTable';
+import { MetricRow } from '../../Components/ui/MetricTile';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
-import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import Button from '../../Components/ui/Button';
 import Field, { Input } from '../../Components/ui/Field';
 import Note from '../../Components/ui/Note';

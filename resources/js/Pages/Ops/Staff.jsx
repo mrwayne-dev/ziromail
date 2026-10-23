@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import SecurityPanel from '../../Components/domain/SecurityPanel';
 import Note from '../../Components/ui/Note';
 import OpsLayout from '../../Layouts/OpsLayout';

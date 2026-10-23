@@ -1,9 +1,9 @@
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import useOpsLoading from '../../Hooks/useOpsLoading';
-import DataTable from '../../Components/ops/DataTable';
-import { MetricRow } from '../../Components/ops/MetricTile';
-import SectionHeader from '../../Components/ops/SectionHeader';
+import DataTable from '../../Components/ui/DataTable';
+import { MetricRow } from '../../Components/ui/MetricTile';
+import SectionHeader from '../../Components/ui/SectionHeader';
 import Note from '../../Components/ui/Note';
 import useRealtimeReload from '../../Hooks/useRealtimeReload';
 import OpsLayout from '../../Layouts/OpsLayout';

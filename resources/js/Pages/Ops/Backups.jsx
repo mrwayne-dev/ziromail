@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import DataTable from '../../Components/ops/DataTable';
-import { MetricRow } from '../../Components/ops/MetricTile';
+import DataTable from '../../Components/ui/DataTable';
+import { MetricRow } from '../../Components/ui/MetricTile';
 import NightStrip from '../../Components/ops/NightStrip';
 import ReasonDialog from '../../Components/ops/ReasonDialog';
-import SectionHeader, { SubSection } from '../../Components/ops/SectionHeader';
+import SectionHeader, { SubSection } from '../../Components/ui/SectionHeader';
 import Banner from '../../Components/ui/Banner';
 import Button from '../../Components/ui/Button';
 import Field from '../../Components/ui/Field';
