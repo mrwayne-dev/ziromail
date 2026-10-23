@@ -38,6 +38,7 @@ enum AuditAction: string
     case MailboxQuotaChanged = 'mailbox.quota_changed';
     case MailboxSuspended = 'mailbox.suspended';
     case MailboxDeleted = 'mailbox.deleted';
+    case MailboxSettingsChanged = 'mailbox.settings_changed';
     case AliasSaved = 'alias.saved';
     case AliasRemoved = 'alias.removed';
     case StorageAdded = 'billing.storage_added';
@@ -96,6 +97,7 @@ enum AuditAction: string
             self::MailboxQuotaChanged => 'Mailbox quota changed',
             self::MailboxSuspended => 'Mailbox suspended',
             self::MailboxDeleted => 'Mailbox deleted',
+            self::MailboxSettingsChanged => 'Mailbox settings changed',
             self::AliasSaved => 'Address saved',
             self::AliasRemoved => 'Address removed',
             self::StorageAdded => 'Storage added',

@@ -35,7 +35,7 @@ class SecuritySuiteTest extends TestCase
     {
         $identity = collect(glob(app_path('{Http/Controllers/Identity,Http/Controllers/Identity/Staff,Identity/Services}/*.php'), GLOB_BRACE))
             ->map(fn ($file) => file_get_contents($file))->implode("\n");
-        $account = collect(glob(app_path('{Http/Controllers/Dashboard,Services/Dashboard,Services/Abuse,Http/Controllers/Ops}/*.php'), GLOB_BRACE))->map(fn ($file) => file_get_contents($file))->implode("\n");
+        $account = collect(glob(app_path('{Http/Controllers/Dashboard,Http/Controllers/Mail,Services/Dashboard,Services/Abuse,Http/Controllers/Ops}/*.php'), GLOB_BRACE))->map(fn ($file) => file_get_contents($file))->implode("\n");
 
         // Events for features whose backend is not connected yet (DNS checks, payments): defined now, emitted when they exist.
         $pending = ['domain.verified', 'domain.record_changed', 'billing.storage_added', 'billing.plan_changed'];

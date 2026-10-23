@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Domain;
+use App\Models\Mailbox;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -44,8 +46,19 @@ class WebmailPagesTest extends TestCase
     #[DataProvider('screens')]
     public function test_a_verified_user_gets_the_page(string $uri, string $component): void
     {
+        $user = User::factory()->create();
+        $domain = Domain::factory()->for($user)->withSubscription()->create();
+        Mailbox::factory()->for($domain)->create();
+
+        $this->actingAs($user);
+
+        $this->get($uri)->assertInertia(fn (Assert $page) => $page->component($component));
+    }
+
+    public function test_a_verified_user_with_no_domain_is_sent_to_onboarding(): void
+    {
         $this->actingAs(User::factory()->create());
 
-        $this->get($uri)->assertInertia(fn (Assert $page) => $page->component($component)->where('site.prototype', true));
+        $this->get('/mail')->assertRedirect(route('onboarding.domain'));
     }
 }

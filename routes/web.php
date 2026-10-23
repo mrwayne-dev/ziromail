@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\MailboxController;
 use App\Http\Controllers\Dashboard\OverviewController;
 use App\Http\Controllers\Dashboard\StorageController;
 use App\Http\Controllers\Dashboard\TeamController;
+use App\Http\Controllers\Mail\MailController;
 use App\Http\Controllers\Onboarding\OnboardingController;
 use App\Http\Controllers\Ops\AbuseController as OpsAbuseController;
 use App\Http\Controllers\Ops\AuditController as OpsAuditController;
@@ -107,15 +108,17 @@ Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function () 
 });
 
 /*
- * Webmail. Fixture-driven like the dashboard: the mailbox is demonstration data, the
- * sign-in is real. The open folder and message travel in the query string.
+ * Webmail. Settings is backed by real tables (display_name, quota, aliases, the
+ * mailboxes.settings JSON blob); inbox, compose, search and contacts are flagged
+ * `demo: true` and still show fixture messages until the mail server is picked.
  */
 Route::prefix('mail')->middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('/', 'Mail/Inbox')->name('mail');
-    Route::inertia('/compose', 'Mail/Compose')->name('mail.compose');
-    Route::inertia('/search', 'Mail/Search')->name('mail.search');
-    Route::inertia('/contacts', 'Mail/Contacts')->name('mail.contacts');
-    Route::inertia('/settings', 'Mail/Settings')->name('mail.settings');
+    Route::get('/', [MailController::class, 'inbox'])->name('mail');
+    Route::get('/compose', [MailController::class, 'compose'])->name('mail.compose');
+    Route::get('/search', [MailController::class, 'search'])->name('mail.search');
+    Route::get('/contacts', [MailController::class, 'contacts'])->name('mail.contacts');
+    Route::get('/settings', [MailController::class, 'settings'])->name('mail.settings');
+    Route::patch('/settings', [MailController::class, 'updateSettings'])->middleware('throttle:mailbox-writes')->name('mail.settings.update');
 });
 
 /*

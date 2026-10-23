@@ -59,13 +59,17 @@ class DeliverabilityController extends Controller
                 'deferred24h' => $total > 0 ? (int) $day->deferred : null,
                 'sent24h' => $total > 0 ? (int) $total : null,
             ],
-            'bounceSeries' => $series,
+            // Cache stores a PHP-serialized value, and a Laravel Collection round-trips
+            // badly across autoloader changes — it comes back as an __PHP_Incomplete_Class
+            // stub that JSON-encodes to `{}` and crashes `.reduce` in the browser. Flatten
+            // to plain arrays before caching so the cache row stores pure data.
+            'bounceSeries' => $series->values()->all(),
             'worstDomains' => $worst->map(fn ($row) => [
                 'domain' => $domains[$row->domain_id]->name,
                 'ownerId' => $domains[$row->domain_id]->user_id,
                 'sent7d' => (int) $row->total,
                 'bouncePct' => round($row->failed / $row->total * 100, 1),
-            ])->values(),
+            ])->values()->all(),
             'authCoverage' => [
                 ['Domains with SPF', $passing('SPF').' / '.$liveOrAll],
                 ['Domains with DKIM', $passing('DKIM').' / '.$liveOrAll],
