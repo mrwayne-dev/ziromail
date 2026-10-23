@@ -11,13 +11,27 @@ const DAY = 24 * HOUR;
 
 const referenceTime = () => new Date(asOf).getTime();
 
+/*
+ * Guard against null/undefined/empty input: `new Date(null)` is `new Date(0)`
+ * which renders as 1 Jan 1970 and reads to the user as a real-but-wrong date.
+ * Return the em-dash so missing values look missing, not fictional. Every
+ * date-rendering path on the dashboard goes through this helper, so the fix
+ * lives here once rather than per caller.
+ */
+const EM_DASH = '—';
+
 export function formatDate(value, { year = true } = {}) {
+    if (value === null || value === undefined || value === '') return EM_DASH;
     const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return EM_DASH;
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', ...(year ? { year: 'numeric' } : {}), timeZone: 'Africa/Lagos' });
 }
 
 export function formatTime(value) {
-    return new Date(value).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' });
+    if (value === null || value === undefined || value === '') return EM_DASH;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return EM_DASH;
+    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' });
 }
 
 export function formatRelative(value, now = referenceTime()) {

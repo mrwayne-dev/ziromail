@@ -1,3 +1,4 @@
+import DataTable from '../ui/DataTable';
 import { formatDate, formatRelative, formatTime } from '../../Lib/format';
 
 function Emphasised({ text, emphasis }) {
@@ -22,19 +23,43 @@ function when(at) {
     return relative.endsWith('days ago') ? relative : formatDate(at);
 }
 
-/* The full log: when, what happened, and the detail underneath. */
-export default function AuditTable({ entries }) {
+/*
+ * The full activity log on the owner dashboard. Built on `DataTable` so the sticky
+ * header, numeric alignment, pagination and row stagger match every other list in
+ * the console. The old `.log / .log-row / .log-when / .log-what` CSS has been
+ * replaced with the standard table shape.
+ */
+const COLUMNS = [
+    {
+        id: 'at',
+        header: 'When',
+        width: 180,
+        nowrap: true,
+        sortable: true,
+        accessor: (row) => when(row.at),
+        sortValue: (row) => row.at,
+    },
+    {
+        id: 'what',
+        header: 'What happened',
+        accessor: (row) => (
+            <>
+                <Emphasised text={row.text} emphasis={row.emphasis} />
+                {row.detail && <><br /><span className="sub">{row.detail}</span></>}
+            </>
+        ),
+    },
+];
+
+export default function AuditTable({ entries, toolbar }) {
     return (
-        <div className="log">
-            {entries.map((entry) => (
-                <div className="log-row" key={entry.id}>
-                    <span className="log-when">{when(entry.at)}</span>
-                    <span className="log-what">
-                        <Emphasised text={entry.text} emphasis={entry.emphasis} />
-                        {entry.detail && <><br /><span className="log-who">{entry.detail}</span></>}
-                    </span>
-                </div>
-            ))}
-        </div>
+        <DataTable
+            columns={COLUMNS}
+            rows={entries}
+            rowKey={(row) => row.id}
+            toolbar={toolbar}
+            emptyState={{ title: 'Nothing recorded in this category yet' }}
+            pagination={{ pageSize: 50 }}
+        />
     );
 }

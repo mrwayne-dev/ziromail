@@ -27,55 +27,18 @@
 :where(.pg-mail-compose) .att button { border: none; background: none; cursor: pointer; color: var(--tx-3); padding: 2px; }
 :where(.pg-mail-compose) .cp-foot { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-top: 1px solid var(--line); flex: none; flex-wrap: wrap; }
 
-/* ---- mail-contacts ---- */
-:where(.pg-mail-contacts) .cts { overflow-y: auto; background: #fff; border-right: 1px solid var(--line); min-width: 0; }
-:where(.pg-mail-contacts) .cts-top { position: sticky; top: 0; background: #fff; z-index: 2; padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-:where(.pg-mail-contacts) .cts-top h1 { font-size: 1.05rem; }
-:where(.pg-mail-contacts) .alpha { padding: 9px 18px 5px; font-size: .74rem; font-weight: 800; letter-spacing: .1em; color: var(--tx-3); background: var(--paper-soft); }
-:where(.pg-mail-contacts) .ct { display: flex; gap: 12px; align-items: center; padding: 13px 18px; border-bottom: 1px solid var(--line); width: 100%; text-align: left; background: #fff; border-inline: none; border-top: none; cursor: pointer; }
-:where(.pg-mail-contacts) .ct:hover { background: var(--paper-soft); }
-:where(.pg-mail-contacts) .ct.is-active { background: var(--blue-050); box-shadow: inset 3px 0 0 var(--blue); }
-:where(.pg-mail-contacts) .ct-av { width: 38px; height: 38px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: .78rem; font-weight: 700; color: #fff; background: var(--ink-600); }
-:where(.pg-mail-contacts) .ct-av.b { background: var(--blue); }
-:where(.pg-mail-contacts) .ct-main { min-width: 0; flex: 1; }
-:where(.pg-mail-contacts) .ct-main b { font-size: .92rem; color: var(--tx-1); display: block; }
-:where(.pg-mail-contacts) .ct-main span { font-size: .83rem; color: var(--tx-3); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-:where(.pg-mail-contacts) .ct-detail { background: #fff; overflow-y: auto; min-width: 0; display: none; }
-@media (min-width: 1280px) {
-  :where(.pg-mail-contacts) .ct-detail { display: block; }
-}
-:where(.pg-mail-contacts) .ct-head { padding: 34px 28px 26px; border-bottom: 1px solid var(--line); text-align: center; }
-:where(.pg-mail-contacts) .ct-head .big { width: 76px; height: 76px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-size: 1.5rem; font-weight: 700; margin: 0 auto 16px; }
-:where(.pg-mail-contacts) .ct-head h2 { font-size: 1.28rem; }
-:where(.pg-mail-contacts) .ct-head .org { font-size: .92rem; color: var(--tx-3); margin-top: 5px; }
-:where(.pg-mail-contacts) .ct-head .btn-row { justify-content: center; margin-top: 20px; }
-:where(.pg-mail-contacts) .ct-rows { padding: 22px 28px; }
-:where(.pg-mail-contacts) .ct-row { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); }
-:where(.pg-mail-contacts) .ct-row:last-child { border-bottom: none; }
-:where(.pg-mail-contacts) .ct-row .k { font-size: .84rem; color: var(--tx-3); width: 92px; flex: none; }
-:where(.pg-mail-contacts) .ct-row .v { font-size: .93rem; color: var(--tx-1); min-width: 0; word-break: break-word; }
+/* ---- mail-contacts (empty-state only; the list/detail markup is removed) ---- */
+:where(.pg-mail-contacts) .cts { overflow-y: auto; background: #fff; min-width: 0; }
 
 /* ---- mail-search ---- */
 :where(.pg-mail-search) .results { grid-column: 2/-1; overflow-y: auto; background: #fff; min-width: 0; }
 :where(.pg-mail-search) .res-top { position: sticky; top: 0; background: #fff; z-index: 2; padding: 16px 20px; border-bottom: 1px solid var(--line); }
 :where(.pg-mail-search) .res-top h1 { font-size: 1.05rem; }
-:where(.pg-mail-search) .res-top .q { color: var(--blue); }
 :where(.pg-mail-search) .scopes { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 :where(.pg-mail-search) .scope { border: 1px solid var(--line-2); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: .85rem; font-weight: 550; color: var(--tx-2); cursor: pointer; }
-:where(.pg-mail-search) .scope:hover { border-color: var(--tx-3); }
+:where(.pg-mail-search) .scope:hover:not(:disabled) { border-color: var(--tx-3); }
 :where(.pg-mail-search) .scope[aria-pressed="true"] { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
-:where(.pg-mail-search) .res { display: flex; gap: 13px; padding: 15px 20px; border-bottom: 1px solid var(--line); width: 100%; text-align: left; background: #fff; border-inline: none; border-top: none; cursor: pointer; }
-:where(.pg-mail-search) .res:hover { background: var(--paper-soft); }
-:where(.pg-mail-search) .res-av { width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: .76rem; font-weight: 700; color: #fff; background: var(--ink-600); }
-:where(.pg-mail-search) .res-av.b { background: var(--blue); }
-:where(.pg-mail-search) .res-main { min-width: 0; flex: 1; }
-:where(.pg-mail-search) .res-line { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
-:where(.pg-mail-search) .res-from { font-size: .9rem; font-weight: 650; color: var(--tx-1); }
-:where(.pg-mail-search) .res-when { font-size: .76rem; color: var(--tx-3); flex: none; }
-:where(.pg-mail-search) .res-subj { font-size: .88rem; color: var(--tx-1); margin-top: 2px; }
-:where(.pg-mail-search) .res-prev { font-size: .85rem; color: var(--tx-3); margin-top: 3px; line-height: 1.45; }
-:where(.pg-mail-search) .res mark { background: #FDF2C4; color: var(--tx-1); padding: 0 2px; border-radius: 2px; font-weight: 600; }
-:where(.pg-mail-search) .res-where { display: inline-flex; align-items: center; gap: 6px; margin-top: 7px; font-size: .78rem; color: var(--tx-3); }
+:where(.pg-mail-search) .scope:disabled { opacity: .55; cursor: not-allowed; }
 
 /* ---- mail-settings ---- */
 :where(.pg-mail-settings) .st { grid-column: 2/-1; overflow-y: auto; background: var(--paper-soft); min-width: 0; }

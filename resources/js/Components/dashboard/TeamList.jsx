@@ -1,3 +1,5 @@
+import { Lock } from 'lucide-react';
+import DataTable from '../ui/DataTable';
 import { formatDate, initials } from '../../Lib/format';
 import Button from '../ui/Button';
 import Pill from '../ui/Pill';
@@ -5,57 +7,98 @@ import Pill from '../ui/Pill';
 const ROLE = { owner: ['info', 'Owner · account holder'], admin: ['muted', 'Administrator'], user: ['muted', 'User'] };
 
 /*
- * Everyone with access: the owner (locked), administrators, and delegated agencies.
- * `onChange` and `onWithdraw` are only given to a role that may use them.
+ * Everyone with access to the account: the owner (locked), administrators invited
+ * by the owner, and agency delegations. Built on `DataTable` so the row shape
+ * matches every other list in the console; the owner row is pinned at the top
+ * via the `kind` field (`owner`), and delegations sort last. `onChange` and
+ * `onWithdraw` are only given to a role that may use them.
  */
+function Person({ row }) {
+    return (
+        <span className="who">
+            <span className={`pe-av${row.kind === 'owner' ? ' b' : ''}`} aria-hidden="true">{initials(row.name)}</span>
+            <span className="nm"><b>{row.name}</b><span>{row.subtitle}</span></span>
+        </span>
+    );
+}
+
+function Role({ row }) {
+    if (row.kind === 'owner') {
+        return (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                <Pill tone={ROLE.owner[0]}>{ROLE.owner[1]}</Pill>
+                <span className="lock" title="The owner address cannot be changed here" style={{ display: 'inline-flex' }}>
+                    <Lock size={14} strokeWidth={1.5} aria-hidden="true" />
+                    <span className="sr-only">Locked</span>
+                </span>
+            </span>
+        );
+    }
+    if (row.kind === 'delegation') return <Pill tone="warn">Delegated</Pill>;
+    return (
+        <>
+            <Pill tone={ROLE[row.role]?.[0] ?? 'muted'}>{ROLE[row.role]?.[1] ?? row.role}</Pill>
+            {row.pending && <> <Pill tone="muted">Invited</Pill></>}
+        </>
+    );
+}
+
+const BASE_COLUMNS = [
+    { id: 'who', header: 'Person', accessor: (row) => <Person row={row} /> },
+    { id: 'role', header: 'Role', accessor: (row) => <Role row={row} /> },
+];
+
 export default function TeamList({ people, delegations, onChange, onWithdraw }) {
-    const owner = people.find((person) => person.role === 'owner');
-    const others = people.filter((person) => person.role !== 'owner');
+    const rows = [
+        ...people.map((person) => ({
+            id: `person-${person.id}`,
+            kind: person.role === 'owner' ? 'owner' : 'member',
+            name: person.name,
+            subtitle: person.email,
+            role: person.role,
+            pending: person.pending,
+            source: person,
+        })),
+        ...delegations
+            .filter((d) => !d.revokedAt)
+            .map((d) => ({
+                id: `del-${d.id}`,
+                kind: 'delegation',
+                name: d.granteeName,
+                subtitle: `Agency · access granted ${formatDate(d.grantedAt)}`,
+                source: d,
+            })),
+    ];
+
+    const hasActions = Boolean(onChange || onWithdraw);
+    const renderActions = hasActions
+        ? (row) => {
+            if (row.kind === 'owner') return null;
+            if (row.kind === 'delegation' && onWithdraw) {
+                return <Button variant="danger" size="sm" aria-label={`Withdraw access from ${row.name}`} onClick={() => onWithdraw(row.source)}>Withdraw</Button>;
+            }
+            if (row.kind === 'member' && onChange) {
+                return <Button variant="line" size="sm" aria-label={`Remove ${row.name}`} onClick={() => onChange(row.source)}>Remove</Button>;
+            }
+            return null;
+        }
+        : undefined;
 
     return (
-        <div>
-            {owner && (
-                <>
-                    <div className="row owner-row mt-s">
-                        <span className="who">
-                            <span className="pe-av b" aria-hidden="true">{initials(owner.name)}</span>
-                            <span className="nm"><b>{owner.name}</b><span>{owner.email}</span></span>
-                        </span>
-                        <Pill tone="info">{ROLE.owner[1]}</Pill>
-                        <span className="lock" title="The owner address cannot be changed here">
-                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                                <rect x="3" y="7" width="10" height="7" rx="1.6" stroke="currentColor" strokeWidth="1.5" />
-                                <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" strokeWidth="1.5" />
-                            </svg>
-                            <span className="sr-only">Locked</span>
-                        </span>
-                    </div>
-                    <p className="hint">
-                        This is the address you signed up with, not a mailbox on your domain. It is how we verify ownership if you are ever locked out, so it is changed by contacting support rather than from this screen.
-                    </p>
-                </>
+        <>
+            <DataTable
+                columns={BASE_COLUMNS}
+                rows={rows}
+                rowKey={(row) => row.id}
+                renderActions={renderActions}
+                emptyState={{ title: 'Only the owner has access right now' }}
+                stagger={false}
+            />
+            {people.find((p) => p.role === 'owner') && (
+                <p className="hint mt-s">
+                    The owner address is the one you signed up with, not a mailbox on your domain. It is how we verify ownership if you are ever locked out, so it is changed by contacting support rather than from this screen.
+                </p>
             )}
-            {others.map((person) => (
-                <div className="row" key={person.id}>
-                    <span className="who">
-                        <span className="pe-av" aria-hidden="true">{initials(person.name)}</span>
-                        <span className="nm"><b>{person.name}</b><span>{person.email}</span></span>
-                    </span>
-                    <Pill tone={ROLE[person.role][0]}>{ROLE[person.role][1]}</Pill>
-                    {person.pending && <Pill tone="muted">Invited</Pill>}
-                    {onChange && <Button variant="line" size="sm" aria-label={`Remove ${person.name}`} onClick={() => onChange(person)}>Remove</Button>}
-                </div>
-            ))}
-            {delegations.filter((delegation) => !delegation.revokedAt).map((delegation) => (
-                <div className="row" key={delegation.id}>
-                    <span className="who">
-                        <span className="pe-av" aria-hidden="true">{initials(delegation.granteeName)}</span>
-                        <span className="nm"><b>{delegation.granteeName}</b><span>Agency &middot; access granted {formatDate(delegation.grantedAt)}</span></span>
-                    </span>
-                    <Pill tone="warn">Delegated</Pill>
-                    {onWithdraw && <Button variant="danger" size="sm" aria-label={`Withdraw access from ${delegation.granteeName}`} onClick={() => onWithdraw(delegation)}>Withdraw</Button>}
-                </div>
-            ))}
-        </div>
+        </>
     );
 }

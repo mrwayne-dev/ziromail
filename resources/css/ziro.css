@@ -265,8 +265,8 @@ p  { margin: 0; }
 .bg-ink .tlink, .bg-blue .tlink { color: #fff; }
 
 /* ---------- cards ---------- */
-.card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 26px; }
-.card-lg { padding: 34px; border-radius: var(--r-lg); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
+.card-lg { padding: 28px; border-radius: var(--r-lg); }
 .card-flat { box-shadow: none; }
 .card-ink { background: var(--ink-800); border-color: var(--line-dark); color: var(--tx-inv-2); }
 .card-ink h3, .card-ink h4 { color: #fff; }
@@ -456,49 +456,112 @@ body.nav-locked { overflow: hidden; }
 @media (min-width: 760px) { .ftr-grid { grid-template-columns: 1.7fr repeat(3, 1fr); } }
 .ftr-btm { margin-top: 48px; padding-top: 26px; border-top: 1px solid var(--line-dark); display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; font-size: .85rem; }
 
-/* ---------- app shell ---------- */
+/* ---------- app shell (owner dashboard) ----------
+ * Grammar matches the ops console (`:where(.ops)` in pages/ops.css): dark
+ * sidebar on the left, a slim dark topbar on the right of it, light main
+ * surface below. See docs/BUILD_LOG.md 2026-10-23 (second entry at 13:00).
+ */
 .app { min-height: 100vh; display: flex; flex-direction: column; background: var(--paper-soft); }
-.app-hdr { background: var(--ink-900); color: #fff; position: sticky; top: 0; z-index: 90; }
-.app-hdr .bar { display: flex; align-items: center; gap: 14px; height: 60px; }
+.app-hdr {
+  background: var(--ops-ink);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  border-bottom: 1px solid var(--ops-ink-line);
+}
+.app-hdr .bar { display: flex; align-items: center; gap: 14px; height: var(--ops-topbar-h, 52px); }
 .app-body { flex: 1; }
-@media (min-width: 1060px) { .app-body { display: grid; grid-template-columns: 250px 1fr; align-items: start; } }
+@media (min-width: 768px) { .app-body { display: grid; grid-template-columns: var(--ops-sidebar-rail-w, 64px) 1fr; align-items: start; } }
+@media (min-width: 1024px) { .app-body { grid-template-columns: var(--ops-sidebar-w, 240px) 1fr; } }
 
-.side { display: none; padding: 22px 14px; background: #fff; border-right: 1px solid var(--line); position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
-@media (min-width: 1060px) { .side { display: block; } }
-.side-grp + .side-grp { margin-top: 24px; }
-.side-ttl { font-size: .71rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tx-3); padding: 0 11px; margin-bottom: 8px; }
-.side a { display: flex; align-items: center; gap: 11px; padding: 11px; border-radius: var(--r-xs); color: var(--tx-2); font-size: .94rem; font-weight: 500; }
-.side a:hover { background: var(--paper-soft); color: var(--tx-1); }
-/* The current page reads as ink, not tint — it is the one black thing in the
-   rail, so the eye finds it before it reads anything. */
-.side a[aria-current="page"] { background: var(--ink-900); color: #fff; font-weight: 650; }
-.side a[aria-current="page"] .si { opacity: 1; }
+.side {
+  display: none;
+  padding: 16px 10px;
+  background: var(--ops-ink);
+  color: var(--ops-text);
+  border-right: 1px solid var(--ops-ink-line);
+  position: sticky;
+  top: var(--ops-topbar-h, 52px);
+  height: calc(100vh - var(--ops-topbar-h, 52px));
+  overflow-y: auto;
+}
+@media (min-width: 768px) { .side { display: block; } }
+.side-grp + .side-grp { margin-top: 16px; }
+.side-ttl {
+  font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ops-text-dim); padding: 0 10px; margin: 0 0 6px;
+}
+.side a {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: var(--ops-radius-sm, 6px);
+  color: var(--ops-text-muted); font-size: .9rem; font-weight: 500; text-decoration: none;
+}
+.side a:hover { background: var(--ops-ink-hover); color: #fff; }
+.side a[aria-current="page"] {
+  background: var(--ops-ink-raised);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--blue-400);
+}
+.side a[aria-current="page"] .si,
+.side a[aria-current="page"] svg { opacity: 1; }
 .side a[aria-current="page"] .cnt { background: rgba(255,255,255,.18); color: #fff; }
 .side .cnt {
-  margin-left: auto; font-size: .76rem; font-weight: 700; color: var(--tx-2);
-  background: var(--paper-2); padding: 1px 8px; border-radius: 999px; font-variant-numeric: tabular-nums;
+  margin-left: auto; font-size: .72rem; font-weight: 700; color: var(--ops-text-dim);
+  background: rgba(255,255,255,.08); padding: 1px 7px; border-radius: 999px; font-variant-numeric: tabular-nums;
 }
 
-/* Icons sit at partial strength so the label leads; the active row and hover
-   bring them up to full. */
-.side .si { flex: none; opacity: .55; transition: opacity .15s; }
-.side a:hover .si { opacity: .9; }
+/* Icons at partial strength until the row is current or hovered. */
+.side .si,
+.side svg { flex: none; opacity: .72; transition: opacity .15s; }
+.side a:hover .si,
+.side a:hover svg { opacity: 1; }
 
-/* The mailbox opens in its own tab, so the link says so. */
-.side .ext { flex: none; margin-left: auto; opacity: .4; transition: opacity .15s, transform .15s; }
-.side a:hover .ext { opacity: .8; transform: translate(1px, -1px); }
+/* External-link glyph at the end of the "Open my mailbox" row. */
+.side .ext { flex: none; margin-left: auto; opacity: .55; transition: opacity .15s, transform .15s; }
+.side a:hover .ext { opacity: .9; transform: translate(1px, -1px); }
 @media (prefers-reduced-motion: reduce) { .side a:hover .ext { transform: none; } }
 
-.main { padding: 24px var(--gutter) 90px; min-width: 0; }
-@media (min-width: 1060px) { .main { padding: 34px 40px 100px; } }
-.page-head { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; justify-content: space-between; margin-bottom: 26px; }
-.page-head h1 { font-size: clamp(1.55rem, 1.35rem + 1vw, 2.1rem); }
-.page-head p { margin-top: 7px; color: var(--tx-3); }
+/* Icon rail at 768-1023 px: hide labels, counts and the group titles, keep the
+ * glyph centred the same way the ops rail does.
+ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .side { padding: 12px 8px; }
+  .side-ttl { display: none; }
+  .side a { justify-content: center; padding: 10px; gap: 0; }
+  .side a .lbl,
+  .side a .cnt,
+  .side a .ext { display: none; }
+}
+
+.main {
+  padding: 24px clamp(16px, 2.2vw, 32px) 56px;
+  min-width: 0;
+}
+@media (min-width: 1024px) { .main { padding: 24px 32px 56px; } }
+.page-head {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  align-items: flex-end; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.page-head h1 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -.021em;
+  line-height: 1.2;
+  margin: 0;
+}
+@media (min-width: 1024px) { .page-head h1 { font-size: 1.625rem; } }
+.page-head p { margin-top: 8px; color: var(--tx-2); font-size: .9375rem; line-height: 1.5; max-width: 68ch; }
 
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; display: flex; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
-@media (min-width: 1060px) { .tabbar { display: none; } }
-.tabbar a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px; font-size: .69rem; font-weight: 600; color: var(--tx-3); }
+@media (min-width: 768px) { .tabbar { display: none; } }
+.tabbar a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px; font-size: .69rem; font-weight: 600; color: var(--tx-3); text-decoration: none; }
 .tabbar a[aria-current="page"] { color: var(--blue); }
+.tabbar .tabbar-ic { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 32px; border-radius: var(--r-pill); }
+.tabbar .tabbar-ic svg { position: relative; z-index: 1; }
+.tabbar .tabbar-pill { position: absolute; inset: 0; background: color-mix(in oklab, var(--blue) 10%, transparent); border-radius: var(--r-pill); }
 .has-tabbar .main { padding-bottom: 100px; }
 
 /* ---------- stats ---------- */
@@ -548,13 +611,6 @@ body.nav-locked { overflow: hidden; }
 /* ==========================================================================
    STATE PATTERNS — the part that makes this an interface, not a picture
    ========================================================================== */
-
-/* skeleton loading */
-.skel { background: linear-gradient(90deg, var(--paper-2) 25%, #E7ECF2 37%, var(--paper-2) 63%); background-size: 400% 100%; animation: shimmer 1.3s ease-in-out infinite; border-radius: 6px; }
-@keyframes shimmer { 0% { background-position: 100% 50% } 100% { background-position: 0 50% } }
-.skel-line { height: 12px; margin-bottom: 9px; }
-.skel-line:last-child { width: 62%; margin-bottom: 0; }
-@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 
 /* empty state */
 .empty { text-align: center; padding: 56px 24px; }
@@ -874,14 +930,6 @@ body.nav-locked { overflow: hidden; }
 .reveal-on [data-pool-anim].in > .pool-seg:nth-child(4) { transition-delay: .29s; }
 .reveal-on [data-pool-anim].in > .pool-seg:nth-child(5) { transition-delay: .37s; }
 
-/* The ink band's figures arrive after the band itself. */
-.hero-anim .hero-band .hb-fig { opacity: 0; transform: translateY(8px); animation: hbFig .5s cubic-bezier(.22,.7,.3,1) forwards; }
-.hero-anim .hero-band .hb-fig:nth-child(1) { animation-delay: .18s; }
-.hero-anim .hero-band .hb-fig:nth-child(2) { animation-delay: .26s; }
-.hero-anim .hero-band .hb-fig:nth-child(3) { animation-delay: .34s; }
-.hero-anim .hero-band .hb-fig:nth-child(4) { animation-delay: .42s; }
-@keyframes hbFig { to { opacity: 1; transform: none; } }
-
 /* Rows in a list settle in when their section arrives, but only the first few —
    past that it is a table, and a table should simply be present. */
 .reveal-on [data-stagger].in > *:nth-child(n+7) { transition-delay: .42s; }
@@ -893,7 +941,6 @@ body.nav-locked { overflow: hidden; }
   .reveal-on [data-meter] > .used,
   .reveal-on [data-pool-anim] > .pool-seg { transform: none !important; transition: none; }
   .reveal-on [data-meter] > .floor { opacity: 1; }
-  .hero-anim .hero-band .hb-fig { opacity: 1; transform: none; animation: none; }
 }
 
 /* ==========================================================================
@@ -998,17 +1045,33 @@ body.nav-locked { overflow: hidden; }
   .folders .side-ttl { color: #6E7C8D; }
 
   .storage-box {
-    margin-top: 22px; padding: 14px; border-radius: var(--r-sm);
-    background: rgba(255,255,255,.055); border: 1px solid var(--line-dark);
+    margin-top: 20px; padding: 16px 14px 14px; border-radius: 10px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
   }
-  /* label and figure stack — side by side they collide in a 216px rail */
-  .storage-box .between { display: block; }
-  .storage-box .tiny { color: #94A3B4; font-size: .74rem; }
-  .storage-box .tiny[style] { color: #fff !important; display: block; margin-bottom: 2px; }
-  .storage-box .meter { background: rgba(255,255,255,.14); margin-top: 9px; }
-  .storage-box .meter i { background: var(--blue-300); }
-  .storage-box .mono { color: #B9C7D6; }
-  .storage-box p { line-height: 1.45; }
+  .storage-box .storage-ttl {
+    margin: 0; color: rgba(255,255,255,.6);
+    font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .storage-box .storage-fig {
+    display: flex; align-items: baseline; gap: 6px;
+    margin: 6px 0 10px; color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .storage-box .storage-fig b { font-size: 1.1rem; font-weight: 600; letter-spacing: -.01em; }
+  .storage-box .storage-fig span { color: rgba(255,255,255,.55); font-size: .82rem; }
+  .storage-box .meter {
+    background: rgba(255,255,255,.12);
+    border-radius: 999px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .storage-box .meter i { background: var(--blue-300); border-radius: 999px; display: block; height: 100%; }
+  .storage-box .storage-sub {
+    margin: 12px 0 0;
+    color: rgba(255,255,255,.6);
+    font-size: .78rem; line-height: 1.5;
+  }
+  .storage-box .storage-sub .mono { color: rgba(255,255,255,.85); }
 
   /* message list */
   .list { background: #fff; overflow-y: auto; border-right: 1px solid var(--line); min-width: 0; }
